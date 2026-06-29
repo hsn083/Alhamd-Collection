@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getLowStockProducts } from '@/lib/stock-helpers';
+import { getLowStockProducts, getStockSummary } from '@/lib/stock-helpers';
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic';
@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
 
     // Filter by category
     if (category) {
-      products = products.filter((p: any) => p.category === category);
+      products = products.filter((p: any) => p.category?.toString() === category);
     }
 
     // Filter by status
@@ -33,19 +33,13 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Calculate summary stats
-    const totalLowStock = products.length;
-    const outOfStock = products.filter((p: any) => p.stockStatus === 'out_of_stock').length;
-    const criticalStock = products.filter((p: any) => p.stockQuantity <= 5).length;
+    // Get summary stats from database
+    const summary = await getStockSummary();
 
     return NextResponse.json({
       success: true,
       products,
-      summary: {
-        totalLowStock,
-        outOfStock,
-        criticalStock,
-      },
+      summary,
     });
   } catch (error: any) {
     console.error('Error fetching low stock products:', error);

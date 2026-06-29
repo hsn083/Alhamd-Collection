@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getStockAlerts, markAlertAsRead, clearStockAlerts } from '@/lib/stock-helpers';
+import connectDB from '@/lib/db';
+import Notification from '@/models/Notification';
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic';
@@ -7,12 +8,29 @@ export const revalidate = 0;
 
 export async function GET(request: NextRequest) {
   try {
-    const alerts = getStockAlerts();
-    const unreadCount = alerts.filter((a) => !a.isRead).length;
+    await connectDB();
+    
+    // Fetch stock notifications for admin
+    const alerts = await Notification.find({
+      recipientType: 'admin',
+      type: 'stock',
+    }).sort({ createdAt: -1 }).limit(50);
+    
+    const unreadCount = alerts.filter((a: any) => !a.isRead).length;
+
+    const transformedAlerts = alerts.map(alert => ({
+      id: alert._id.toString(),
+      title: alert.title,
+      message: alert.message,
+      isRead: alert.isRead,
+      createdAt: alert.createdAt.toISOString(),
+      data: alert.data,
+      link: alert.link,
+    }));
 
     return NextResponse.json({
       success: true,
-      alerts,
+      alerts: transformedAlerts,
       unreadCount,
     });
   } catch (error: any) {
@@ -26,14 +44,19 @@ export async function GET(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
+    await connectDB();
+    
     const body = await request.json();
     const { action, alertId } = body;
 
     if (action === 'mark_read' && alertId) {
-      markAlertAsRead(alertId);
+      await Notification.findByIdAndUpdate(alertId, { isRead: true });
       return NextResponse.json({ success: true, message: 'Alert marked as read' });
     } else if (action === 'clear_all') {
-      clearStockAlerts();
+      await Notification.updateMany(
+        { recipientType: 'admin', type: 'stock' },
+        { isRead: true }
+      );
       return NextResponse.json({ success: true, message: 'All alerts cleared' });
     } else {
       return NextResponse.json(

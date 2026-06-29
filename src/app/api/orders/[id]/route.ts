@@ -177,6 +177,10 @@ export async function PUT(
       updateData.paymentStatus = paymentStatus;
     }
 
+    if (adminNotes !== undefined) {
+      updateData.notes = adminNotes;
+    }
+
     const updatedOrder = await Order.findByIdAndUpdate(
       params.id,
       updateData,

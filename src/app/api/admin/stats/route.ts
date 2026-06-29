@@ -188,14 +188,14 @@ export async function GET(request: NextRequest) {
     const monthOrdersCount = monthRevenueResult[0]?.totalOrders || 0;
 
     const statistics = {
-      totalSales: totalRevenue,
+      totalRevenue,
       totalOrders,
       totalCustomers,
       totalProducts,
       totalCategories,
       activeCategories,
       totalInventory,
-      orderStatuses: orderStatusMap,
+      ordersByStatus: orderStatusMap,
       paymentStatuses: paymentStatusMap,
       topProducts: topProductsResult,
       recentOrders: recentOrdersFormatted,

@@ -1,165 +1,82 @@
-import { readProducts, writeProducts } from './server-products';
-import { StockStatus, StockHistory, StockAlert } from '@/types';
+import connectDB from '@/lib/db';
+import Product from '@/models/Product';
+import Inventory from '@/models/Inventory';
+import StockHistory from '@/models/StockHistory';
+import Notification from '@/models/Notification';
 import { sendOrderStatusEmail } from './email-service';
-import fs from 'fs';
-import path from 'path';
-
-const stockHistoryPath = path.join(process.cwd(), 'data', 'stock-history.json');
-const stockAlertsPath = path.join(process.cwd(), 'data', 'stock-alerts.json');
+import mongoose from 'mongoose';
 
 // Admin email for stock alerts
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'alhamdcollection518@gmail.com';
 
-// Read stock history
-function readStockHistory(): StockHistory[] {
-  try {
-    if (fs.existsSync(stockHistoryPath)) {
-      const data = fs.readFileSync(stockHistoryPath, 'utf-8');
-      return JSON.parse(data) || [];
-    }
-    return [];
-  } catch (error) {
-    console.error('Error reading stock history:', error);
-    return [];
-  }
-}
-
-// Write stock history
-function writeStockHistory(history: StockHistory[]): void {
-  try {
-    fs.writeFileSync(stockHistoryPath, JSON.stringify(history, null, 2), 'utf-8');
-  } catch (error) {
-    console.error('Error writing stock history:', error);
-    throw error;
-  }
-}
-
-// Read stock alerts
-function readStockAlerts(): StockAlert[] {
-  try {
-    if (fs.existsSync(stockAlertsPath)) {
-      const data = fs.readFileSync(stockAlertsPath, 'utf-8');
-      return JSON.parse(data) || [];
-    }
-    return [];
-  } catch (error) {
-    console.error('Error reading stock alerts:', error);
-    return [];
-  }
-}
-
-// Write stock alerts
-function writeStockAlerts(alerts: StockAlert[]): void {
-  try {
-    fs.writeFileSync(stockAlertsPath, JSON.stringify(alerts, null, 2), 'utf-8');
-  } catch (error) {
-    console.error('Error writing stock alerts:', error);
-    throw error;
-  }
-}
-
-// Send stock alert email to admin
-async function sendStockAlertEmail(
-  productName: string,
-  sku: string,
-  currentQuantity: number,
-  threshold: number,
-  alertType: 'low_stock' | 'out_of_stock'
-): Promise<void> {
-  try {
-    const subject = alertType === 'out_of_stock' 
-      ? `🚨 OUT OF STOCK: ${productName}`
-      : `⚠️ LOW STOCK ALERT: ${productName}`;
-    
-    const message = `
-Stock Alert - ${alertType.toUpperCase()}
-
-Product: ${productName}
-SKU: ${sku}
-Current Quantity: ${currentQuantity}
-Threshold: ${threshold}
-Alert Type: ${alertType}
-
-${alertType === 'out_of_stock' 
-  ? 'This product is now OUT OF STOCK. Please restock immediately.'
-  : `This product has LOW STOCK. Current quantity is below the threshold.`
-}
-
-Restock Link: ${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/admin/products
-
-Time: ${new Date().toLocaleString()}
-    `.trim();
-
-    // Use existing email service to send alert
-    await sendOrderStatusEmail(
-      ADMIN_EMAIL,
-      `STK-${Date.now()}`,
-      'Admin',
-      alertType === 'out_of_stock' ? 'out_of_stock' : 'low_stock'
-    );
-    
-    console.log(`Stock alert email sent for ${productName}`);
-  } catch (error) {
-    console.error('Error sending stock alert email:', error);
-  }
-}
-
 // Calculate stock status based on quantity and threshold
-export function calculateStockStatus(quantity: number, threshold: number): StockStatus {
+export function calculateStockStatus(quantity: number, threshold: number): 'in_stock' | 'low_stock' | 'out_of_stock' {
   if (quantity === 0) return 'out_of_stock';
   if (quantity <= threshold) return 'low_stock';
   return 'in_stock';
 }
 
-// Update product stock
+// Update product stock using MongoDB
 export async function updateProductStock(
   productId: string,
   newQuantity: number,
-  changeType: 'increase' | 'decrease' | 'adjustment',
+  changeType: 'in' | 'out' | 'adjustment' | 'sale' | 'return',
   reason: string,
-  changedBy: string
+  performedBy?: string
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    const products = await readProducts();
-    const productIndex = products.findIndex((p: any) => p.id === productId);
+    await connectDB();
 
-    if (productIndex === -1) {
+    // Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+      return { success: false, error: 'Invalid product ID' };
+    }
+
+    // Find product
+    const product = await Product.findById(productId);
+    if (!product) {
       return { success: false, error: 'Product not found' };
     }
 
-    const product = products[productIndex];
-    const previousQuantity = product.stockQuantity || product.stock || 0;
+    const previousQuantity = product.stock || 0;
+    const threshold = product.lowStockThreshold || 10;
 
-    // Update stock fields
+    // Update product stock
     product.stock = newQuantity;
-    product.stockQuantity = newQuantity;
-    product.lowStockThreshold = product.lowStockThreshold || 10;
-    product.stockStatus = calculateStockStatus(newQuantity, product.lowStockThreshold);
-    product.updatedAt = new Date().toISOString();
+    await product.save();
 
-    // Save updated product
-    products[productIndex] = product;
-    await writeProducts(products);
+    // Update or create inventory record
+    let inventory = await Inventory.findOne({ product: productId });
+    if (!inventory) {
+      inventory = await Inventory.create({
+        product: productId,
+        quantity: newQuantity,
+        lowStockThreshold: threshold,
+        status: calculateStockStatus(newQuantity, threshold),
+        reserved: 0,
+        available: newQuantity,
+      });
+    } else {
+      inventory.quantity = newQuantity;
+      inventory.available = newQuantity;
+      inventory.status = calculateStockStatus(newQuantity, inventory.lowStockThreshold);
+      await inventory.save();
+    }
 
     // Record stock history
-    const historyEntry: StockHistory = {
-      id: `STK-HIST-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      productId,
-      productName: product.name,
+    await StockHistory.create({
+      product: productId,
+      type: changeType,
+      quantity: Math.abs(newQuantity - previousQuantity),
       previousQuantity,
       newQuantity,
-      changeType,
       reason,
-      changedBy,
-      changedAt: new Date().toISOString(),
-    };
+      referenceType: changeType === 'sale' ? 'order' : changeType === 'return' ? 'return' : 'manual',
+      performedBy: performedBy ? new mongoose.Types.ObjectId(performedBy) : undefined,
+    });
 
-    const history = readStockHistory();
-    history.unshift(historyEntry);
-    writeStockHistory(history);
-
-    // Check for stock alerts
-    await checkStockAlerts(product, previousQuantity, newQuantity);
+    // Check for stock alerts and send notifications
+    await checkStockAlerts(product, previousQuantity, newQuantity, threshold);
 
     return { success: true };
   } catch (error) {
@@ -168,88 +85,143 @@ export async function updateProductStock(
   }
 }
 
-// Check and create stock alerts
-async function checkStockAlerts(product: any, previousQuantity: number, newQuantity: number): Promise<void> {
-  const alerts = readStockAlerts();
-  const threshold = product.lowStockThreshold || 10;
+// Check and create stock alerts using MongoDB
+async function checkStockAlerts(
+  product: any,
+  previousQuantity: number,
+  newQuantity: number,
+  threshold: number
+): Promise<void> {
+  const thresholdCrossed = newQuantity <= threshold && previousQuantity > threshold;
+  const outOfStock = newQuantity === 0 && previousQuantity > 0;
 
-  // Check for out of stock
-  if (newQuantity === 0 && previousQuantity > 0) {
-    const alert: StockAlert = {
-      id: `STK-ALT-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      productId: product.id,
-      productName: product.name,
-      sku: product.sku,
-      currentQuantity: newQuantity,
-      threshold,
-      alertType: 'out_of_stock',
-      isRead: false,
-      createdAt: new Date().toISOString(),
-    };
-    alerts.unshift(alert);
-    writeStockAlerts(alerts);
-    
+  if (thresholdCrossed || outOfStock) {
+    const alertType = outOfStock ? 'out_of_stock' : 'low_stock';
+
+    // Create admin notification
+    try {
+      await Notification.create({
+        recipientType: 'admin',
+        type: 'stock',
+        title: outOfStock ? '🚨 Out of Stock Alert' : '⚠️ Low Stock Alert',
+        message: `${product.name} is ${outOfStock ? 'OUT OF STOCK' : 'running LOW on stock'}. Current quantity: ${newQuantity}`,
+        link: `/admin/products/${product._id}`,
+        data: {
+          productId: product._id,
+          productName: product.name,
+          currentQuantity: newQuantity,
+          threshold,
+          alertType,
+        },
+      });
+    } catch (notifError) {
+      console.error('Failed to create stock notification:', notifError);
+    }
+
     // Send email alert
-    await sendStockAlertEmail(product.name, product.sku, newQuantity, threshold, 'out_of_stock');
-  }
-  // Check for low stock (crossed threshold)
-  else if (newQuantity <= threshold && previousQuantity > threshold) {
-    const alert: StockAlert = {
-      id: `STK-ALT-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      productId: product.id,
-      productName: product.name,
-      sku: product.sku,
-      currentQuantity: newQuantity,
-      threshold,
-      alertType: 'low_stock',
-      isRead: false,
-      createdAt: new Date().toISOString(),
-    };
-    alerts.unshift(alert);
-    writeStockAlerts(alerts);
-    
-    // Send email alert
-    await sendStockAlertEmail(product.name, product.sku, newQuantity, threshold, 'low_stock');
+    try {
+      await sendOrderStatusEmail(
+        ADMIN_EMAIL,
+        `STK-${product._id}`,
+        'Admin',
+        alertType
+      );
+      console.log(`Stock alert email sent for ${product.name}`);
+    } catch (emailError) {
+      console.error('Failed to send stock alert email:', emailError);
+    }
   }
 }
 
-// Get low stock products
+// Get low stock products from MongoDB
 export async function getLowStockProducts(): Promise<any[]> {
   try {
-    const products = await readProducts();
-    return products.filter((product: any) => {
-      const quantity = product.stockQuantity || product.stock || 0;
+    await connectDB();
+
+    const products = await Product.find({ status: 'active' }).lean();
+    const lowStockProducts = [];
+
+    for (const product of products) {
+      const quantity = product.stock || 0;
       const threshold = product.lowStockThreshold || 10;
       const status = calculateStockStatus(quantity, threshold);
-      return status === 'low_stock' || status === 'out_of_stock';
-    }).map((product: any) => ({
-      ...product,
-      stockQuantity: product.stockQuantity || product.stock || 0,
-      lowStockThreshold: product.lowStockThreshold || 10,
-      stockStatus: calculateStockStatus(product.stockQuantity || product.stock || 0, product.lowStockThreshold || 10),
-    }));
+
+      if (status === 'low_stock' || status === 'out_of_stock') {
+        lowStockProducts.push({
+          ...product,
+          id: product._id.toString(),
+          stockQuantity: quantity,
+          lowStockThreshold: threshold,
+          stockStatus: status,
+        });
+      }
+    }
+
+    return lowStockProducts;
   } catch (error) {
     console.error('Error getting low stock products:', error);
     return [];
   }
 }
 
-// Get stock alerts
-export function getStockAlerts(): StockAlert[] {
-  return readStockAlerts();
-}
+// Get stock summary statistics
+export async function getStockSummary(): Promise<{
+  totalLowStock: number;
+  outOfStock: number;
+  criticalStock: number;
+}> {
+  try {
+    await connectDB();
 
-// Mark alert as read
-export function markAlertAsRead(alertId: string): void {
-  const alerts = readStockAlerts();
-  const alertIndex = alerts.findIndex((a) => a.id === alertId);
-  if (alertIndex !== -1) {
-    alerts[alertIndex].isRead = true;
-    writeStockAlerts(alerts);
+    const products = await Product.find({ status: 'active' }).lean();
+    let totalLowStock = 0;
+    let outOfStock = 0;
+    let criticalStock = 0;
+
+    for (const product of products) {
+      const quantity = product.stock || 0;
+      const threshold = product.lowStockThreshold || 10;
+      const status = calculateStockStatus(quantity, threshold);
+
+      if (status === 'out_of_stock') {
+        outOfStock++;
+        totalLowStock++;
+      } else if (status === 'low_stock') {
+        totalLowStock++;
+        if (quantity <= 5) {
+          criticalStock++;
+        }
+      }
+    }
+
+    return { totalLowStock, outOfStock, criticalStock };
+  } catch (error) {
+    console.error('Error getting stock summary:', error);
+    return { totalLowStock: 0, outOfStock: 0, criticalStock: 0 };
   }
 }
 
-// Clear all alerts
-export function clearStockAlerts(): void {
-  writeStockAlerts([]);
+// Get stock history for a product
+export async function getStockHistory(productId: string): Promise<any[]> {
+  try {
+    await connectDB();
+
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+      return [];
+    }
+
+    const history = await StockHistory.find({ product: productId })
+      .populate('performedBy', 'name email')
+      .sort({ createdAt: -1 })
+      .limit(50)
+      .lean();
+
+    return history.map((h: any) => ({
+      ...h,
+      id: h._id.toString(),
+    }));
+  } catch (error) {
+    console.error('Error getting stock history:', error);
+    return [];
+  }
 }

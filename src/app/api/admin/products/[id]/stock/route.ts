@@ -11,18 +11,18 @@ export async function PUT(
 ) {
   try {
     const body = await request.json();
-    const { quantity, changeType, reason, changedBy } = body;
+    const { quantity, changeType, reason, performedBy } = body;
 
-    if (!quantity || quantity < 0) {
+    if (quantity === undefined || quantity === null || quantity < 0) {
       return NextResponse.json(
         { success: false, error: 'Valid quantity is required' },
         { status: 400 }
       );
     }
 
-    if (!changeType || !['increase', 'decrease', 'adjustment'].includes(changeType)) {
+    if (!changeType || !['in', 'out', 'adjustment', 'sale', 'return'].includes(changeType)) {
       return NextResponse.json(
-        { success: false, error: 'Valid change type is required' },
+        { success: false, error: 'Valid change type is required (in, out, adjustment, sale, return)' },
         { status: 400 }
       );
     }
@@ -39,7 +39,7 @@ export async function PUT(
       quantity,
       changeType,
       reason,
-      changedBy || 'admin'
+      performedBy
     );
 
     if (result.success) {
