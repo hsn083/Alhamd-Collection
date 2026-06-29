@@ -1,11 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { writeFile, mkdir } from 'fs/promises';
-import { join } from 'path';
-import { existsSync } from 'fs';
+import { v2 as cloudinary } from 'cloudinary';
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
+
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+  secure: true,
+});
 
 const MAX_IMAGES = 5;
 const MAX_VIDEO_SIZE = 50 * 1024 * 1024; // 50MB for videos
@@ -14,25 +20,16 @@ const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB for images
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
 const ALLOWED_VIDEO_TYPES = ['video/mp4', 'video/webm', 'video/ogg'];
 
-// Ensure upload directory exists
-async function ensureUploadDir() {
-  const uploadDir = join(process.cwd(), 'public', 'uploads', 'reviews');
-  if (!existsSync(uploadDir)) {
-    await mkdir(uploadDir, { recursive: true });
-  }
-  return uploadDir;
-}
-
-// Generate unique filename
-function generateFilename(originalName: string, isVideo: boolean = false) {
-  const timestamp = Date.now();
-  const random = Math.random().toString(36).substring(2, 9);
-  const extension = isVideo ? '.mp4' : originalName.split('.').pop();
-  return `review-${timestamp}-${random}.${extension}`;
-}
-
 export async function POST(request: NextRequest) {
   try {
+    // Check Cloudinary configuration
+    if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
+      return NextResponse.json(
+        { success: false, error: 'Cloudinary is not configured. Please set environment variables.' },
+        { status: 500 }
+      );
+    }
+
     const formData = await request.formData();
     const files = formData.getAll('files') as File[];
     const isVideo = formData.get('isVideo') === 'true';
@@ -60,7 +57,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const uploadDir = await ensureUploadDir();
     const uploadedFiles: string[] = [];
 
     for (const file of files) {
@@ -99,14 +95,27 @@ export async function POST(request: NextRequest) {
       const bytes = await file.arrayBuffer();
       const buffer = Buffer.from(bytes);
 
-      // Generate filename and save
-      const filename = generateFilename(file.name, isVideo);
-      const filepath = join(uploadDir, filename);
-      await writeFile(filepath, buffer);
+      // Upload to Cloudinary
+      const uploadResult = await new Promise<any>((resolve, reject) => {
+        cloudinary.uploader.upload_stream(
+          {
+            folder: 'reviews',
+            resource_type: isVideo ? 'video' : 'image',
+            allowed_formats: isVideo ? ['mp4', 'webm', 'ogg'] : ['jpg', 'jpeg', 'png', 'webp', 'gif'],
+            max_file_size: isVideo ? MAX_VIDEO_SIZE : MAX_IMAGE_SIZE,
+            transformation: isVideo ? [] : [
+              { quality: 'auto:good' },
+              { fetch_format: 'auto' }
+            ]
+          },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        ).end(buffer);
+      });
 
-      // Return public URL
-      const publicUrl = `/uploads/reviews/${filename}`;
-      uploadedFiles.push(publicUrl);
+      uploadedFiles.push(uploadResult.secure_url);
     }
 
     return NextResponse.json({

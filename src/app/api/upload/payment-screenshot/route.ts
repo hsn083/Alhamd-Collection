@@ -1,16 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { writeFile, mkdir, unlink } from 'fs/promises';
-import { existsSync } from 'fs';
-import path from 'path';
+import { v2 as cloudinary } from 'cloudinary';
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+  secure: true,
+});
+
 // Security configurations
-const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'application/pdf'];
+const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-const ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp', 'pdf'];
 
 // Rate limiting (simple in-memory)
 const uploadAttempts = new Map<string, { count: number; resetTime: number }>();
@@ -34,17 +39,16 @@ function checkRateLimit(ip: string): boolean {
   return true;
 }
 
-function sanitizeFilename(filename: string): string {
-  return filename.replace(/[^a-zA-Z0-9._-]/g, '_');
-}
-
-function validateFileExtension(filename: string): boolean {
-  const extension = filename.split('.').pop()?.toLowerCase();
-  return extension ? ALLOWED_EXTENSIONS.includes(extension) : false;
-}
-
 export async function POST(request: NextRequest) {
   try {
+    // Check Cloudinary configuration
+    if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
+      return NextResponse.json(
+        { success: false, error: 'Cloudinary is not configured. Please set environment variables.' },
+        { status: 500 }
+      );
+    }
+
     // Rate limiting
     const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
     if (!checkRateLimit(ip)) {
@@ -68,15 +72,7 @@ export async function POST(request: NextRequest) {
     // Validate file type
     if (!ALLOWED_MIME_TYPES.includes(file.type)) {
       return NextResponse.json(
-        { success: false, error: 'Invalid file type. Allowed types: JPG, JPEG, PNG, WEBP, PDF' },
-        { status: 400 }
-      );
-    }
-
-    // Validate file extension
-    if (!validateFileExtension(file.name)) {
-      return NextResponse.json(
-        { success: false, error: 'Invalid file extension. Allowed extensions: jpg, jpeg, png, webp, pdf' },
+        { success: false, error: 'Invalid file type. Allowed types: JPG, JPEG, PNG, WEBP' },
         { status: 400 }
       );
     }
@@ -97,63 +93,42 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create upload directory if it doesn't exist
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'payment-screenshots');
-    if (!existsSync(uploadDir)) {
-      await mkdir(uploadDir, { recursive: true });
-    }
-
-    // Generate unique filename with sanitized components
-    const timestamp = Date.now();
-    const randomString = Math.random().toString(36).substring(2, 15);
-    const sanitizedOrderId = orderId ? sanitizeFilename(orderId) : 'temp';
-    const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
-    const filename = `${sanitizedOrderId}-${timestamp}-${randomString}.${extension}`;
-    const filepath = path.join(uploadDir, filename);
-
     // Convert file to buffer
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Additional content validation for images (check for valid image signatures)
-    if (file.type.startsWith('image/')) {
-      const validImageSignatures = {
-        'image/jpeg': [0xFF, 0xD8, 0xFF],
-        'image/png': [0x89, 0x50, 0x4E, 0x47],
-        'image/webp': [0x52, 0x49, 0x46, 0x46]
-      };
-
-      const signature = validImageSignatures[file.type as keyof typeof validImageSignatures];
-      if (signature) {
-        const fileSignature = Array.from(buffer.slice(0, signature.length));
-        const isValidSignature = signature.every((byte, index) => fileSignature[index] === byte);
-        
-        if (!isValidSignature) {
-          return NextResponse.json(
-            { success: false, error: 'Invalid file content. File does not match its declared type.' },
-            { status: 400 }
-          );
+    // Upload to Cloudinary
+    const uploadResult = await new Promise<any>((resolve, reject) => {
+      cloudinary.uploader.upload_stream(
+        {
+          folder: 'payment-screenshots',
+          public_id: orderId ? `payment-${orderId}-${Date.now()}` : `payment-${Date.now()}`,
+          resource_type: 'image',
+          allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
+          max_file_size: MAX_FILE_SIZE,
+          transformation: [
+            { quality: 'auto:good' },
+            { fetch_format: 'auto' }
+          ]
+        },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
         }
-      }
-    }
+      ).end(buffer);
+    });
 
-    // Write file to disk
-    await writeFile(filepath, buffer);
-
-    // Return the URL
-    const url = `/uploads/payment-screenshots/${filename}`;
-
-    console.log(`Payment screenshot uploaded: ${filename} for order: ${orderId}`);
+    console.log(`Payment screenshot uploaded to Cloudinary: ${uploadResult.public_id} for order: ${orderId}`);
 
     return NextResponse.json({
       success: true,
-      url: url,
-      filename: filename
+      url: uploadResult.secure_url,
+      publicId: uploadResult.public_id
     });
   } catch (error: any) {
-    console.error('Error uploading payment screenshot:', error);
+    console.error('Error uploading payment screenshot to Cloudinary:', error);
     return NextResponse.json(
-      { success: false, error: error.message || 'Failed to upload file' },
+      { success: false, error: error.message || 'Failed to upload file to Cloudinary' },
       { status: 500 }
     );
   }

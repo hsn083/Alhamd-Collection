@@ -186,8 +186,8 @@ export default function CheckoutPage() {
       }
 
       // Validate payment screenshot for Easypaisa and JazzCash
-      if ((paymentMethod === 'easypaisa' || paymentMethod === 'jazzcash') && !paymentScreenshot) {
-        setError('Please upload Easypaisa/JazzCash payment screenshot before placing your order.');
+      if ((paymentMethod === 'easypaisa' || paymentMethod === 'jazzcash' || paymentMethod === 'bankTransfer') && !paymentScreenshot) {
+        setError('Please upload payment screenshot before placing your order.');
         setIsLoading(false);
         return;
       }

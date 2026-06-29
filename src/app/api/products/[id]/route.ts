@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { unlink } from 'fs/promises';
-import { join } from 'path';
-import { existsSync } from 'fs';
+import { v2 as cloudinary } from 'cloudinary';
 import connectDB from '@/lib/db';
 import Product from '@/models/Product';
 import Category from '@/models/Category';
@@ -10,18 +8,50 @@ import Category from '@/models/Category';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-// Helper function to delete image files
-async function deleteImageFiles(imagePaths: string[]): Promise<void> {
-  for (const imagePath of imagePaths) {
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+  secure: true,
+});
+
+// Helper function to delete image files from Cloudinary
+async function deleteImageFiles(imageUrls: string[]): Promise<void> {
+  for (const imageUrl of imageUrls) {
     try {
-      const fullPath = join(process.cwd(), 'public', imagePath);
-      if (existsSync(fullPath)) {
-        await unlink(fullPath);
+      // Extract public_id from Cloudinary URL
+      const publicId = extractPublicIdFromUrl(imageUrl);
+      if (publicId) {
+        await cloudinary.uploader.destroy(publicId);
+        console.log('Deleted image from Cloudinary:', publicId);
       }
     } catch (error) {
-      console.error('Error deleting image file:', imagePath, error);
+      console.error('Error deleting image from Cloudinary:', imageUrl, error);
     }
   }
+}
+
+// Extract public_id from Cloudinary URL
+function extractPublicIdFromUrl(url: string): string | null {
+  try {
+    // Cloudinary URL format: https://res.cloudinary.com/cloud_name/image/upload/v1234567890/folder/public_id.ext
+    const urlObj = new URL(url);
+    const pathParts = urlObj.pathname.split('/');
+    // Find the index of 'upload' or 'image/upload'
+    const uploadIndex = pathParts.findIndex(part => part === 'upload' || part === 'image');
+    if (uploadIndex !== -1 && uploadIndex < pathParts.length - 1) {
+      // Everything after 'upload' is the folder/public_id
+      const publicIdWithVersion = pathParts.slice(uploadIndex + 1).join('/');
+      // Remove version number if present (starts with v followed by digits)
+      const publicId = publicIdWithVersion.replace(/^v\d+\//, '');
+      // Remove file extension
+      return publicId.replace(/\.[^/.]+$/, '');
+    }
+  } catch (error) {
+    console.error('Error extracting public_id from URL:', url, error);
+  }
+  return null;
 }
 
 // GET - Fetch a single product by ID

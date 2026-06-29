@@ -1,5 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { processImage, isValidImageFile } from '@/lib/image-processor';
+import { v2 as cloudinary } from 'cloudinary';
+
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+  secure: true,
+});
 
 export async function POST(request: NextRequest) {
   try {
@@ -11,6 +23,14 @@ export async function POST(request: NextRequest) {
     console.log('File received:', file?.name, file?.size, file?.type);
     console.log('Upload type:', uploadType);
 
+    // Check Cloudinary configuration
+    if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
+      return NextResponse.json(
+        { success: false, error: 'Cloudinary is not configured. Please set environment variables.' },
+        { status: 500 }
+      );
+    }
+
     if (!file) {
       console.error('No file provided');
       return NextResponse.json(
@@ -20,7 +40,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate file type
-    if (!isValidImageFile(file.name, file.type)) {
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
+    if (!allowedTypes.includes(file.type)) {
       console.error('Invalid file type:', file.name, file.type);
       return NextResponse.json(
         { success: false, error: 'Invalid file type. Only images are allowed.' },
@@ -44,43 +65,53 @@ export async function POST(request: NextRequest) {
     const buffer = Buffer.from(bytes);
 
     console.log('Buffer created, size:', buffer.length);
-    console.log('Processing image...');
+    console.log('Uploading to Cloudinary...');
 
-    // Process image with compression and resizing
-    const result = await processImage(buffer, file.name, {
-      maxWidth: 800,
-      maxHeight: 800,
-      quality: 85,
-      generateThumbnail: uploadType === 'products',
-      thumbnailSize: 300,
-      uploadType,
+    // Upload to Cloudinary
+    const folder = uploadType === 'products' ? 'products' : 'categories';
+    const uploadResult = await new Promise<any>((resolve, reject) => {
+      cloudinary.uploader.upload_stream(
+        {
+          folder,
+          resource_type: 'image',
+          allowed_formats: ['jpg', 'jpeg', 'png', 'webp', 'gif'],
+          max_file_size: maxSize,
+          transformation: [
+            { width: 800, height: 800, crop: 'limit', quality: 'auto:good' },
+            { fetch_format: 'auto' }
+          ]
+        },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }
+      ).end(buffer);
     });
 
-    console.log('Image processing result:', result);
-
-    if (!result.success) {
-      console.error('Image processing failed:', result.error);
-      return NextResponse.json(
-        { success: false, error: result.error || 'Failed to process image' },
-        { status: 500 }
-      );
+    // Generate thumbnail URL for products
+    let thumbnailUrl: string | undefined;
+    if (uploadType === 'products') {
+      thumbnailUrl = cloudinary.url(uploadResult.public_id, {
+        transformation: [
+          { width: 300, height: 300, crop: 'fill', quality: 'auto:good' },
+          { fetch_format: 'auto' }
+        ]
+      });
     }
 
-    console.log('Upload successful:', result.optimizedPath);
-    console.log('[DEBUG] Image saved to:', result.optimizedPath);
-    console.log('[DEBUG] Thumbnail saved to:', result.thumbnailPath);
-    console.log('[DEBUG] File size reduced from:', result.originalSize, 'to:', result.optimizedSize);
+    console.log('Upload successful:', uploadResult.secure_url);
+    console.log('[DEBUG] Image uploaded to Cloudinary:', uploadResult.public_id);
+    console.log('[DEBUG] Thumbnail URL:', thumbnailUrl);
+    console.log('[DEBUG] File size:', uploadResult.bytes);
+    
     return NextResponse.json({
       success: true,
       data: {
-        optimizedPath: result.optimizedPath,
-        thumbnailPath: result.thumbnailPath,
-        originalSize: result.originalSize,
-        optimizedSize: result.optimizedSize,
-        thumbnailSize: result.thumbnailSize,
-        compressionRatio: result.originalSize && result.optimizedSize 
-          ? ((1 - result.optimizedSize / result.originalSize) * 100).toFixed(2) + '%'
-          : undefined,
+        optimizedPath: uploadResult.secure_url,
+        thumbnailPath: thumbnailUrl,
+        originalSize: file.size,
+        optimizedSize: uploadResult.bytes,
+        publicId: uploadResult.public_id,
       },
     });
   } catch (error) {
