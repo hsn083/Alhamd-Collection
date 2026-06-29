@@ -1,0 +1,36 @@
+[
+  {
+    "id": "REVIEW-1782552504647-uruqi8cpf",
+    "productId": "1",
+    "customerName": "Test User",
+    "customerEmail": "test@example.com",
+    "rating": 5,
+    "comment": "This is a test review for debugging purposes",
+    "images": [],
+    "isVerifiedPurchase": false,
+    "status": "pending",
+    "sessionId": "test-session-123",
+    "createdAt": "2026-06-27T09:28:24.647Z",
+    "updatedAt": "2026-06-27T09:28:24.647Z"
+  },
+  {
+    "id": "REVIEW-1782554461445-3ar4322zh",
+    "productId": "1",
+    "customerName": "Hassan Ahmad",
+    "customerEmail": "mhassanahmad183@gmail.com",
+    "rating": 5,
+    "comment": "fghvhjvghjghk",
+    "images": [],
+    "variant": {},
+    "isVerifiedPurchase": false,
+    "likes": 1,
+    "helpful": 1,
+    "status": "approved",
+    "sessionId": "session-1782202625521-9sfx05644",
+    "createdAt": "2026-06-27T10:01:01.445Z",
+    "updatedAt": "2026-06-27T10:24:55.698Z",
+    "helpfulUsers": [
+      "session-1782555883429-j89451ke8"
+    ]
+  }
+]

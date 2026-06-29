@@ -1,0 +1,122 @@
+[
+  {
+    "type": "order",
+    "title": "New Order Received",
+    "message": "Order ORD-1782558689941-vae03nyzx placed by Hassan Ahmad for PKR 9,592",
+    "isRead": false,
+    "userId": "admin",
+    "role": "admin",
+    "id": "1782558689976",
+    "createdAt": "2026-06-27T11:11:29.976Z"
+  },
+  {
+    "type": "order",
+    "title": "New Order Received",
+    "message": "Order ORD-1782558604290-9s5zscgu6 placed by Hassan Ahmad for PKR 8,393",
+    "isRead": false,
+    "userId": "admin",
+    "role": "admin",
+    "id": "1782558604451",
+    "createdAt": "2026-06-27T11:10:04.451Z"
+  },
+  {
+    "type": "order",
+    "title": "New Order Received",
+    "message": "Order ORD-1782556867153-jeiegz6of placed by Hassan Ahmad for PKR 5,046",
+    "isRead": false,
+    "userId": "admin",
+    "role": "admin",
+    "id": "1782556867352",
+    "createdAt": "2026-06-27T10:41:07.352Z"
+  },
+  {
+    "type": "order",
+    "title": "New Order Received",
+    "message": "Order ORD-1782556527131-w2e03b171 placed by Hassan Ahmad for PKR 2,948",
+    "isRead": false,
+    "userId": "admin",
+    "role": "admin",
+    "id": "1782556527229",
+    "createdAt": "2026-06-27T10:35:27.229Z"
+  },
+  {
+    "type": "order",
+    "title": "New Order Received",
+    "message": "Order ORD-1782552062388-fz85s0ni7 placed by Hassan Ahmad for PKR 1,449",
+    "isRead": false,
+    "userId": "admin",
+    "role": "admin",
+    "id": "1782552062483",
+    "createdAt": "2026-06-27T09:21:02.483Z"
+  },
+  {
+    "type": "order",
+    "title": "New Order Received",
+    "message": "Order ORD-1782546799572-48wf7pztv placed by Hassan Ahmad for PKR 1,449",
+    "isRead": false,
+    "userId": "admin",
+    "role": "admin",
+    "id": "1782546799581",
+    "createdAt": "2026-06-27T07:53:19.581Z"
+  },
+  {
+    "type": "order",
+    "title": "New Order Received",
+    "message": "Order ORD-1782546749047-xt9rxwc4z placed by Hassan Ahmad for PKR 1,449",
+    "isRead": false,
+    "userId": "admin",
+    "role": "admin",
+    "id": "1782546749143",
+    "createdAt": "2026-06-27T07:52:29.143Z"
+  },
+  {
+    "type": "order",
+    "title": "New Order Received",
+    "message": "Order ORD-1782538240812-hy1y8wpri placed by Hassan Ahmad for PKR 1,449",
+    "isRead": false,
+    "userId": "admin",
+    "role": "admin",
+    "id": "1782538240899",
+    "createdAt": "2026-06-27T05:30:40.899Z"
+  },
+  {
+    "id": "1782470823290",
+    "type": "order",
+    "title": "New Order Received",
+    "message": "Order ORD-1782470823282-kexuq0b9s placed by Guest for PKR 1,449",
+    "isRead": false,
+    "userId": "admin",
+    "role": "admin",
+    "createdAt": "2026-06-26T10:47:03.290Z"
+  },
+  {
+    "id": "1782470344782",
+    "type": "order",
+    "title": "New Order Received",
+    "message": "Order ORD-1782470344767-ul5z8f8nx placed by Guest for PKR 3,049",
+    "isRead": true,
+    "userId": "admin",
+    "role": "admin",
+    "createdAt": "2026-06-26T10:39:04.782Z"
+  },
+  {
+    "id": "1782381893444",
+    "type": "order",
+    "title": "New Order Received",
+    "message": "Order ORD-1782381893436-9i8jbi6py placed by Hassan Ahmad for PKR 1,449",
+    "isRead": true,
+    "userId": "admin",
+    "role": "admin",
+    "createdAt": "2026-06-25T10:04:53.444Z"
+  },
+  {
+    "id": "1780292841638",
+    "type": "order",
+    "title": "New Order Received",
+    "message": "Order ORD-1780292841622-n7bzqgip7 placed by Guest for PKR 6,250",
+    "isRead": true,
+    "userId": "admin",
+    "role": "admin",
+    "createdAt": "2026-06-01T05:47:21.638Z"
+  }
+]

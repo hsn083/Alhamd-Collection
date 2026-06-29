@@ -1,0 +1,11 @@
+[
+  {
+    "id": "SESS-1782641489741-6wh5w8e7v",
+    "userId": "CUST-1782641487016-sjiyjrgts",
+    "token": "d53dc1099e04fc5c0c9eb18569747aa427d712f1d33045f337e2826fe66730ea",
+    "expiresAt": "2026-07-28T10:11:29.741Z",
+    "createdAt": "2026-06-28T10:11:29.741Z",
+    "ipAddress": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36"
+  }
+]

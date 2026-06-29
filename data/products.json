@@ -1,0 +1,156 @@
+[
+  {
+    "id": "1",
+    "name": "Premium Cotton T-Shirt",
+    "slug": "premium-cotton-t-shirt",
+    "description": "A classic premium cotton t-shirt with a comfortable fit. Made from 100% pure cotton for all-day comfort.",
+    "price": 1499,
+    "discountPrice": 1199,
+    "brand": "AlhamdCollection",
+    "category": "mens-clothing",
+    "images": [
+      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&q=80"
+    ],
+    "stock": 10,
+    "rating": 5,
+    "reviews": 2,
+    "isFeatured": true,
+    "isBestSeller": true,
+    "isNew": true,
+    "status": "active",
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "categoryId": "mens-clothing",
+    "warranty": "1 Year",
+    "tags": [],
+    "updatedAt": "2026-06-27T11:12:29.213Z",
+    "stockQuantity": 10,
+    "lowStockThreshold": 10,
+    "stockStatus": "low_stock"
+  },
+  {
+    "id": "2",
+    "name": "Slim Fit Jeans",
+    "slug": "slim-fit-jeans",
+    "description": "Modern slim fit jeans crafted from premium denim. Perfect for a stylish yet comfortable everyday look.",
+    "price": 3499,
+    "discountPrice": 2799,
+    "brand": "AlhamdCollection",
+    "category": "mens-clothing",
+    "images": [
+      "https://images.unsplash.com/photo-1542272604-787c3835535d?w=600&q=80"
+    ],
+    "stock": 34,
+    "rating": 0,
+    "reviews": 0,
+    "isFeatured": true,
+    "isBestSeller": false,
+    "isNew": false,
+    "status": "active",
+    "createdAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "3",
+    "name": "Formal Oxford Shirt",
+    "slug": "formal-oxford-shirt",
+    "description": "Elegant formal shirt perfect for office and events. Made from premium oxford fabric with a tailored fit.",
+    "price": 2999,
+    "discountPrice": null,
+    "brand": "AlhamdCollection",
+    "category": "formal-wear",
+    "images": [
+      "https://images.unsplash.com/photo-1602810316498-ab67cf68c8e1?w=600&q=80"
+    ],
+    "stock": 20,
+    "rating": 0,
+    "reviews": 0,
+    "isFeatured": false,
+    "isBestSeller": true,
+    "isNew": true,
+    "status": "active",
+    "createdAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "4",
+    "name": "Classic Polo Shirt",
+    "slug": "classic-polo-shirt",
+    "description": "A timeless polo shirt for a smart-casual look. Breathable fabric ideal for both work and leisure.",
+    "price": 1999,
+    "discountPrice": 1499,
+    "brand": "AlhamdCollection",
+    "category": "mens-clothing",
+    "images": [
+      "https://images.unsplash.com/photo-1571945153237-4929e783af4a?w=600&q=80"
+    ],
+    "stock": 59,
+    "rating": 0,
+    "reviews": 0,
+    "isFeatured": true,
+    "isBestSeller": true,
+    "isNew": false,
+    "status": "active",
+    "createdAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "5",
+    "name": "Elegant Evening Dress",
+    "slug": "elegant-evening-dress",
+    "description": "A stunning evening dress that combines elegance and comfort. Perfect for formal events and special occasions.",
+    "price": 5999,
+    "discountPrice": 4799,
+    "brand": "AlhamdCollection",
+    "category": "womens-clothing",
+    "images": [
+      "https://images.unsplash.com/photo-1566479179817-9b474e44b2e8?w=600&q=80"
+    ],
+    "stock": 15,
+    "rating": 0,
+    "reviews": 0,
+    "isFeatured": true,
+    "isBestSeller": false,
+    "isNew": true,
+    "status": "active",
+    "createdAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "6",
+    "name": "Casual Printed Top",
+    "slug": "casual-printed-top",
+    "description": "Trendy and comfortable printed top for everyday casual wear. Available in multiple colors and patterns.",
+    "price": 1299,
+    "discountPrice": null,
+    "brand": "AlhamdCollection",
+    "category": "womens-clothing",
+    "images": [
+      "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=600&q=80"
+    ],
+    "stock": 45,
+    "rating": 0,
+    "reviews": 0,
+    "isFeatured": false,
+    "isBestSeller": true,
+    "isNew": false,
+    "status": "active",
+    "createdAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "7",
+    "name": "Women's Fashion Jacket",
+    "slug": "womens-fashion-jacket",
+    "description": "A stylish fashion jacket that adds elegance to any outfit. Premium fabric with a modern cut.",
+    "price": 6499,
+    "discountPrice": 5199,
+    "brand": "AlhamdCollection",
+    "category": "womens-clothing",
+    "images": [
+      "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=600&q=80"
+    ],
+    "stock": 25,
+    "rating": 0,
+    "reviews": 0,
+    "isFeatured": true,
+    "isBestSeller": true,
+    "isNew": true,
+    "status": "active",
+    "createdAt": "2024-01-01T00:00:00.000Z"
+  }
+]

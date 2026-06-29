@@ -1,0 +1,30 @@
+[
+  {
+    "id": "CUST-1780290331627-gmndkylpl",
+    "fullName": "Hassan Ahmad",
+    "email": "mhassanahmad183@gmail.com",
+    "phone": "03457485827",
+    "passwordHash": "$2b$10$Q4pOAr1Qub3OTX9rgKkpUOKzijGR6JS1YCIU4JVC8p5mxecc6Pkly",
+    "role": "customer",
+    "emailVerified": false,
+    "provider": "manual",
+    "createdAt": "2026-06-01T05:05:31.627Z",
+    "updatedAt": "2026-06-01T05:07:40.300Z",
+    "failedLoginAttempts": 0,
+    "lastLogin": "2026-06-01T05:07:40.300Z"
+  },
+  {
+    "id": "CUST-1780290501622-7zwb9hv79",
+    "fullName": "Hassan Ahmad",
+    "email": "ha8678183@gmail.com",
+    "phone": "03457485827",
+    "passwordHash": "$2b$10$.3plQ.MqdeGZdqS1iMVRgurlp/9Oj26K6LLWYYfeC/wGhtQaDV2gu",
+    "role": "customer",
+    "emailVerified": false,
+    "provider": "manual",
+    "createdAt": "2026-06-01T05:08:21.622Z",
+    "updatedAt": "2026-06-01T05:08:56.485Z",
+    "failedLoginAttempts": 0,
+    "lastLogin": "2026-06-01T05:08:56.485Z"
+  }
+]

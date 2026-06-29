@@ -1,0 +1,44 @@
+[
+  {
+    "id": "1",
+    "name": "Men's Clothing",
+    "slug": "mens-clothing",
+    "image": "",
+    "description": "Premium shirts, jeans, trousers and formal wear for men",
+    "productCount": 3,
+    "status": "active",
+    "displayOrder": 1,
+    "metaTitle": "Men's Clothing - Premium Fashion for Men",
+    "metaDescription": "Shop the latest men's fashion including shirts, jeans, trousers, and formal wear.",
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2026-06-27T12:49:02.000Z"
+  },
+  {
+    "id": "2",
+    "name": "Women's Clothing",
+    "slug": "womens-clothing",
+    "image": "",
+    "description": "Elegant dresses, tops, and stylish outfits for women",
+    "productCount": 3,
+    "status": "active",
+    "displayOrder": 2,
+    "metaTitle": "Women's Clothing - Elegant Fashion Collection",
+    "metaDescription": "Discover elegant women's fashion including dresses, tops, jackets, and more.",
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2026-06-27T12:49:02.000Z"
+  },
+  {
+    "id": "5",
+    "name": "Formal Wear",
+    "slug": "formal-wear",
+    "image": "",
+    "description": "Sophisticated formal clothing for professional settings",
+    "productCount": 1,
+    "status": "active",
+    "displayOrder": 5,
+    "metaTitle": "Formal Wear - Professional Fashion",
+    "metaDescription": "Shop premium formal wear for men and women.",
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2026-06-27T12:49:02.000Z"
+  }
+]

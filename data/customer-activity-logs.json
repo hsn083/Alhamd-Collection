@@ -1,0 +1,65 @@
+[
+  {
+    "id": "LOG-1782184769060-bdc8mzmna",
+    "customerId": "CUST-1780292477240-05fsfvsi3",
+    "action": "BLOCKED",
+    "details": "Account blocked by admin",
+    "timestamp": "2026-06-23T03:19:29.060Z"
+  },
+  {
+    "id": "LOG-1782185132628-nzlp8wo5o",
+    "customerId": "CUST-1780292477240-05fsfvsi3",
+    "action": "UNBLOCKED",
+    "details": "Account unblocked by admin",
+    "timestamp": "2026-06-23T03:25:32.628Z"
+  },
+  {
+    "id": "LOG-1782185147924-wufafbnzx",
+    "customerId": "CUST-1780292477240-05fsfvsi3",
+    "action": "VERIFIED",
+    "details": "Email verified by admin",
+    "timestamp": "2026-06-23T03:25:47.924Z"
+  },
+  {
+    "id": "LOG-1782185349394-fj8ypekhe",
+    "customerId": "CUST-1780292477240-05fsfvsi3",
+    "action": "UPDATED",
+    "details": "Profile updated by admin",
+    "timestamp": "2026-06-23T03:29:09.394Z"
+  },
+  {
+    "id": "LOG-1782185420687-bdfq94mpg",
+    "customerId": "CUST-1780292477240-05fsfvsi3",
+    "action": "PASSWORD_RESET",
+    "details": "Password reset by admin",
+    "timestamp": "2026-06-23T03:30:20.687Z"
+  },
+  {
+    "id": "LOG-1782467876849-d0rwgtpzu",
+    "customerId": "CUST-1780292477240-05fsfvsi3",
+    "action": "PERMANENTLY_DELETED",
+    "details": "Account permanently deleted by admin",
+    "timestamp": "2026-06-26T09:57:56.849Z"
+  },
+  {
+    "id": "LOG-1782467881009-j9p5148am",
+    "customerId": "CUST-1780290501622-7zwb9hv79",
+    "action": "PERMANENTLY_DELETED",
+    "details": "Account permanently deleted by admin",
+    "timestamp": "2026-06-26T09:58:01.009Z"
+  },
+  {
+    "id": "LOG-1782467884597-kvz012xfk",
+    "customerId": "CUST-1780290331627-gmndkylpl",
+    "action": "PERMANENTLY_DELETED",
+    "details": "Account permanently deleted by admin",
+    "timestamp": "2026-06-26T09:58:04.597Z"
+  },
+  {
+    "id": "LOG-1782532793192-0umwpadcw",
+    "customerId": "CUST-1782470223162-la0lvoup8",
+    "action": "PERMANENTLY_DELETED",
+    "details": "Account permanently deleted by admin",
+    "timestamp": "2026-06-27T03:59:53.192Z"
+  }
+]

@@ -1,0 +1,18 @@
+[
+  {
+    "id": "VERIFY-1780290331630-7gidxbldo",
+    "userId": "CUST-1780290331627-gmndkylpl",
+    "otp": "488792",
+    "expiresAt": "2026-06-01T05:06:31.630Z",
+    "createdAt": "2026-06-01T05:05:31.630Z",
+    "verified": false
+  },
+  {
+    "id": "VERIFY-1780290501624-tim5ey4sv",
+    "userId": "CUST-1780290501622-7zwb9hv79",
+    "otp": "226813",
+    "expiresAt": "2026-06-01T05:09:21.624Z",
+    "createdAt": "2026-06-01T05:08:21.624Z",
+    "verified": false
+  }
+]

@@ -1,0 +1,50 @@
+[
+  {
+    "id": "RATING-1782202546537-tvega4ldz",
+    "productId": "1780239500932",
+    "rating": 5,
+    "sessionId": "test-session-123",
+    "ipAddress": "::ffff:127.0.0.1",
+    "timestamp": "2026-06-23T08:15:46.537Z"
+  },
+  {
+    "id": "RATING-1782202616944-rb0bt0z36",
+    "productId": "1780239500932",
+    "rating": 4,
+    "sessionId": "test-session-456",
+    "ipAddress": "::ffff:127.0.0.1",
+    "timestamp": "2026-06-23T08:16:56.944Z"
+  },
+  {
+    "id": "RATING-1782202631699-58o4rpfou",
+    "productId": "1780239500932",
+    "rating": 5,
+    "sessionId": "session-1782202625521-9sfx05644",
+    "ipAddress": "::1",
+    "timestamp": "2026-06-23T08:17:11.699Z"
+  },
+  {
+    "id": "RATING-1782470019348-lgxatn5iz",
+    "productId": "1",
+    "rating": 5,
+    "sessionId": "session-1782202625521-9sfx05644",
+    "ipAddress": "::1",
+    "timestamp": "2026-06-26T10:33:39.348Z"
+  },
+  {
+    "id": "RATING-1782552753721-ofgkhz7an",
+    "productId": "4",
+    "rating": 5,
+    "sessionId": "session-1782202625521-9sfx05644",
+    "ipAddress": "::1",
+    "timestamp": "2026-06-27T09:32:33.721Z"
+  },
+  {
+    "id": "RATING-1782555911691-29xj497vw",
+    "productId": "1",
+    "rating": 5,
+    "sessionId": "session-1782555883429-j89451ke8",
+    "ipAddress": "::1",
+    "timestamp": "2026-06-27T10:25:11.691Z"
+  }
+]

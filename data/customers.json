@@ -1,0 +1,16 @@
+[
+  {
+    "id": "CUST-1782641487016-sjiyjrgts",
+    "fullName": "Hassan Ahmad",
+    "email": "mhassanahmad183@gmail.com",
+    "phone": "03457485827",
+    "passwordHash": "$2b$10$3jsMgzNerVn8dHFJX2p9aeOs1M3UuiHAQFoHBmLcJn9aRibauIVry",
+    "role": "customer",
+    "emailVerified": true,
+    "provider": "manual",
+    "createdAt": "2026-06-28T10:11:27.016Z",
+    "updatedAt": "2026-06-28T10:11:29.739Z",
+    "failedLoginAttempts": 0,
+    "lastLogin": "2026-06-28T10:11:29.739Z"
+  }
+]

@@ -1,0 +1,46 @@
+[
+  {
+    "id": "STK-HIST-1782558749213-11igkk31k",
+    "productId": "1",
+    "productName": "Premium Cotton T-Shirt",
+    "previousQuantity": 0,
+    "newQuantity": 10,
+    "changeType": "increase",
+    "reason": "Restock",
+    "changedBy": "admin",
+    "changedAt": "2026-06-27T11:12:29.213Z"
+  },
+  {
+    "id": "STK-HIST-1782558689981-0rkasu5va",
+    "productId": "1",
+    "productName": "Premium Cotton T-Shirt",
+    "previousQuantity": 8,
+    "newQuantity": 0,
+    "changeType": "decrease",
+    "reason": "Order ORD-1782558689941-vae03nyzx - 8 items sold",
+    "changedBy": "system",
+    "changedAt": "2026-06-27T11:11:29.981Z"
+  },
+  {
+    "id": "STK-HIST-1782558604455-5shipkh5b",
+    "productId": "1",
+    "productName": "Premium Cotton T-Shirt",
+    "previousQuantity": 15,
+    "newQuantity": 8,
+    "changeType": "decrease",
+    "reason": "Order ORD-1782558604290-9s5zscgu6 - 7 items sold",
+    "changedBy": "system",
+    "changedAt": "2026-06-27T11:10:04.455Z"
+  },
+  {
+    "id": "STK-HIST-1782558518807-smmi2jkyv",
+    "productId": "1",
+    "productName": "Premium Cotton T-Shirt",
+    "previousQuantity": 5,
+    "newQuantity": 15,
+    "changeType": "increase",
+    "reason": "restock",
+    "changedBy": "admin",
+    "changedAt": "2026-06-27T11:08:38.807Z"
+  }
+]

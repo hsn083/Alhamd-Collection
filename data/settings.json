@@ -1,0 +1,191 @@
+{
+  "general": {
+    "siteName": "AlhamdCollection",
+    "siteTagline": "Premium Clothing & Shoes Collection",
+    "siteLogo": "/Logo.jpeg",
+    "favicon": "/favicon.ico",
+    "contactEmail": "alhamdcollection518@gmail.com",
+    "phoneNumber": "+923171853183",
+    "phoneNumber2": "+92 317 1853183",
+    "whatsappNumber": "+923171853183",
+    "companyAddress": "ALHAMD COLLECTION, ALJANNAT MARKET, ADDA MONGI BANGLA, GOJRA, PUNJAB, PAKISTAN",
+    "footerInfo": "© 2026 AlhamdCollection. All rights reserved.",
+    "currency": "PKR",
+    "currencySymbol": "₨",
+    "timezone": "Asia/Karachi",
+    "language": "en",
+    "storeStatus": "active",
+    "maintenanceMode": false,
+    "maintenanceMessage": "We are currently performing maintenance. Please check back soon."
+  },
+  "seo": {
+    "metaTitle": "AlhamdCollection | Premium Clothing & Shoes",
+    "metaDescription": "Shop premium clothing, shoes, and fashion accessories at AlhamdCollection. Style meets comfort.",
+    "metaKeywords": "clothing, shoes, fashion, sneakers, apparel, Pakistan",
+    "ogTitle": "AlhamdCollection - Premium Fashion",
+    "ogDescription": "Discover the latest fashion trends at AlhamdCollection",
+    "ogImage": "/images/og-image.jpg",
+    "twitterCard": "summary_large_image",
+    "twitterTitle": "AlhamdCollection",
+    "twitterDescription": "Premium fashion collection",
+    "twitterImage": "/images/twitter-image.jpg",
+    "robots": "index, follow",
+    "canonicalUrl": "https://alhamdcollection.pk",
+    "structuredData": {
+      "organization": {
+        "name": "AlhamdCollection",
+        "url": "https://alhamdcollection.pk",
+        "logo": "/Logo.jpeg",
+        "contactPoint": {
+          "telephone": "+92 345 7791198",
+          "contactType": "customer service"
+        }
+      }
+    }
+  },
+  "shipping": {
+    "freeShippingThreshold": 5000,
+    "standardShippingCost": 150,
+    "expressShippingCost": 300,
+    "deliveryTime": "3-5 business days",
+    "shippingStatus": "active",
+    "shippingRules": "Free shipping on orders above PKR 5000"
+  },
+  "provinces": {
+    "Punjab": {
+      "standard": 250,
+      "express": 500,
+      "codAvailable": true,
+      "status": "active"
+    },
+    "Sindh": {
+      "standard": 300,
+      "express": 600,
+      "codAvailable": false,
+      "status": "inactive"
+    },
+    "Khyber Pakhtunkhwa (KPK)": {
+      "standard": 350,
+      "express": 700,
+      "codAvailable": false,
+      "status": "inactive"
+    },
+    "Balochistan": {
+      "standard": 450,
+      "express": 900,
+      "codAvailable": false,
+      "status": "inactive"
+    },
+    "Islamabad Capital Territory (ICT)": {
+      "standard": 200,
+      "express": 400,
+      "codAvailable": false,
+      "status": "inactive"
+    },
+    "Azad Jammu & Kashmir (AJK)": {
+      "standard": 400,
+      "express": 800,
+      "codAvailable": false,
+      "status": "inactive"
+    },
+    "Gilgit Baltistan (GB)": {
+      "standard": 500,
+      "express": 1000,
+      "codAvailable": false,
+      "status": "inactive"
+    }
+  },
+  "payments": {
+    "cashOnDelivery": {
+      "enabled": false,
+      "displayName": "Cash on Delivery",
+      "instructions": "Pay cash when your order arrives at your doorstep. Please keep the exact amount ready.",
+      "order": 1
+    },
+    "bankTransfer": {
+      "enabled": false,
+      "displayName": "Bank Transfer",
+      "instructions": "Transfer payment to our bank account. Upload payment screenshot after transfer.",
+      "accountTitle": "AlhamdCollection",
+      "accountNumber": "1234567890123",
+      "bankName": "HBL",
+      "iban": "PK36HABB0000123456789012",
+      "branchName": "Main Branch",
+      "receiverName": "AlhamdCollection",
+      "order": 2
+    },
+    "jazzcash": {
+      "enabled": true,
+      "displayName": "JazzCash",
+      "instructions": "Send payment to our JazzCash account. Upload payment screenshot after transfer.",
+      "accountTitle": "AlhamdCollection",
+      "accountNumber": "+923171853183",
+      "receiverName": "Muhammad Umar Farooq",
+      "order": 3
+    },
+    "easypaisa": {
+      "enabled": true,
+      "displayName": "EasyPaisa",
+      "instructions": "Send payment to our EasyPaisa account. Upload payment screenshot after transfer.",
+      "accountTitle": "AlhamdCollection",
+      "accountNumber": "+923171853183",
+      "receiverName": "Muhammad Umar Farooq",
+      "order": 4
+    },
+    "stripe": {
+      "enabled": false,
+      "displayName": "Credit/Debit Card",
+      "instructions": "Pay securely with your credit or debit card.",
+      "publicKey": "",
+      "secretKey": "",
+      "order": 5
+    },
+    "paypal": {
+      "enabled": false,
+      "displayName": "PayPal",
+      "instructions": "Pay securely with PayPal.",
+      "clientId": "",
+      "clientSecret": "",
+      "order": 6
+    }
+  },
+  "socialMedia": {
+    "facebook": {
+      "enabled": true,
+      "url": "https://www.facebook.com/share/1CyXPvVDfD/",
+      "handle": "@alhamdcollection"
+    },
+    "instagram": {
+      "enabled": true,
+      "url": "https://instagram.com/alhamdcollection",
+      "handle": "@alhamdcollection"
+    },
+    "tiktok": {
+      "enabled": true,
+      "url": "https://www.tiktok.com/@muhammadumarfaroo048?_r=1&_t=ZN-97Yc52PiHRO  Tick tock",
+      "handle": "@alhamdcollection"
+    },
+    "youtube": {
+      "enabled": false,
+      "url": "https://youtube.com/@alhamdcollection",
+      "handle": "@alhamdcollection"
+    },
+    "linkedin": {
+      "enabled": false,
+      "url": "",
+      "handle": ""
+    },
+    "twitter": {
+      "enabled": false,
+      "url": "https://twitter.com/alhamdcollection",
+      "handle": "@alhamdcollection"
+    },
+    "whatsapp": {
+      "enabled": true,
+      "url": "https://wa.me/923457791198",
+      "number": "+923457791198",
+      "handle": "@alhamdcollection"
+    }
+  },
+  "updatedAt": "2026-06-28T10:17:11.945Z"
+}
