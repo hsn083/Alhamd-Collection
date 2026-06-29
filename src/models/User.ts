@@ -27,7 +27,6 @@ export interface IUser extends Document {
   isBlocked?: boolean;
   isDeleted?: boolean;
   deletedAt?: Date;
-  provider?: string;
   createdAt: Date;
   updatedAt: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
@@ -109,11 +108,6 @@ const UserSchema = new Schema<IUser>(
       default: false,
     },
     deletedAt: Date,
-    provider: {
-      type: String,
-      enum: ['local', 'google', 'facebook'],
-      default: 'local',
-    },
   },
   {
     timestamps: true,
@@ -126,16 +120,14 @@ UserSchema.index({ isActive: 1 });
 UserSchema.index({ createdAt: -1 });
 
 // Hash password before saving
-UserSchema.pre('save', async function (next: any) {
-  if (!(this as any).isModified('password')) return next();
+UserSchema.pre('save', async function () {
+  if (!this.isModified('password')) return;
   
   try {
     const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash((this as any).get('password') as string, salt);
-    (this as any).set('password', hashedPassword);
-    next();
+    this.password = await bcrypt.hash(this.password, salt);
   } catch (error: any) {
-    next(error);
+    throw error;
   }
 });
 

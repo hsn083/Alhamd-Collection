@@ -18,7 +18,8 @@ import {
   MapPin,
   CreditCard,
   Share2,
-  Loader2
+  Loader2,
+  RotateCcw
 } from 'lucide-react';
 import { useToast, ToastContainer } from '@/components/ui/toast';
 import { useSettingsStore } from '@/store/settingsStore';
@@ -216,6 +217,10 @@ export default function AdminSettingsPage() {
               <TabsTrigger value="social" className="data-[state=active]:bg-emerald-600 data-[state=active]:text-black">
                 <Share2 className="mr-2 h-4 w-4" />
                 Social Media
+              </TabsTrigger>
+              <TabsTrigger value="reset-data" className="data-[state=active]:bg-red-600 data-[state=active]:text-white">
+                <RotateCcw className="mr-2 h-4 w-4" />
+                Reset Data
               </TabsTrigger>
             </TabsList>
 
@@ -645,6 +650,29 @@ export default function AdminSettingsPage() {
                       </div>
                     </div>
                   ))}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Reset Data */}
+            <TabsContent value="reset-data">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-red-600">Reset Data</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-center py-8">
+                    <RotateCcw className="h-12 w-12 text-red-600 mx-auto mb-4" />
+                    <p className="text-gray-600 mb-4">
+                      Access the comprehensive data reset system to safely reset selected statistics and data.
+                    </p>
+                    <Button
+                      onClick={() => window.location.href = '/admin/settings/reset-data'}
+                      className="bg-red-600 hover:bg-red-700 text-white"
+                    >
+                      Go to Reset Data Page
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             </TabsContent>

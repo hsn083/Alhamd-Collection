@@ -83,7 +83,6 @@ export async function POST(request: NextRequest) {
           phone: customerPhone,
           role: 'customer',
           isEmailVerified: true,
-          provider: 'local',
           addresses: [{
             street: order.address?.address,
             city: order.address?.city,

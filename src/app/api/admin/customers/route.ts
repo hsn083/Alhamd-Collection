@@ -92,7 +92,6 @@ export async function GET(request: NextRequest) {
           phone: order.customerPhone,
           role: 'customer',
           emailVerified: true,
-          provider: 'guest',
           createdAt: order.createdAt,
           joinedDate: order.createdAt,
           totalOrders: 0,
@@ -166,6 +165,8 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { customerId, action, data } = body;
 
+    console.log('[CUSTOMER_POST] Request received:', { customerId, action });
+
     if (!customerId || !action) {
       return NextResponse.json(
         { success: false, error: 'Customer ID and action are required' },
@@ -174,22 +175,39 @@ export async function POST(request: NextRequest) {
     }
 
     // Find customer by either _id or customerId
-    let customer;
+    let customer = null;
+    let lookupMethod = '';
     
+    // Check if it's a valid MongoDB ObjectId
     if (mongoose.Types.ObjectId.isValid(customerId)) {
+      console.log('[CUSTOMER_POST] ID is valid ObjectId, trying findById');
       customer = await User.findById(customerId);
+      lookupMethod = 'ObjectId';
     }
     
+    // If not found by ObjectId, try by customerId field
     if (!customer) {
+      console.log('[CUSTOMER_POST] Not found by ObjectId, trying customerId field');
       customer = await User.findOne({ customerId: customerId });
+      lookupMethod = 'customerId';
+    }
+    
+    // If still not found, try by email
+    if (!customer) {
+      console.log('[CUSTOMER_POST] Not found by customerId, trying email');
+      customer = await User.findOne({ email: customerId });
+      lookupMethod = 'email';
     }
 
     if (!customer) {
+      console.log('[CUSTOMER_POST] Customer NOT found with ID:', customerId);
       return NextResponse.json(
         { success: false, message: 'Customer not found' },
         { status: 404 }
       );
     }
+
+    console.log('[CUSTOMER_POST] Customer found using method:', lookupMethod, 'MongoDB _id:', customer._id.toString());
 
     switch (action) {
       case 'block':
@@ -274,6 +292,8 @@ export async function DELETE(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
 
+    console.log('[CUSTOMER_DELETE] Request received with ID:', id);
+
     if (!id) {
       return NextResponse.json(
         { success: false, error: 'Customer ID is required' },
@@ -282,26 +302,42 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Find customer by either _id or customerId
-    let customer;
+    let customer = null;
+    let lookupMethod = '';
     
+    // Check if it's a valid MongoDB ObjectId
     if (mongoose.Types.ObjectId.isValid(id)) {
+      console.log('[CUSTOMER_DELETE] ID is valid ObjectId, trying findById');
       customer = await User.findById(id);
+      lookupMethod = 'ObjectId';
     }
     
+    // If not found by ObjectId, try by customerId field
     if (!customer) {
-      customer = await User.findOne({
-        customerId: id
-      });
+      console.log('[CUSTOMER_DELETE] Not found by ObjectId, trying customerId field');
+      customer = await User.findOne({ customerId: id });
+      lookupMethod = 'customerId';
+    }
+    
+    // If still not found, try by email
+    if (!customer) {
+      console.log('[CUSTOMER_DELETE] Not found by customerId, trying email');
+      customer = await User.findOne({ email: id });
+      lookupMethod = 'email';
     }
 
     if (!customer) {
+      console.log('[CUSTOMER_DELETE] Customer NOT found with ID:', id);
       return NextResponse.json(
         { success: false, message: 'Customer not found' },
         { status: 404 }
       );
     }
 
+    console.log('[CUSTOMER_DELETE] Customer found using method:', lookupMethod, 'MongoDB _id:', customer._id.toString());
+
     await User.deleteOne({ _id: customer._id });
+    console.log('[CUSTOMER_DELETE] Customer deleted successfully');
 
     return NextResponse.json({
       success: true,

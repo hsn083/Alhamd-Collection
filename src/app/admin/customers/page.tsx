@@ -46,7 +46,6 @@ interface Customer {
   phone?: string;
   role: string;
   emailVerified: boolean;
-  provider: string;
   createdAt: string;
   joinedDate?: string;
   lastLogin?: string;
@@ -250,13 +249,12 @@ export default function AdminCustomersPage() {
   };
 
   const exportToCSV = () => {
-    const headers = ['ID', 'Name', 'Email', 'Phone', 'Provider', 'Verified', 'Orders', 'Spending', 'Joined', 'Last Login'];
+    const headers = ['ID', 'Name', 'Email', 'Phone', 'Verified', 'Orders', 'Spending', 'Joined', 'Last Login'];
     const rows = filteredCustomers.map((c: Customer) => [
       c.id,
       c.fullName,
       c.email,
       c.phone || '',
-      c.provider,
       c.emailVerified ? 'Yes' : 'No',
       c.totalOrders || 0,
       c.totalSpending || 0,
@@ -298,6 +296,20 @@ export default function AdminCustomersPage() {
     if (customer.isBlocked) return 'Blocked';
     if (customer.emailVerified) return 'Verified';
     return 'Unverified';
+  };
+
+  const formatJoinedDate = (customer: Customer) => {
+    const date = customer.joinedDate || customer.createdAt;
+    if (!date) return 'N/A';
+    
+    try {
+      const d = new Date(date);
+      // Format: 29 Jun 2026
+      const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short', year: 'numeric' };
+      return d.toLocaleDateString('en-GB', options);
+    } catch (error) {
+      return 'Invalid Date';
+    }
   };
 
   if (isLoading) {
@@ -513,7 +525,6 @@ export default function AdminCustomersPage() {
                     <tr className="border-b">
                       <th className="text-left p-4 font-medium">Customer</th>
                       <th className="text-left p-4 font-medium">Contact</th>
-                      <th className="text-left p-4 font-medium">Provider</th>
                       <th className="text-left p-4 font-medium">Status</th>
                       <th className="text-left p-4 font-medium">Orders</th>
                       <th className="text-left p-4 font-medium">Spending</th>
@@ -548,9 +559,6 @@ export default function AdminCustomersPage() {
                           </div>
                         </td>
                         <td className="p-4">
-                          <p className="text-sm capitalize">{customer.provider}</p>
-                        </td>
-                        <td className="p-4">
                           <span className={`text-xs px-2 py-1 rounded-full border ${getStatusColor(customer)}`}>
                             {getStatusText(customer)}
                           </span>
@@ -567,7 +575,7 @@ export default function AdminCustomersPage() {
                         <td className="p-4">
                           <p className="text-sm flex items-center">
                             <Calendar className="h-3 w-3 mr-1" />
-                            {customer.joinedDate ? new Date(customer.joinedDate).toLocaleDateString() : (customer.createdAt ? new Date(customer.createdAt).toLocaleDateString() : 'N/A')}
+                            {formatJoinedDate(customer)}
                           </p>
                         </td>
                         <td className="p-4">

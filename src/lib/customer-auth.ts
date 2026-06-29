@@ -12,8 +12,6 @@ export interface CustomerUser {
   passwordHash: string;
   role: 'customer' | 'admin';
   emailVerified: boolean;
-  provider: 'manual' | 'google' | 'facebook';
-  providerId?: string;
   createdAt: string;
   updatedAt: string;
   lastLogin?: string;
@@ -122,8 +120,6 @@ export async function createCustomer(data: {
   email: string;
   phone?: string;
   password: string;
-  provider?: 'manual' | 'google' | 'facebook';
-  providerId?: string;
 }): Promise<{ success: boolean; user?: CustomerUser; error?: string }> {
   const normalizedEmail = normalizeEmail(data.email);
   
@@ -144,8 +140,6 @@ export async function createCustomer(data: {
     passwordHash,
     role: 'customer',
     emailVerified: false,
-    provider: data.provider || 'manual',
-    providerId: data.providerId,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     failedLoginAttempts: 0,

@@ -67,7 +67,6 @@ export function createAuthResponse(data: any, user: any) {
       phone: user.phone,
       role: user.role,
       emailVerified: user.emailVerified,
-      provider: user.provider,
     },
   });
 }

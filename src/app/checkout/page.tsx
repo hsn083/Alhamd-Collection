@@ -56,6 +56,10 @@ export default function CheckoutPage() {
   const [paymentScreenshot, setPaymentScreenshot] = useState<File | null>(null);
   const [screenshotPreview, setScreenshotPreview] = useState<string | null>(null);
   const [transactionId, setTransactionId] = useState('');
+  const [couponInput, setCouponInput] = useState('');
+  const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
+  const [couponError, setCouponError] = useState<string | null>(null);
+  const [couponSuccess, setCouponSuccess] = useState<string | null>(null);
 
   // Do not auto-select payment method - user must explicitly select
   // useEffect(() => {
@@ -427,6 +431,50 @@ export default function CheckoutPage() {
       case 'bank_transfer': return 'Bank Transfer';
       default: return method;
     }
+  };
+
+  const handleApplyCoupon = async () => {
+    if (!couponInput.trim()) {
+      setCouponError('Please enter a coupon code');
+      return;
+    }
+
+    setIsApplyingCoupon(true);
+    setCouponError(null);
+    setCouponSuccess(null);
+
+    try {
+      const response = await fetch('/api/coupons', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          code: couponInput.trim(),
+          cartTotal: subtotal,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.valid) {
+        setCouponError(data.message || 'Invalid coupon code');
+        return;
+      }
+
+      // Apply coupon using cart store
+      useCartStore.getState().applyCoupon(data.couponCode, data.discountAmount);
+      setCouponSuccess(`Coupon applied successfully! ${data.discountType === 'percentage' ? data.value + '% OFF' : 'PKR ' + data.discountAmount.toLocaleString() + ' OFF'}`);
+      setCouponInput('');
+    } catch (err: any) {
+      setCouponError(err.message || 'Failed to apply coupon');
+    } finally {
+      setIsApplyingCoupon(false);
+    }
+  };
+
+  const handleRemoveCoupon = () => {
+    useCartStore.getState().removeCoupon();
+    setCouponSuccess(null);
+    setCouponError(null);
   };
 
   if (items.length === 0) {
@@ -862,6 +910,67 @@ export default function CheckoutPage() {
                     <CardTitle>Order Summary</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
+                    {/* Coupon Section */}
+                    <div className="border-b pb-4">
+                      {!couponCode ? (
+                        <div className="space-y-2">
+                          <p className="text-sm font-medium">Have a coupon?</p>
+                          <div className="flex gap-2">
+                            <Input
+                              placeholder="Enter coupon code"
+                              value={couponInput}
+                              onChange={(e) => {
+                                setCouponInput(e.target.value.toUpperCase());
+                                setCouponError(null);
+                                setCouponSuccess(null);
+                              }}
+                              onKeyPress={(e) => e.key === 'Enter' && handleApplyCoupon()}
+                              disabled={isApplyingCoupon}
+                            />
+                            <Button
+                              type="button"
+                              onClick={handleApplyCoupon}
+                              disabled={isApplyingCoupon}
+                              size="sm"
+                            >
+                              {isApplyingCoupon ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                              ) : (
+                                'Apply'
+                              )}
+                            </Button>
+                          </div>
+                          {couponError && (
+                            <p className="text-sm text-red-600">{couponError}</p>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <CheckCircle className="h-5 w-5 text-green-600" />
+                              <div>
+                                <p className="text-sm font-medium text-green-800">Coupon Applied ✅</p>
+                                <p className="text-sm text-green-700 font-bold">{couponCode}</p>
+                              </div>
+                            </div>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={handleRemoveCoupon}
+                              className="text-red-600 hover:text-red-700"
+                            >
+                              Remove
+                            </Button>
+                          </div>
+                          <div className="mt-2 text-sm text-green-700">
+                            - PKR {discount.toLocaleString()} Discount
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
                     {/* Items */}
                     <div className="space-y-3 max-h-64 overflow-y-auto">
                       {items.map((item) => (

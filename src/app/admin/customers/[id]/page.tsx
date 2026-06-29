@@ -38,7 +38,6 @@ interface Customer {
   phone?: string;
   role: string;
   emailVerified: boolean;
-  provider: string;
   createdAt?: string;
   joinedDate?: string;
   lastLogin?: string;
@@ -228,6 +227,20 @@ export default function CustomerProfilePage({ params }: { params: { id: string }
     if (customer?.isBlocked) return 'Blocked';
     if (customer?.emailVerified) return 'Verified';
     return 'Unverified';
+  };
+
+  const formatJoinedDate = (customer: Customer) => {
+    const date = customer.joinedDate || customer.createdAt;
+    if (!date) return 'N/A';
+    
+    try {
+      const d = new Date(date);
+      // Format: 29 Jun 2026, 10:45 AM
+      const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true };
+      return d.toLocaleDateString('en-GB', options);
+    } catch (error) {
+      return 'Invalid Date';
+    }
   };
 
   if (isLoading) {
@@ -445,7 +458,7 @@ export default function CustomerProfilePage({ params }: { params: { id: string }
                         </div>
                         <div className="flex items-center space-x-2">
                           <Calendar className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-sm">Joined: {customer.joinedDate ? new Date(customer.joinedDate).toLocaleDateString() : 'N/A'}</span>
+                          <span className="text-sm">Joined: {formatJoinedDate(customer)}</span>
                         </div>
                         <div className="flex items-center space-x-2">
                           <Clock className="h-4 w-4 text-muted-foreground" />
@@ -456,9 +469,6 @@ export default function CustomerProfilePage({ params }: { params: { id: string }
                         <div className="flex items-center space-x-2">
                           <Badge className={`capitalize ${getStatusColor()}`}>
                             {getStatusText()}
-                          </Badge>
-                          <Badge className="capitalize bg-blue-500/20 text-blue-400 border-blue-500/50">
-                            {customer.provider}
                           </Badge>
                         </div>
                       </div>

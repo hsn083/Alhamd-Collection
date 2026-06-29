@@ -334,6 +334,12 @@ export default function OrderTrackingPage() {
                     <span>Discount</span><span>-PKR {order.discount?.toLocaleString()}</span>
                   </div>
                 )}
+                {order.couponCode && (
+                  <div className="flex justify-between text-sm text-emerald-600 bg-emerald-50 px-2 py-1 rounded">
+                    <span>Coupon: {order.couponCode}</span>
+                    <span>-PKR {order.couponDiscount?.toLocaleString() || order.discount?.toLocaleString()}</span>
+                  </div>
+                )}
                 <div className="flex justify-between text-sm text-gray-500">
                   <span>Shipping</span><span>PKR {order.shippingCost?.toLocaleString() || 0}</span>
                 </div>

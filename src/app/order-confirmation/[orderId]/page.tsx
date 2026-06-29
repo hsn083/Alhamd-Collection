@@ -462,9 +462,9 @@ Please verify my payment.`;
                   </div>
                 )}
                 {order.couponCode && (
-                  <div className="flex justify-between text-sm text-emerald-600">
-                    <span>Coupon Applied</span>
-                    <span>{order.couponCode}</span>
+                  <div className="flex justify-between text-sm text-emerald-600 bg-emerald-50 px-2 py-1 rounded">
+                    <span>Coupon: {order.couponCode}</span>
+                    <span>-PKR {order.couponDiscount?.toLocaleString() || order.discount?.toLocaleString()}</span>
                   </div>
                 )}
                 <div className="flex justify-between text-sm text-gray-500">

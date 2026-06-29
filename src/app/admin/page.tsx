@@ -6,10 +6,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger
+} from '@/components/ui/dialog';
+import {
   DollarSign, ShoppingCart, Users, Package, TrendingUp,
   ArrowUpRight, ArrowDownRight, RefreshCw, AlertTriangle,
   CheckCircle, Clock, XCircle, BarChart3, Activity, Eye,
-  Folder, Image, Shield, Ticket, AlertCircle
+  Folder, Image, Shield, Ticket, AlertCircle, RotateCcw
 } from 'lucide-react';
 import { useCartStore } from '@/store/cartStore';
 import { useWishlistStore } from '@/store/wishlistStore';
@@ -32,9 +35,60 @@ export default function AdminDashboard() {
   const [lowStockStats, setLowStockStats] = useState<any>(null);
   const [isLoadingStats, setIsLoadingStats] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
+  const [isResetModalOpen, setIsResetModalOpen] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
+  const [resetSuccess, setResetSuccess] = useState(false);
+  const [resetOptions, setResetOptions] = useState({
+    revenue: false,
+    orders: false,
+    customers: false,
+    products: false,
+    categories: false,
+    salesAnalytics: false,
+    customerStatistics: false,
+    orderStatistics: false,
+  });
 
   const clearCart = useCartStore(state => state.clearCart);
   const clearWishlist = useWishlistStore(state => state.clearWishlist);
+
+  const handleResetData = async () => {
+    setIsResetting(true);
+    try {
+      const adminId = localStorage.getItem('adminId') || 'unknown';
+      const adminUsername = localStorage.getItem('adminUsername') || 'unknown';
+
+      const response = await fetch('/api/admin/reset', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          resetOptions,
+          adminId,
+          adminUsername,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setResetSuccess(true);
+        setIsResetModalOpen(false);
+        // Refresh dashboard data
+        await fetchStats();
+        // Dispatch custom event to refresh other components
+        window.dispatchEvent(new CustomEvent('dashboard-refresh'));
+        // Reset success message after 3 seconds
+        setTimeout(() => setResetSuccess(false), 3000);
+      } else {
+        alert('Failed to reset data: ' + (data.error || 'Unknown error'));
+      }
+    } catch (error) {
+      console.error('Error resetting data:', error);
+      alert('Failed to reset data. Please try again.');
+    } finally {
+      setIsResetting(false);
+    }
+  };
 
   const fetchStats = async () => {
     setIsLoadingStats(true);
@@ -69,7 +123,19 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     const interval = setInterval(fetchStats, 30000);
-    return () => clearInterval(interval);
+    
+    // Listen for dashboard refresh event
+    const handleDashboardRefresh = () => {
+      console.log('[Dashboard] Refresh event received, fetching stats...');
+      fetchStats();
+    };
+    
+    window.addEventListener('dashboard-refresh', handleDashboardRefresh);
+    
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('dashboard-refresh', handleDashboardRefresh);
+    };
   }, []);
 
   if (!isAuthenticated) return null;
@@ -111,6 +177,15 @@ export default function AdminDashboard() {
       color: 'bg-amber-50 border-amber-100',
       iconColor: 'bg-amber-600',
     },
+    {
+      title: 'Categories',
+      value: stats?.totalCategories || 0,
+      change: '',
+      trend: 'neutral',
+      icon: Folder,
+      color: 'bg-teal-50 border-teal-100',
+      iconColor: 'bg-teal-600',
+    },
   ];
 
   const quickActions = [
@@ -137,20 +212,152 @@ export default function AdminDashboard() {
               Welcome back! Last updated {lastUpdated.toLocaleTimeString()}
             </p>
           </div>
-          <Button
-            onClick={fetchStats}
-            disabled={isLoadingStats}
-            variant="outline"
-            className="border-emerald-200 text-emerald-700 hover:bg-emerald-50"
-            size="sm"
-          >
-            <RefreshCw className={`h-4 w-4 mr-2 ${isLoadingStats ? 'animate-spin' : ''}`} />
-            Refresh
-          </Button>
+          <div className="flex gap-2">
+            <Dialog open={isResetModalOpen} onOpenChange={setIsResetModalOpen}>
+              <DialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="border-red-200 text-red-700 hover:bg-red-50"
+                  size="sm"
+                >
+                  <RotateCcw className="h-4 w-4 mr-2" />
+                  Reset Data
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="bg-white border-gray-200">
+                <DialogHeader>
+                  <DialogTitle className="text-gray-900">Reset Dashboard Data?</DialogTitle>
+                  <DialogDescription className="text-gray-600">
+                    Select what you want to reset. This action cannot be undone.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-3 py-4">
+                  <label className="flex items-center space-x-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={resetOptions.revenue}
+                      onChange={(e) => setResetOptions({ ...resetOptions, revenue: e.target.checked })}
+                      className="w-4 h-4 rounded border-gray-300 text-red-600 focus:ring-red-500"
+                    />
+                    <span className="text-sm text-gray-700">Total Revenue</span>
+                  </label>
+                  <label className="flex items-center space-x-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={resetOptions.orders}
+                      onChange={(e) => setResetOptions({ ...resetOptions, orders: e.target.checked })}
+                      className="w-4 h-4 rounded border-gray-300 text-red-600 focus:ring-red-500"
+                    />
+                    <span className="text-sm text-gray-700">Total Orders</span>
+                  </label>
+                  <label className="flex items-center space-x-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={resetOptions.customers}
+                      onChange={(e) => setResetOptions({ ...resetOptions, customers: e.target.checked })}
+                      className="w-4 h-4 rounded border-gray-300 text-red-600 focus:ring-red-500"
+                    />
+                    <span className="text-sm text-gray-700">Total Customers</span>
+                  </label>
+                  <label className="flex items-center space-x-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={resetOptions.products}
+                      onChange={(e) => setResetOptions({ ...resetOptions, products: e.target.checked })}
+                      className="w-4 h-4 rounded border-gray-300 text-red-600 focus:ring-red-500"
+                    />
+                    <span className="text-sm text-gray-700">Total Products</span>
+                  </label>
+                  <label className="flex items-center space-x-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={resetOptions.categories}
+                      onChange={(e) => setResetOptions({ ...resetOptions, categories: e.target.checked })}
+                      className="w-4 h-4 rounded border-gray-300 text-red-600 focus:ring-red-500"
+                    />
+                    <span className="text-sm text-gray-700">Categories</span>
+                  </label>
+                  <label className="flex items-center space-x-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={resetOptions.salesAnalytics}
+                      onChange={(e) => setResetOptions({ ...resetOptions, salesAnalytics: e.target.checked })}
+                      className="w-4 h-4 rounded border-gray-300 text-red-600 focus:ring-red-500"
+                    />
+                    <span className="text-sm text-gray-700">Sales Statistics</span>
+                  </label>
+                  <label className="flex items-center space-x-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={resetOptions.customerStatistics}
+                      onChange={(e) => setResetOptions({ ...resetOptions, customerStatistics: e.target.checked })}
+                      className="w-4 h-4 rounded border-gray-300 text-red-600 focus:ring-red-500"
+                    />
+                    <span className="text-sm text-gray-700">Customer Statistics</span>
+                  </label>
+                  <label className="flex items-center space-x-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={resetOptions.orderStatistics}
+                      onChange={(e) => setResetOptions({ ...resetOptions, orderStatistics: e.target.checked })}
+                      className="w-4 h-4 rounded border-gray-300 text-red-600 focus:ring-red-500"
+                    />
+                    <span className="text-sm text-gray-700">Order Statistics</span>
+                  </label>
+                </div>
+                <DialogFooter>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setIsResetModalOpen(false);
+                      setResetOptions({
+                        revenue: false,
+                        orders: false,
+                        customers: false,
+                        products: false,
+                        categories: false,
+                        salesAnalytics: false,
+                        customerStatistics: false,
+                        orderStatistics: false,
+                      });
+                    }}
+                    disabled={isResetting}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={handleResetData}
+                    disabled={isResetting || Object.values(resetOptions).every(v => !v)}
+                    className="bg-red-600 hover:bg-red-700 text-white"
+                  >
+                    {isResetting ? 'Resetting...' : 'Reset Selected'}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+            <Button
+              onClick={fetchStats}
+              disabled={isLoadingStats}
+              variant="outline"
+              className="border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+              size="sm"
+            >
+              <RefreshCw className={`h-4 w-4 mr-2 ${isLoadingStats ? 'animate-spin' : ''}`} />
+              Refresh
+            </Button>
+          </div>
         </div>
 
+        {/* Success Message */}
+        {resetSuccess && (
+          <div className="mb-6 bg-emerald-50 border border-emerald-200 rounded-lg p-4 flex items-center gap-3">
+            <CheckCircle className="h-5 w-5 text-emerald-600" />
+            <span className="text-emerald-700 font-medium">Reset completed successfully</span>
+          </div>
+        )}
+
         {/* Metric Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-8">
           {metricCards.map((card) => (
             <Card key={card.title} className={`border ${card.color} shadow-sm`}>
               <CardContent className="p-6">

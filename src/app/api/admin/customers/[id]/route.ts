@@ -2,30 +2,45 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import User from '@/models/User';
 import Order from '@/models/Order';
+import mongoose from 'mongoose';
 
-// Helper function to find customer by ID (handles both ObjectId and customerId)
+// Helper function to find customer by ID (handles ObjectId, custom customerId, and email)
 async function findCustomerById(id: string) {
   await connectDB();
   
-  // Try to find by MongoDB ObjectId first
-  try {
-    if (id.match(/^[0-9a-fA-F]{24}$/)) {
-      const customer = await User.findById(id);
-      if (customer) return customer;
-    }
-  } catch (error) {
-    // Not a valid ObjectId, continue to customerId lookup
+  console.log('[CUSTOMER_LOOKUP] Looking up customer with ID:', id);
+  
+  let customer = null;
+  let lookupMethod = '';
+  
+  // Check if it's a valid MongoDB ObjectId
+  if (mongoose.Types.ObjectId.isValid(id)) {
+    console.log('[CUSTOMER_LOOKUP] ID is valid ObjectId, trying findById');
+    customer = await User.findById(id);
+    lookupMethod = 'ObjectId';
   }
   
-  // Try to find by customerId field
-  const customer = await User.findOne({ customerId: id });
-  if (customer) return customer;
+  // If not found by ObjectId, try by customerId field
+  if (!customer) {
+    console.log('[CUSTOMER_LOOKUP] Not found by ObjectId, trying customerId field');
+    customer = await User.findOne({ customerId: id });
+    lookupMethod = 'customerId';
+  }
   
-  // Try to find by email (for guest customers)
-  const customerByEmail = await User.findOne({ email: id });
-  if (customerByEmail) return customerByEmail;
+  // If still not found, try by email
+  if (!customer) {
+    console.log('[CUSTOMER_LOOKUP] Not found by customerId, trying email');
+    customer = await User.findOne({ email: id });
+    lookupMethod = 'email';
+  }
   
-  return null;
+  if (customer) {
+    console.log('[CUSTOMER_LOOKUP] Customer found using method:', lookupMethod, 'MongoDB _id:', customer._id.toString());
+  } else {
+    console.log('[CUSTOMER_LOOKUP] Customer NOT found with ID:', id);
+  }
+  
+  return customer;
 }
 
 // GET - Get single customer with details

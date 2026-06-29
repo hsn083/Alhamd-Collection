@@ -4,6 +4,62 @@
     "adminId": "ADMIN-1780244625271",
     "adminUsername": "hassan83",
     "details": "Successful login",
+    "id": "AUDIT-1782734413209-uiuq2dufd",
+    "timestamp": "2026-06-29T12:00:13.209Z"
+  },
+  {
+    "id": "AUDIT-1782734234226-wfe1y0l",
+    "action": "DATA_RESET",
+    "adminId": "unknown",
+    "adminUsername": "unknown",
+    "details": "Reset data: revenue, salesAnalytics",
+    "timestamp": "2026-06-29T11:57:14.226Z"
+  },
+  {
+    "id": "AUDIT-1782733721145-u8wz2h3",
+    "action": "DATA_RESET",
+    "adminId": "unknown",
+    "adminUsername": "unknown",
+    "details": "Reset data: products",
+    "timestamp": "2026-06-29T11:48:41.145Z"
+  },
+  {
+    "id": "AUDIT-1782733708957-8lp3ixh",
+    "action": "DATA_RESET",
+    "adminId": "unknown",
+    "adminUsername": "unknown",
+    "details": "Reset data: revenue, customers, salesAnalytics",
+    "timestamp": "2026-06-29T11:48:28.957Z"
+  },
+  {
+    "id": "AUDIT-1782733706036-rav1kfu",
+    "action": "DATA_RESET",
+    "adminId": "unknown",
+    "adminUsername": "unknown",
+    "details": "Reset data: revenue, salesAnalytics",
+    "timestamp": "2026-06-29T11:48:26.036Z"
+  },
+  {
+    "id": "AUDIT-1782733664275-lpdcn0a",
+    "action": "DATA_RESET",
+    "adminId": "unknown",
+    "adminUsername": "unknown",
+    "details": "Reset data: revenue, salesAnalytics",
+    "timestamp": "2026-06-29T11:47:44.275Z"
+  },
+  {
+    "id": "AUDIT-1782733614128-hawe2mk",
+    "action": "DATA_RESET",
+    "adminId": "unknown",
+    "adminUsername": "unknown",
+    "details": "Reset data: revenue, salesAnalytics",
+    "timestamp": "2026-06-29T11:46:54.128Z"
+  },
+  {
+    "action": "LOGIN_SUCCESS",
+    "adminId": "ADMIN-1780244625271",
+    "adminUsername": "hassan83",
+    "details": "Successful login",
     "id": "AUDIT-1782727867217-y8127zlty",
     "timestamp": "2026-06-29T10:11:07.217Z"
   },

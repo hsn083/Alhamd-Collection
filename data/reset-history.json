@@ -1,0 +1,356 @@
+[
+  {
+    "id": "RESET-1782734234225-3r63wwd",
+    "adminId": "unknown",
+    "adminUsername": "unknown",
+    "selectedOptions": [
+      "revenue",
+      "salesAnalytics"
+    ],
+    "results": {
+      "revenue": {
+        "success": true,
+        "message": "Cleared 1 orders (PKR 600 revenue)",
+        "count": 1
+      },
+      "orders": {
+        "success": false,
+        "message": "",
+        "count": 0
+      },
+      "customers": {
+        "success": false,
+        "message": "",
+        "count": 0
+      },
+      "products": {
+        "success": false,
+        "message": "",
+        "count": 0
+      },
+      "categories": {
+        "success": false,
+        "message": "",
+        "count": 0
+      },
+      "customerStatistics": {
+        "success": false,
+        "message": ""
+      },
+      "orderStatistics": {
+        "success": false,
+        "message": ""
+      },
+      "salesAnalytics": {
+        "success": true,
+        "message": "Sales analytics cleared (via revenue reset)"
+      }
+    },
+    "timestamp": "2026-06-29T11:57:14.225Z"
+  },
+  {
+    "id": "RESET-1782733721144-762elcp",
+    "adminId": "unknown",
+    "adminUsername": "unknown",
+    "selectedOptions": [
+      "products"
+    ],
+    "results": {
+      "revenue": {
+        "success": false,
+        "message": "",
+        "count": 0
+      },
+      "orders": {
+        "success": false,
+        "message": "",
+        "count": 0
+      },
+      "customers": {
+        "success": false,
+        "message": "",
+        "count": 0
+      },
+      "products": {
+        "success": true,
+        "message": "Deleted 7 products",
+        "count": 7
+      },
+      "categories": {
+        "success": false,
+        "message": "",
+        "count": 0
+      },
+      "customerStatistics": {
+        "success": false,
+        "message": ""
+      },
+      "orderStatistics": {
+        "success": false,
+        "message": ""
+      },
+      "salesAnalytics": {
+        "success": false,
+        "message": ""
+      },
+      "dashboardStatistics": {
+        "success": false,
+        "message": ""
+      },
+      "lowStockStatistics": {
+        "success": false,
+        "message": ""
+      },
+      "couponUsageStatistics": {
+        "success": false,
+        "message": ""
+      }
+    },
+    "timestamp": "2026-06-29T11:48:41.144Z"
+  },
+  {
+    "id": "RESET-1782733708957-u7imwl6",
+    "adminId": "unknown",
+    "adminUsername": "unknown",
+    "selectedOptions": [
+      "revenue",
+      "customers",
+      "salesAnalytics"
+    ],
+    "results": {
+      "revenue": {
+        "success": true,
+        "message": "Cleared 0 transactions (PKR 0)",
+        "count": 0
+      },
+      "orders": {
+        "success": false,
+        "message": "",
+        "count": 0
+      },
+      "customers": {
+        "success": true,
+        "message": "Deleted 1 customer accounts (kept 0 admin accounts)",
+        "count": 1
+      },
+      "products": {
+        "success": false,
+        "message": "",
+        "count": 0
+      },
+      "categories": {
+        "success": false,
+        "message": "",
+        "count": 0
+      },
+      "customerStatistics": {
+        "success": false,
+        "message": ""
+      },
+      "orderStatistics": {
+        "success": false,
+        "message": ""
+      },
+      "salesAnalytics": {
+        "success": true,
+        "message": "Sales analytics cleared (via revenue reset)"
+      },
+      "dashboardStatistics": {
+        "success": false,
+        "message": ""
+      },
+      "lowStockStatistics": {
+        "success": false,
+        "message": ""
+      },
+      "couponUsageStatistics": {
+        "success": false,
+        "message": ""
+      }
+    },
+    "timestamp": "2026-06-29T11:48:28.957Z"
+  },
+  {
+    "id": "RESET-1782733706035-632q1mj",
+    "adminId": "unknown",
+    "adminUsername": "unknown",
+    "selectedOptions": [
+      "revenue",
+      "salesAnalytics"
+    ],
+    "results": {
+      "revenue": {
+        "success": true,
+        "message": "Cleared 0 transactions (PKR 0)",
+        "count": 0
+      },
+      "orders": {
+        "success": false,
+        "message": "",
+        "count": 0
+      },
+      "customers": {
+        "success": false,
+        "message": "",
+        "count": 0
+      },
+      "products": {
+        "success": false,
+        "message": "",
+        "count": 0
+      },
+      "categories": {
+        "success": false,
+        "message": "",
+        "count": 0
+      },
+      "customerStatistics": {
+        "success": false,
+        "message": ""
+      },
+      "orderStatistics": {
+        "success": false,
+        "message": ""
+      },
+      "salesAnalytics": {
+        "success": true,
+        "message": "Sales analytics cleared (via revenue reset)"
+      },
+      "dashboardStatistics": {
+        "success": false,
+        "message": ""
+      },
+      "lowStockStatistics": {
+        "success": false,
+        "message": ""
+      },
+      "couponUsageStatistics": {
+        "success": false,
+        "message": ""
+      }
+    },
+    "timestamp": "2026-06-29T11:48:26.035Z"
+  },
+  {
+    "id": "RESET-1782733664274-na3ndv4",
+    "adminId": "unknown",
+    "adminUsername": "unknown",
+    "selectedOptions": [
+      "revenue",
+      "salesAnalytics"
+    ],
+    "results": {
+      "revenue": {
+        "success": true,
+        "message": "Cleared 0 transactions (PKR 0)",
+        "count": 0
+      },
+      "orders": {
+        "success": false,
+        "message": "",
+        "count": 0
+      },
+      "customers": {
+        "success": false,
+        "message": "",
+        "count": 0
+      },
+      "products": {
+        "success": false,
+        "message": "",
+        "count": 0
+      },
+      "categories": {
+        "success": false,
+        "message": "",
+        "count": 0
+      },
+      "customerStatistics": {
+        "success": false,
+        "message": ""
+      },
+      "orderStatistics": {
+        "success": false,
+        "message": ""
+      },
+      "salesAnalytics": {
+        "success": true,
+        "message": "Sales analytics cleared (via revenue reset)"
+      },
+      "dashboardStatistics": {
+        "success": false,
+        "message": ""
+      },
+      "lowStockStatistics": {
+        "success": false,
+        "message": ""
+      },
+      "couponUsageStatistics": {
+        "success": false,
+        "message": ""
+      }
+    },
+    "timestamp": "2026-06-29T11:47:44.274Z"
+  },
+  {
+    "id": "RESET-1782733614127-fleeudb",
+    "adminId": "unknown",
+    "adminUsername": "unknown",
+    "selectedOptions": [
+      "revenue",
+      "salesAnalytics"
+    ],
+    "results": {
+      "revenue": {
+        "success": true,
+        "message": "Cleared 11 transactions (PKR 5,846)",
+        "count": 11
+      },
+      "orders": {
+        "success": false,
+        "message": "",
+        "count": 0
+      },
+      "customers": {
+        "success": false,
+        "message": "",
+        "count": 0
+      },
+      "products": {
+        "success": false,
+        "message": "",
+        "count": 0
+      },
+      "categories": {
+        "success": false,
+        "message": "",
+        "count": 0
+      },
+      "customerStatistics": {
+        "success": false,
+        "message": ""
+      },
+      "orderStatistics": {
+        "success": false,
+        "message": ""
+      },
+      "salesAnalytics": {
+        "success": true,
+        "message": "Sales analytics cleared (via revenue reset)"
+      },
+      "dashboardStatistics": {
+        "success": false,
+        "message": ""
+      },
+      "lowStockStatistics": {
+        "success": false,
+        "message": ""
+      },
+      "couponUsageStatistics": {
+        "success": false,
+        "message": ""
+      }
+    },
+    "timestamp": "2026-06-29T11:46:54.127Z"
+  }
+]
