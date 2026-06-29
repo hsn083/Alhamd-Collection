@@ -282,7 +282,7 @@ export async function sendPasswordResetEmail(
   
   try {
     const transporter = getTransporter();
-    const resetLink = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/auth/reset-password?token=${token}`;
+    const resetLink = `${process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/auth/reset-password?token=${token}`;
     
     const mailOptions = {
       from: `"AlhamdCollection" <${EMAIL_CONFIG.auth.user}>`,

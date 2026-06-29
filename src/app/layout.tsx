@@ -6,6 +6,10 @@ import SettingsProvider from "@/components/SettingsProvider";
 import { ToastContainer } from "@/components/ui/toast";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
+// Force dynamic rendering to avoid build-time fetch issues
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 const inter = Inter({ subsets: ["latin"], variable: '--font-inter' });
 const poppins = Poppins({ 
   subsets: ["latin"], 
@@ -15,7 +19,8 @@ const poppins = Poppins({
 
 async function getSettings() {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/settings`, {
+    // Use relative URL for internal API call during runtime
+    const response = await fetch('/api/settings', {
       cache: 'no-store',
     });
     if (response.ok) {
@@ -39,7 +44,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const canonicalUrl = settings?.seo?.canonicalUrl || 'https://alhamdcollection.pk';
 
   return {
-    metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'),
+    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://alhamdcollection.pk'),
     title: metaTitle,
     description: metaDescription,
     keywords: metaKeywords,

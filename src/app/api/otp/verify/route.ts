@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
     
     if (result.valid) {
       // Remove the code after successful verification
-      removeVerificationCode(normalizedEmail);
+      await removeVerificationCode(normalizedEmail);
       console.log(`[OTP-VERIFY] OTP verified successfully for ${normalizedEmail}`);
       
       return NextResponse.json({

@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
     const hashedCode = await hashVerificationCode(otp);
     
     // Store OTP with timestamp (this automatically invalidates any previous OTP)
-    storeVerificationCode(normalizedEmail, otp, hashedCode, orderId);
+    await storeVerificationCode(normalizedEmail, otp, hashedCode, orderId);
     
     // Create email send promise and track it for deduplication
     const emailPromise = sendOTPEmail(normalizedEmail, otp, orderId).then(result => {
@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
     
     if (!emailResult) {
       // Remove the stored code if email failed
-      removeVerificationCode(normalizedEmail);
+      await removeVerificationCode(normalizedEmail);
       console.log(`[OTP-SEND] Email send failed, removed code for ${normalizedEmail}`);
       return NextResponse.json(
         { success: false, error: 'Failed to send OTP email. Please try again.' },

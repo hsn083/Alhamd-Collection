@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
         code,
         client_id: process.env.GOOGLE_CLIENT_ID!,
         client_secret: process.env.GOOGLE_CLIENT_SECRET!,
-        redirect_uri: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/auth/google/callback`,
+        redirect_uri: `${process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/auth/google/callback`,
         grant_type: 'authorization_code',
       }),
     });
@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
     console.log('[AUTH-GOOGLE-CALLBACK] User info received:', userInfo.email);
 
     // Call the internal Google OAuth handler
-    const authResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/auth/google`, {
+    const authResponse = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/auth/google`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

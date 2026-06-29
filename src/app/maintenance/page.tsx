@@ -1,7 +1,7 @@
 async function getSettings() {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-    const response = await fetch(`${baseUrl}/api/settings`, {
+    // Use relative URL for internal API call during runtime
+    const response = await fetch('/api/settings', {
       cache: 'no-store',
     });
     if (response.ok) {

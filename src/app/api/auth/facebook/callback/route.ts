@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Exchange authorization code for tokens
-    const tokenResponse = await fetch(`https://graph.facebook.com/v18.0/oauth/access_token?client_id=${process.env.FACEBOOK_CLIENT_ID}&client_secret=${process.env.FACEBOOK_CLIENT_SECRET}&code=${code}&redirect_uri=${encodeURIComponent(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/auth/facebook/callback`)}`, {
+    const tokenResponse = await fetch(`https://graph.facebook.com/v18.0/oauth/access_token?client_id=${process.env.FACEBOOK_CLIENT_ID}&client_secret=${process.env.FACEBOOK_CLIENT_SECRET}&code=${code}&redirect_uri=${encodeURIComponent(`${process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/auth/facebook/callback`)}`, {
       method: 'GET',
     });
 
@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
     console.log('[AUTH-FACEBOOK-CALLBACK] User info received:', userInfo.email);
 
     // Call the internal Facebook OAuth handler
-    const authResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/auth/facebook`, {
+    const authResponse = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/auth/facebook`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
