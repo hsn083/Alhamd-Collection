@@ -12,23 +12,21 @@ export async function middleware(request: NextRequest) {
   // Check maintenance mode for non-admin routes
   if (!pathname.startsWith('/admin')) {
     try {
-      // Use relative URL for internal API call
-      const response = await fetch('/api/settings', {
+      // Construct absolute URL for the maintenance status endpoint
+      const baseUrl = request.nextUrl.origin;
+      const response = await fetch(`${baseUrl}/api/maintenance-status`, {
         cache: 'no-store',
       });
       
       if (response.ok) {
-        const contentType = response.headers.get('content-type');
-        if (contentType && contentType.includes('application/json')) {
-          const data = await response.json();
-          if (data.success && data.settings?.general?.maintenanceMode) {
-            // Allow access to maintenance page itself
-            if (pathname === '/maintenance') {
-              return NextResponse.next();
-            }
-            // Redirect to maintenance page
-            return NextResponse.redirect(new URL('/maintenance', request.url));
+        const data = await response.json();
+        if (data.success && data.maintenanceMode) {
+          // Allow access to maintenance page itself
+          if (pathname === '/maintenance') {
+            return NextResponse.next();
           }
+          // Redirect to maintenance page
+          return NextResponse.redirect(new URL('/maintenance', request.url));
         }
       }
     } catch (error) {
