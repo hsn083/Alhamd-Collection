@@ -43,6 +43,7 @@ const STATUS_BADGE: Record<string, string> = {
 export default function TrackOrderPage() {
   const [orderId, setOrderId] = useState('');
   const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
   const [order, setOrder] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -55,11 +56,20 @@ export default function TrackOrderPage() {
     setIsLoading(true);
     setSearched(true);
 
+    // Trim whitespace
+    const trimmedOrderId = orderId.trim();
+    const trimmedPhone = phone.trim();
+    const trimmedEmail = email.trim();
+
     try {
       const res = await fetch('/api/track', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ orderId, phone }),
+        body: JSON.stringify({ 
+          orderId: trimmedOrderId, 
+          phone: trimmedPhone,
+          email: trimmedEmail
+        }),
       });
       const data = await res.json();
 
@@ -103,31 +113,29 @@ export default function TrackOrderPage() {
             <CardContent className="p-6">
               <form onSubmit={handleTrack} className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-gray-700 mb-2 block">Order ID *</label>
+                  <label className="text-sm font-medium text-gray-700 mb-2 block">Order ID </label>
                   <Input
                     type="text"
-                    placeholder="e.g., ORD-1234567890"
+                    placeholder="e.g., 100001 or Order# (100001)"
                     value={orderId}
                     onChange={(e) => setOrderId(e.target.value)}
                     className="border-emerald-200 focus:border-emerald-400"
-                    required
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-700 mb-2 block">Phone Number *</label>
+                  <label className="text-sm font-medium text-gray-700 mb-2 block">Phone Number </label>
                   <Input
                     type="tel"
-                    placeholder="0300-1234567"
+                    placeholder="0300-xxxxxxx or +923xxxxxxxxx"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     className="border-emerald-200 focus:border-emerald-400"
-                    required
                   />
+                  <p className="text-xs text-gray-500 mt-1"> </p>
                 </div>
-                <p className="text-xs text-gray-500">* Phone number is required for verification</p>
                 <Button
                   type="submit"
-                  disabled={isLoading || !orderId || !phone}
+                  disabled={isLoading || (!orderId && !phone && !email)}
                   className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
                   size="lg"
                 >

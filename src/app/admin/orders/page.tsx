@@ -138,7 +138,8 @@ export default function AdminOrdersPage() {
   const filtered = orders.filter(o => {
     const matchesSearch = !searchQuery ||
       o._id?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      o.orderNumber?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      o.displayOrderNumber?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      o.orderNumber?.toString().includes(searchQuery) ||
       o.customerName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       o.customerEmail?.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === 'all' || o.status === statusFilter;
@@ -244,7 +245,7 @@ export default function AdminOrdersPage() {
                       return (
                         <tr key={order._id} className="hover:bg-gray-50 transition-colors">
                           <td className="px-6 py-4">
-                            <p className="text-xs font-mono text-gray-600">{order.orderNumber || order._id?.slice(0, 18)}...</p>
+                            <p className="text-xs font-mono text-gray-600">{order.displayOrderNumber || order.orderNumber || order._id?.slice(0, 18)}...</p>
                           </td>
                           <td className="px-6 py-4">
                             <p className="text-sm font-medium text-gray-800">{order.customerName || 'N/A'}</p>

@@ -259,7 +259,7 @@ export default function ReturnsPage() {
                     <label className="block text-sm font-medium mb-2">Order Number *</label>
                     <input
                       type="text"
-                      placeholder="e.g., ORD-001"
+                      placeholder="e.g., 100001 or Order# (100001)"
                       value={orderNumber}
                       onChange={(e) => setOrderNumber(e.target.value)}
                       className="w-full px-4 py-2 border rounded-md"

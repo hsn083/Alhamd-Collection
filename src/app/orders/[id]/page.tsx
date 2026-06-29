@@ -156,8 +156,8 @@ export default function OrderTrackingPage() {
             <CardContent className="p-6">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
-                  <p className="text-xs text-gray-400 mb-1">Order ID</p>
-                  <p className="font-mono text-sm font-semibold text-gray-800">{order.orderNumber || order._id?.slice(0, 18)}</p>
+                  <p className="text-xs text-gray-400 mb-1">Order Number</p>
+                  <p className="font-mono text-sm font-semibold text-gray-800">{order.displayOrderNumber || order.orderNumber || order._id?.slice(0, 18)}</p>
                   <div className="flex items-center gap-2 mt-2">
                     <Calendar className="h-3.5 w-3.5 text-gray-400" />
                     <p className="text-xs text-gray-400">Placed on {new Date(order.createdAt).toLocaleDateString('en-PK', { day: 'numeric', month: 'long', year: 'numeric' })}</p>

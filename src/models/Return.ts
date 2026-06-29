@@ -12,7 +12,7 @@ export interface IReturnItem {
 export interface IReturn extends Document {
   returnNumber: string;
   order: mongoose.Types.ObjectId;
-  orderNumber: string;
+  orderNumber: string; // Stores displayOrderNumber for reference
   customer: mongoose.Types.ObjectId;
   customerName: string;
   customerEmail: string;

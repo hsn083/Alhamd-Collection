@@ -1,36 +1,36 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import connectDB from '@/lib/db';
+import Order from '@/models/Order';
 import { generateInvoicePDF, InvoiceData } from '@/lib/invoice';
+import { extractOrderNumber } from '@/lib/order-number';
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
-
-// File paths
-const ordersFilePath = path.join(process.cwd(), 'data', 'orders.json');
-
-// Helper function to read orders from disk
-function getOrders(): any[] {
-  try {
-    if (fs.existsSync(ordersFilePath)) {
-      const data = fs.readFileSync(ordersFilePath, 'utf-8');
-      return JSON.parse(data) || [];
-    }
-    return [];
-  } catch (error) {
-    console.error('Error reading orders:', error);
-    return [];
-  }
-}
 
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const orders = getOrders();
-    const order = orders.find((o: any) => o.id === params.id);
+    await connectDB();
+    
+    const searchValue = params.id.trim();
+    let order;
+    
+    // Check if it's a MongoDB ObjectId
+    if (/^[0-9A-F]{24}$/i.test(searchValue)) {
+      order = await Order.findById(searchValue);
+    } else {
+      // Try to extract numeric order number from display format
+      const numericOrderNumber = extractOrderNumber(searchValue);
+      if (numericOrderNumber !== null) {
+        order = await Order.findOne({ orderNumber: numericOrderNumber });
+      } else {
+        // Try searching by displayOrderNumber as fallback
+        order = await Order.findOne({ displayOrderNumber: searchValue });
+      }
+    }
 
     if (!order) {
       return NextResponse.json(
@@ -41,21 +41,21 @@ export async function GET(
 
     // Prepare invoice data
     const invoiceData: InvoiceData = {
-      orderId: order.id,
-      customerName: order.user?.name || order.address?.fullName || 'N/A',
-      customerEmail: order.user?.email || 'N/A',
-      customerPhone: order.user?.phone || order.address?.phone || 'N/A',
-      customerAddress: order.address?.address || 'N/A',
-      customerCity: order.address?.city || 'N/A',
-      customerProvince: order.address?.province || 'N/A',
+      orderId: order.displayOrderNumber || order._id.toString(),
+      customerName: order.customerName || 'N/A',
+      customerEmail: order.customerEmail || 'N/A',
+      customerPhone: order.customerPhone || 'N/A',
+      customerAddress: order.shippingAddress?.street || 'N/A',
+      customerCity: order.shippingAddress?.city || 'N/A',
+      customerProvince: order.shippingAddress?.state || 'N/A',
       items: order.items?.map((item: any) => ({
-        name: item.product?.name || 'Product',
+        name: item.name || 'Product',
         quantity: item.quantity,
         price: item.price || 0,
       })) || [],
       subtotal: order.subtotal || 0,
       total: order.total || 0,
-      date: order.createdAt || new Date().toISOString(),
+      date: order.createdAt ? order.createdAt.toISOString() : new Date().toISOString(),
     };
 
     // Generate PDF
@@ -65,7 +65,7 @@ export async function GET(
     return new NextResponse(new Uint8Array(pdfBuffer), {
       headers: {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment; filename="invoice-${order.id}.pdf"`,
+        'Content-Disposition': `attachment; filename="invoice-${order.displayOrderNumber || order._id}.pdf"`,
         'Content-Length': pdfBuffer.length.toString(),
       },
     });

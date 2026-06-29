@@ -8,17 +8,12 @@ import StockHistory from '@/models/StockHistory';
 import Notification from '@/models/Notification';
 import User from '@/models/User';
 import { sendPaymentStatusEmail, sendOrderStatusEmail } from '@/lib/email-service';
+import { normalizePhoneNumber } from '@/lib/utils';
+import { generateNextOrderNumber, formatOrderNumber } from '@/lib/order-number';
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
-
-// Generate unique order number
-function generateOrderNumber(): string {
-  const timestamp = Date.now().toString(36).toUpperCase();
-  const random = Math.random().toString(36).substring(2, 8).toUpperCase();
-  return `ORD-${timestamp}-${random}`;
-}
 
 export async function POST(request: NextRequest) {
   try {
@@ -71,6 +66,7 @@ export async function POST(request: NextRequest) {
     let customerName = order.user?.name || order.address?.fullName;
     let customerEmail = order.user?.email;
     let customerPhone = order.user?.phone || order.address?.phone;
+    let customerPhoneNormalized = normalizePhoneNumber(customerPhone);
 
     // If no userId (guest checkout), create customer record
     if (!customerId && customerEmail) {
@@ -106,13 +102,19 @@ export async function POST(request: NextRequest) {
       customerPhone = existingCustomer.phone;
     }
 
+    // Generate sequential order number
+    const orderNumber = await generateNextOrderNumber();
+    const displayOrderNumber = formatOrderNumber(orderNumber);
+
     // Create order
     const newOrder = await Order.create({
-      orderNumber: generateOrderNumber(),
+      orderNumber,
+      displayOrderNumber,
       customer: customerId,
       customerName: customerName,
       customerEmail: customerEmail,
       customerPhone: customerPhone,
+      customerPhoneNormalized: customerPhoneNormalized,
       shippingAddress: {
         street: order.address?.address,
         city: order.address?.city,
@@ -183,8 +185,8 @@ export async function POST(request: NextRequest) {
             quantity: item.quantity,
             previousQuantity: product.stock,
             newQuantity: newStock,
-            reason: `Order ${newOrder.orderNumber} - ${item.quantity} items sold`,
-            reference: newOrder.orderNumber,
+            reason: `Order ${newOrder.displayOrderNumber} - ${item.quantity} items sold`,
+            reference: newOrder.displayOrderNumber,
             referenceType: 'order',
           });
         }
@@ -212,7 +214,7 @@ export async function POST(request: NextRequest) {
         recipientType: 'admin',
         type: 'order',
         title: 'New Order Received',
-        message: `Order #${newOrder.orderNumber} has been placed by ${newOrder.customerName}`,
+        message: `Order ${newOrder.displayOrderNumber} has been placed by ${newOrder.customerName}`,
         link: `/admin/orders/${newOrder._id}`,
         data: { orderId: newOrder._id },
       });
@@ -228,7 +230,7 @@ export async function POST(request: NextRequest) {
           recipientType: 'user',
           type: 'order',
           title: 'Order Placed Successfully',
-          message: `Your order #${newOrder.orderNumber} has been placed successfully`,
+          message: `Your order ${newOrder.displayOrderNumber} has been placed successfully`,
           link: `/orders/${newOrder._id}`,
           data: { orderId: newOrder._id },
         });
@@ -241,15 +243,17 @@ export async function POST(request: NextRequest) {
     if (newOrder.customerEmail && newOrder.customerName) {
       sendOrderStatusEmail(
         newOrder.customerEmail,
-        newOrder.orderNumber,
+        newOrder.displayOrderNumber,
         newOrder.customerName,
         'confirmed'
       ).catch(err => console.error('Failed to send order confirmation email:', err));
     }
 
-    console.log('Order created successfully:', {
+    console.log('[ORDERS POST] Order created successfully:', {
       orderId: newOrder._id.toString(),
       orderNumber: newOrder.orderNumber,
+      customerEmail: newOrder.customerEmail,
+      total: newOrder.total,
     });
 
     return NextResponse.json({
@@ -259,7 +263,7 @@ export async function POST(request: NextRequest) {
       payment,
     });
   } catch (error: any) {
-    console.error('Error creating order:', error);
+    console.error('[ORDERS POST] Error creating order:', error);
     return NextResponse.json(
       { success: false, error: error.message || 'Failed to create order' },
       { status: 500 }
@@ -273,21 +277,43 @@ export async function GET(request: NextRequest) {
     
     const { searchParams } = new URL(request.url);
     const orderId = searchParams.get('orderId');
+    const orderNumber = searchParams.get('orderNumber');
     const userId = searchParams.get('userId');
     const email = searchParams.get('email');
     const status = searchParams.get('status');
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '50');
 
-    if (orderId) {
-      const order = await Order.findById(orderId).populate('customer', 'name email');
+    if (orderId || orderNumber) {
+      // Support both MongoDB _id and orderNumber
+      const searchValue = (orderId || orderNumber)?.trim();
+      console.log('[ORDERS GET] Looking up order:', searchValue);
+      
+      let order;
+      // Check if it's a MongoDB ObjectId
+      if (/^[0-9A-F]{24}$/i.test(searchValue || '')) {
+        order = await Order.findById(searchValue).populate('customer', 'name email');
+      } else {
+        // Try to parse as numeric order number
+        const numericOrderNumber = parseInt(searchValue || '', 10);
+        if (!isNaN(numericOrderNumber)) {
+          order = await Order.findOne({ orderNumber: numericOrderNumber }).populate('customer', 'name email');
+        } else {
+          // Try searching by displayOrderNumber
+          order = await Order.findOne({ displayOrderNumber: searchValue }).populate('customer', 'name email');
+        }
+      }
+      
       if (!order) {
+        console.log('[ORDERS GET] Order not found:', searchValue);
         return NextResponse.json(
           { success: false, error: 'Order not found' },
           { status: 404 }
         );
       }
-      const payment = await Payment.findOne({ order: orderId });
+      
+      const payment = await Payment.findOne({ order: order._id });
+      console.log('[ORDERS GET] Order found successfully:', order.displayOrderNumber);
       return NextResponse.json({ success: true, order, payment });
     }
 
@@ -313,7 +339,7 @@ export async function GET(request: NextRequest) {
       totalPages: Math.ceil(total / limit)
     });
   } catch (error: any) {
-    console.error('Error fetching orders:', error);
+    console.error('[ORDERS GET] Error fetching orders:', error);
     return NextResponse.json(
       { success: false, error: error.message || 'Failed to fetch orders' },
       { status: 500 }
@@ -391,7 +417,7 @@ export async function PUT(request: NextRequest) {
       if (paymentStatus && ['payment_submitted', 'under_verification', 'verified', 'rejected', 'refunded'].includes(paymentStatus)) {
         sendPaymentStatusEmail(
           updatedOrder.customerEmail,
-          updatedOrder.orderNumber,
+          updatedOrder.displayOrderNumber,
           updatedOrder.customerName,
           paymentStatus,
           updatedOrder.paymentMethod
@@ -401,7 +427,7 @@ export async function PUT(request: NextRequest) {
       if (status && ['confirmed', 'processing', 'packed', 'shipped', 'in_transit', 'out_for_delivery', 'delivered', 'cancelled'].includes(status)) {
         sendOrderStatusEmail(
           updatedOrder.customerEmail,
-          updatedOrder.orderNumber,
+          updatedOrder.displayOrderNumber,
           updatedOrder.customerName,
           status
         ).catch(err => console.error('Failed to send order status email:', err));
@@ -413,7 +439,7 @@ export async function PUT(request: NextRequest) {
       order: updatedOrder,
     });
   } catch (error: any) {
-    console.error('Error updating order:', error);
+    console.error('[ORDERS PUT] Error updating order:', error);
     return NextResponse.json(
       { success: false, error: error.message || 'Failed to update order' },
       { status: 500 }

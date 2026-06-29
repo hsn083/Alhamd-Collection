@@ -28,11 +28,13 @@ export interface IOrderStatusHistory {
 }
 
 export interface IOrder extends Document {
-  orderNumber: string;
+  orderNumber: number;
+  displayOrderNumber: string;
   customer: mongoose.Types.ObjectId | string;
   customerName: string;
   customerEmail: string;
   customerPhone: string;
+  customerPhoneNormalized?: string;
   shippingAddress: IOrderAddress;
   items: IOrderItem[];
   subtotal: number;
@@ -83,6 +85,11 @@ const OrderStatusHistorySchema = new Schema<IOrderStatusHistory>({
 const OrderSchema = new Schema<IOrder>(
   {
     orderNumber: {
+      type: Number,
+      required: true,
+      unique: true,
+    },
+    displayOrderNumber: {
       type: String,
       required: true,
       unique: true,
@@ -102,6 +109,10 @@ const OrderSchema = new Schema<IOrder>(
     customerPhone: {
       type: String,
       required: true,
+    },
+    customerPhoneNormalized: {
+      type: String,
+      required: false,
     },
     shippingAddress: {
       type: OrderAddressSchema,
@@ -178,6 +189,11 @@ OrderSchema.index({ customer: 1 });
 OrderSchema.index({ status: 1 });
 OrderSchema.index({ paymentStatus: 1 });
 OrderSchema.index({ createdAt: -1 });
+OrderSchema.index({ orderNumber: 1 }, { unique: true });
+OrderSchema.index({ displayOrderNumber: 1 }, { unique: true });
+OrderSchema.index({ trackingNumber: 1 });
+OrderSchema.index({ customerPhone: 1 });
+OrderSchema.index({ customerPhoneNormalized: 1 });
 
 const Order: Model<IOrder> = mongoose.models.Order || mongoose.model<IOrder>('Order', OrderSchema);
 

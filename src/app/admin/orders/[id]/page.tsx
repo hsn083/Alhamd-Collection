@@ -221,7 +221,7 @@ export default function AdminOrderDetailPage() {
             </Button>
             <div>
               <h1 className="text-xl font-bold text-gray-900">Order Details</h1>
-              <p className="text-xs font-mono text-gray-400 mt-0.5">{order._id || order.orderNumber}</p>
+              <p className="text-xs font-mono text-gray-400 mt-0.5">{order.displayOrderNumber || order.orderNumber || order._id}</p>
             </div>
           </div>
           <div className="flex gap-2">

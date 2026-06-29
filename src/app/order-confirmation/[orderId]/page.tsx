@@ -215,7 +215,7 @@ Please verify my payment.`;
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
                 <div>
                   <p className="text-sm text-gray-500 mb-1">Order Number</p>
-                  <p className="font-mono text-lg font-bold text-gray-900">{order.id}</p>
+                  <p className="font-mono text-lg font-bold text-gray-900">{order.displayOrderNumber || order.id}</p>
                 </div>
                 <div className="flex gap-3">
                   <Badge className={`text-sm px-4 py-2 border ${orderStatusConfig.color}`}>

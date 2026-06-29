@@ -7,6 +7,7 @@ import Inventory from '@/models/Inventory';
 import StockHistory from '@/models/StockHistory';
 import Notification from '@/models/Notification';
 import { sendOrderStatusEmail } from '@/lib/email-service';
+import { extractOrderNumber } from '@/lib/order-number';
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic';
@@ -19,16 +20,34 @@ export async function GET(
   try {
     await connectDB();
     
-    const order = await Order.findById(params.id).populate('customer', 'name email');
+    const searchValue = params.id.trim();
+    console.log('[ORDERS ID GET] Looking up order:', searchValue);
+    
+    let order;
+    // Check if it's a MongoDB ObjectId
+    if (/^[0-9A-F]{24}$/i.test(searchValue)) {
+      order = await Order.findById(searchValue).populate('customer', 'name email');
+    } else {
+      // Try to extract numeric order number from display format
+      const numericOrderNumber = extractOrderNumber(searchValue);
+      if (numericOrderNumber !== null) {
+        order = await Order.findOne({ orderNumber: numericOrderNumber }).populate('customer', 'name email');
+      } else {
+        // Try searching by displayOrderNumber as fallback
+        order = await Order.findOne({ displayOrderNumber: searchValue }).populate('customer', 'name email');
+      }
+    }
 
     if (!order) {
+      console.log('[ORDERS ID GET] Order not found:', searchValue);
       return NextResponse.json(
         { success: false, error: 'Order not found' },
         { status: 404 }
       );
     }
 
-    const payment = await Payment.findOne({ order: params.id });
+    const payment = await Payment.findOne({ order: order._id });
+    console.log('[ORDERS ID GET] Order found successfully:', order.displayOrderNumber);
 
     return NextResponse.json({
       success: true,
@@ -36,7 +55,7 @@ export async function GET(
       payment
     });
   } catch (error) {
-    console.error('Error fetching order:', error);
+    console.error('[ORDERS ID GET] Error fetching order:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to fetch order' },
       { status: 500 }
@@ -105,8 +124,8 @@ export async function PUT(
               quantity: item.quantity,
               previousQuantity,
               newQuantity: newStock,
-              reason: `Order ${order.orderNumber} ${status} - ${item.quantity} items restored`,
-              reference: order.orderNumber,
+              reason: `Order ${order.displayOrderNumber} ${status} - ${item.quantity} items restored`,
+              reference: order.displayOrderNumber,
               referenceType: 'order',
             });
           }
@@ -213,7 +232,7 @@ export async function PUT(
           recipientType: 'user',
           type: 'order',
           title: `Order ${status.charAt(0).toUpperCase() + status.slice(1)}`,
-          message: `Your order #${updatedOrder.orderNumber} has been ${status}`,
+          message: `Your order ${updatedOrder.displayOrderNumber} has been ${status}`,
           link: `/orders/${updatedOrder._id}`,
           data: { orderId: updatedOrder._id },
         });
@@ -226,7 +245,7 @@ export async function PUT(
     if (updatedOrder.customerEmail && status && oldStatus !== status) {
       await sendOrderStatusEmail(
         updatedOrder.customerEmail,
-        updatedOrder.orderNumber,
+        updatedOrder.displayOrderNumber,
         updatedOrder.customerName || 'Customer',
         status
       );

@@ -65,7 +65,7 @@ export function orderConfirmationTemplate(name: string, orderId: string, order: 
     <p style="margin:0 0 8px;color:#374151;font-size:16px;">Hi <strong>${name}</strong>,</p>
     <p style="margin:0 0 24px;color:#6b7280;font-size:15px;">Thank you for your order! We've received it and will start processing soon.</p>
     <div style="background:#ecfdf5;border-radius:8px;padding:16px 20px;margin:0 0 24px;border-left:4px solid ${BRAND_COLOR};">
-      <p style="margin:0;font-size:13px;color:#059669;">Order ID: <strong style="font-family:monospace;">${orderId}</strong></p>
+      <p style="margin:0;font-size:13px;color:#059669;">Order Number: <strong style="font-family:monospace;">${orderId}</strong></p>
     </div>
     <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;margin:0 0 24px;">
       <thead>
@@ -115,11 +115,11 @@ export function orderStatusUpdateTemplate(name: string, orderId: string, status:
     <p style="margin:0 0 8px;color:#374151;font-size:15px;">Hi <strong>${name}</strong>,</p>
     <p style="margin:0 0 24px;color:#6b7280;font-size:15px;">${info.message}</p>
     <div style="background:#ecfdf5;border-radius:8px;padding:16px 20px;margin:0 0 24px;border-left:4px solid ${BRAND_COLOR};">
-      <p style="margin:0;font-size:13px;color:#059669;">Order ID: <strong style="font-family:monospace;">${orderId}</strong></p>
+      <p style="margin:0;font-size:13px;color:#059669;">Order Number: <strong style="font-family:monospace;">${orderId}</strong></p>
       ${trackingNumber ? `<p style="margin:8px 0 0;font-size:13px;color:#059669;">Tracking #: <strong style="font-family:monospace;">${trackingNumber}</strong></p>` : ''}
     </div>
     <div style="text-align:center;margin:24px 0;">
-      <a href="https://alhamdcollection.pk/orders/${orderId}" style="display:inline-block;background:${BRAND_COLOR};color:#fff;text-decoration:none;padding:14px 28px;border-radius:8px;font-weight:600;font-size:15px;">Track Your Order →</a>
+      <a href="https://alhamdcollection.pk/track-order" style="display:inline-block;background:${BRAND_COLOR};color:#fff;text-decoration:none;padding:14px 28px;border-radius:8px;font-weight:600;font-size:15px;">Track Your Order →</a>
     </div>
   `;
   return baseTemplate(info.title, content);

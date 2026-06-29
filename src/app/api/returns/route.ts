@@ -3,6 +3,7 @@ import connectDB from '@/lib/db';
 import Return from '@/models/Return';
 import Order from '@/models/Order';
 import Notification from '@/models/Notification';
+import { extractOrderNumber } from '@/lib/order-number';
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic';
@@ -30,8 +31,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Find the order
-    const order = await Order.findOne({ orderNumber });
+    // Find the order - try numeric order number first, then displayOrderNumber
+    let order;
+    const numericOrderNumber = extractOrderNumber(orderNumber);
+    if (numericOrderNumber !== null) {
+      order = await Order.findOne({ orderNumber: numericOrderNumber });
+    } else {
+      order = await Order.findOne({ displayOrderNumber: orderNumber });
+    }
+
     if (!order) {
       return NextResponse.json(
         { success: false, error: 'Order not found' },
@@ -63,7 +71,7 @@ export async function POST(request: NextRequest) {
     const newReturn = await Return.create({
       returnNumber: generateReturnNumber(),
       order: order._id,
-      orderNumber: order.orderNumber,
+      orderNumber: order.displayOrderNumber,
       customer: order.customer,
       customerName: order.customerName,
       customerEmail: order.customerEmail,
@@ -94,7 +102,7 @@ export async function POST(request: NextRequest) {
   recipientType: 'admin',
   type: 'system',
   title: 'New Return Request',
-  message: `Return request #${newReturn.returnNumber} for order ${order.orderNumber}`,
+  message: `Return request #${newReturn.returnNumber} for order ${order.displayOrderNumber}`,
   link: `/admin/returns/${newReturn._id}`,
 });
     } catch (notifError) {
