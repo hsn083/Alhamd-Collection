@@ -593,12 +593,12 @@ export default function AdminOrderDetailPage() {
                   {payment?.screenshot && (
                     <div>
                       <label className="text-xs font-medium text-gray-600 mb-1 block">Payment Screenshot</label>
-                      <div className="relative w-full h-32">
+                      <div className="relative w-full h-48 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center">
                         <Image
                           src={payment.screenshot}
                           alt="Payment Screenshot"
                           fill
-                          className="object-cover rounded-lg border border-gray-200 cursor-pointer"
+                          className="object-contain rounded-lg cursor-pointer"
                           onClick={() => window.open(payment.screenshot, '_blank')}
                         />
                         <Button

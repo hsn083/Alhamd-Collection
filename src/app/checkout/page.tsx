@@ -263,10 +263,16 @@ export default function CheckoutPage() {
             body: formDataUpload,
           });
           
-          if (uploadResponse.ok) {
-            const uploadData = await uploadResponse.json();
-            screenshotUrl = uploadData.url;
+          if (!uploadResponse.ok) {
+            const uploadError = await uploadResponse.json();
+            throw new Error(uploadError.error || 'Failed to upload payment screenshot');
           }
+          
+          const uploadData = await uploadResponse.json();
+          if (!uploadData.url) {
+            throw new Error('Screenshot upload did not return a valid URL');
+          }
+          screenshotUrl = uploadData.url;
         }
 
         // Determine payment status and order status
@@ -799,8 +805,8 @@ export default function CheckoutPage() {
                                   <span className="text-sm font-medium">{paymentScreenshot.name}</span>
                                 </div>
                               ) : (
-                                <div className="relative w-full h-40">
-                                  <Image src={screenshotPreview} alt="Payment Screenshot" fill className="object-cover rounded-lg border" />
+                                <div className="relative w-full h-40 bg-gray-100 rounded-lg border flex items-center justify-center">
+                                  <Image src={screenshotPreview} alt="Payment Screenshot" fill className="object-contain rounded-lg" />
                                 </div>
                               )}
                               <Button

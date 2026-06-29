@@ -51,6 +51,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Validate payment screenshot for bank_transfer if provided
+    if (order.paymentMethod === 'bank_transfer' && !order.paymentScreenshot) {
+      return NextResponse.json(
+        { success: false, error: 'Payment screenshot is required for bank transfer payments' },
+        { status: 400 }
+      );
+    }
+
     // Calculate totals
     const subtotal = order.items?.reduce((sum: number, item: any) => sum + (item.price * item.quantity), 0) || 0;
     const shippingCost = order.shippingCost || 0;
