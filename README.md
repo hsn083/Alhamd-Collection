@@ -1,198 +1,338 @@
-# Zorynix - Premium Gaming & Tech E-Commerce Store
+# AlhamdCollection - Premium Clothing E-Commerce Store 🛍️
 
-A professional online store built with Next.js, TypeScript, and TailwindCSS for selling gaming accessories, mobile accessories, and tech gadgets across Pakistan.
+A professional online clothing store built with Next.js, TypeScript, TailwindCSS, MongoDB, and modern web technologies for selling fashion products across Pakistan.
+
+AlhamdCollection provides a complete shopping experience with customer accounts, product management, secure authentication, online ordering, payment verification, and a powerful admin dashboard.
 
 ## 🚀 Features
 
 ### Customer Features
-- **Home Page** with Hero section, Features, Categories, Featured Products, and Newsletter
-- **Shop Page** with advanced filters (category, price, brand, rating, availability), sorting, and search
-- **Product Detail Page** with images, specifications, features, reviews, and related products
-- **Shopping Cart** with quantity management, coupon codes, and shipping calculation
-- **Checkout System** with multiple payment methods:
-  - Cash on Delivery (COD)
-  - EasyPaisa
-  - JazzCash
-  - Bank Transfer
-  - Debit/Credit Cards
-- **User Account** with:
-  - Login/Registration
-  - Order history and tracking
-  - Wishlist management
-  - Saved addresses
-  - Profile settings
-- **Wishlist System** to save and share favorite products
 
-### Admin Panel
-- **Dashboard** with sales statistics, order overview, and top products
-- **Product Management** (CRUD operations)
-- **Order Management** with status updates and invoice generation
-- **Customer Management** with profiles and order history
-- **Coupon Management** with percentage and fixed discounts
-- **Inventory Management** with stock tracking and low stock alerts
+- **Modern Home Page** with:
+  - Hero section
+  - Featured products
+  - Categories
+  - Latest collections
+  - Newsletter section
 
-### Pakistan-Specific Features
-- PKR (Pakistani Rupee) currency
-- Local payment methods (EasyPaisa, JazzCash)
-- Cash on Delivery available nationwide
-- Delivery coverage across all major cities and rural areas
-- Pakistan-specific provinces and cities
+- **Shop Page** with:
+  - Product browsing
+  - Category filtering
+  - Search system
+  - Price filtering
+  - Product sorting
 
-### Additional Features
-- **Blog Section** for SEO and content marketing
-- **SEO Optimization** with meta tags, sitemap, and schema markup
-- **Responsive Design** for mobile, tablet, and desktop
-- **Modern UI** with shadcn/ui components
-- **State Management** with Zustand
-- **TypeScript** for type safety
+- **Product Detail Page** with:
+  - Multiple product images
+  - Product information
+  - Price details
+  - Stock availability
+  - Related products
+
+- **Shopping Cart**
+  - Add products to cart
+  - Update quantity
+  - Remove items
+  - Cart total calculation
+
+- **Checkout System**
+  - Customer information
+  - Shipping details
+  - Order summary
+  - Payment selection
+
+- **User Account**
+  - User registration
+  - Secure login
+  - Profile management
+  - Order history
+  - Order tracking
+
+- **Order System**
+  - Place orders
+  - Track orders
+  - View order status
+  - Order history
+
+- **Return System**
+  - Submit return requests
+  - Manage return status
+
+- **Coupon System**
+  - Apply discount coupons
+  - Percentage and fixed discounts
+
+---
+
+## 🛠️ Admin Panel
+
+### Dashboard
+
+- Sales overview
+- Total customers
+- Total products
+- Total orders
+- Website statistics
+
+### Product Management
+
+- Add products
+- Edit products
+- Delete products
+- Upload product images
+- Manage categories
+- Update stock
+- Manage pricing
+
+### Order Management
+
+- View all orders
+- Update order status
+
+Order statuses:
+
+```
+Pending
+Confirmed
+Processing
+Shipped
+Delivered
+Cancelled
+Returned
+```
+
+### Customer Management
+
+- View customers
+- Customer details
+- Block customers
+- Verify customers
+- Manage accounts
+
+### Payment Management
+
+- View payment screenshots
+- Verify payments
+- Manage EasyPaisa/JazzCash orders
+
+---
+
+## 🇵🇰 Pakistan Specific Features
+
+- PKR currency support
+- EasyPaisa payment
+- JazzCash payment
+- Cash on Delivery support
+- Pakistan address support
+- Local customer experience
+
+---
+
+## 🔐 Authentication System
+
+- Secure login system
+- User registration
+- Protected routes
+- Admin authorization
+- Session management
+
+---
 
 ## 🛠️ Tech Stack
 
-- **Framework**: Next.js 14 (App Router)
-- **Language**: TypeScript
-- **Styling**: TailwindCSS
-- **UI Components**: shadcn/ui (Radix UI primitives)
-- **State Management**: Zustand
-- **Icons**: Lucide React
-- **Forms**: React Hook Form + Zod
+### Frontend
+
+- Next.js 14 (App Router)
+- React
+- TypeScript
+- TailwindCSS
+
+### Backend
+
+- Next.js API Routes
+- Node.js
+
+### Database
+
+- MongoDB
+- Mongoose
+
+### Authentication
+
+- NextAuth.js
+
+### Image Upload
+
+- Cloudinary
+
+### Deployment
+
+- Vercel
+
+---
 
 ## 📦 Installation
 
-1. Clone the repository:
+Clone the repository:
+
 ```bash
-git clone <repository-url>
-cd Zorynix
+git clone https://github.com/hsn083/Alhamd-Collection.git
 ```
 
-2. Install dependencies:
+Go to project folder:
+
+```bash
+cd Alhamd-Collection
+```
+
+Install dependencies:
+
 ```bash
 npm install
 ```
 
-3. Run the development server:
+Run development server:
+
 ```bash
 npm run dev
 ```
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser
+Open:
+
+```
+http://localhost:3000
+```
+
+---
+
+## 🔧 Environment Variables
+
+Create a `.env.local` file:
+
+```env
+MONGODB_URI=
+
+NEXTAUTH_SECRET=
+
+NEXTAUTH_URL=http://localhost:3000
+
+CLOUDINARY_CLOUD_NAME=
+CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=
+```
+
+---
 
 ## 📁 Project Structure
 
 ```
 src/
-├── app/                    # Next.js app directory
-│   ├── admin/             # Admin panel pages
-│   ├── blog/              # Blog pages
-│   ├── cart/              # Shopping cart page
-│   ├── checkout/          # Checkout page
-│   ├── product/           # Product detail pages
-│   ├── shop/              # Shop page
-│   ├── account/           # User account pages
-│   ├── wishlist/          # Wishlist page
-│   ├── globals.css        # Global styles
-│   ├── layout.tsx         # Root layout
-│   └── page.tsx           # Home page
-├── components/            # React components
-│   ├── ui/               # shadcn/ui components
-│   ├── Header.tsx        # Site header
-│   ├── Footer.tsx        # Site footer
-│   ├── Hero.tsx          # Hero section
-│   ├── Features.tsx      # Features section
-│   ├── Categories.tsx    # Categories section
-│   ├── FeaturedProducts.tsx
-│   ├── Newsletter.tsx    # Newsletter section
-│   └── ProductCard.tsx   # Product card component
-├── data/                 # Mock data
-│   └── products.ts       # Product data
-├── lib/                  # Utility functions
-│   └── utils.ts          # Common utilities
-├── store/                # Zustand stores
-│   ├── cartStore.ts      # Shopping cart state
-│   └── wishlistStore.ts  # Wishlist state
-└── types/                # TypeScript types
-    └── index.ts          # Type definitions
+├── app/
+│   ├── admin/          # Admin dashboard
+│   ├── account/        # Customer account
+│   ├── products/       # Product pages
+│   ├── checkout/       # Checkout system
+│   ├── cart/           # Shopping cart
+│   └── api/            # Backend APIs
+│
+├── components/         # Reusable components
+├── models/             # Database models
+├── utils/              # Helper functions
+├── public/             # Images and assets
+└── styles/             # Global styling
 ```
 
-## 🎨 Pages
+---
+
+## 🌐 Pages
 
 ### Customer Pages
-- `/` - Home page
-- `/shop` - Shop all products
-- `/product/[slug]` - Product detail page
-- `/cart` - Shopping cart
-- `/checkout` - Checkout page
-- `/account` - User account dashboard
-- `/wishlist` - Wishlist
-- `/blog` - Blog listing
+
+```
+/ 
+/shop
+/product/[id]
+/cart
+/checkout
+/account
+/track-order
+/returns
+```
 
 ### Admin Pages
-- `/admin` - Admin dashboard
-- `/admin/products` - Product management
-- `/admin/orders` - Order management
-- `/admin/coupons` - Coupon management
 
-## 🔧 Configuration
-
-### Environment Variables
-
-Create a `.env.local` file in the root directory:
-
-```env
-# Database
-DATABASE_URL=
-
-# Payment Gateways
-EASYPAISA_API_KEY=
-JAZZCASH_API_KEY=
-STRIPE_SECRET_KEY=
-
-# Email Service
-SMTP_HOST=
-SMTP_PORT=
-SMTP_USER=
-SMTP_PASSWORD=
-
-# Analytics
-GOOGLE_ANALYTICS_ID=
-FACEBOOK_PIXEL_ID=
 ```
+/admin
+/admin/products
+/admin/orders
+/admin/customers
+/admin/coupons
+```
+
+---
 
 ## 🚀 Deployment
 
 ### Vercel (Recommended)
 
-1. Push your code to GitHub
-2. Import the project in Vercel
+1. Push code to GitHub
+2. Import repository into Vercel
 3. Add environment variables
 4. Deploy
 
-### Other Platforms
-
-The project can be deployed to any platform that supports Next.js:
-- Netlify
-- AWS Amplify
-- Digital Ocean App Platform
-- Railway
+---
 
 ## 📝 Available Scripts
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm start` - Start production server
-- `npm run lint` - Run ESLint
+```bash
+npm run dev
+```
+Start development server
 
-## 🤝 Contributing
+```bash
+npm run build
+```
+Create production build
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+```bash
+npm start
+```
+Start production server
 
-## 📄 License
-
-This project is licensed under the MIT License.
-
-## 📞 Support
-
-For support, email info@zorynix.pk or visit our website at https://zorynix.pk
+```bash
+npm run lint
+```
+Check code quality
 
 ---
 
-Built with ❤️ for the Pakistani gaming community
+## 📞 Contact
+
+**AlhamdCollection**
+
+ALJANNAT MARKET  
+ADDA MONGI BANGLA
+
+Phone:
+
+```
++923457791198
+```
+
+Email:
+
+```
+alhamdcollection518@gmail.com
+```
+
+---
+
+## 📄 License
+
+This project is developed for AlhamdCollection.
+
+All rights reserved.
+
+---
+
+Built with ❤️ using Next.js and modern web technologies.
