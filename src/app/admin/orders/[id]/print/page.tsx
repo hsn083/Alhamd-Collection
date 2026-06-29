@@ -3,12 +3,14 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
+import { useSettingsStore } from '@/store/settingsStore';
 
 export default function PrintOrderPage() {
   const params = useParams();
   const orderId = params.id as string;
   const [order, setOrder] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const general = useSettingsStore(state => state.settings.general);
 
   useEffect(() => {
     fetch(`/api/orders/${orderId}`)
@@ -128,8 +130,8 @@ export default function PrintOrderPage() {
 
       {/* Footer */}
       <div style={{ textAlign: 'center', borderTop: '1px solid #e5e7eb', paddingTop: '16px', color: '#9CA3AF', fontSize: '12px' }}>
-        <p style={{ margin: 0 }}>Thank you for shopping with AlhamdCollection! For support: info@alhamdcollection.pk</p>
-        <p style={{ margin: '4px 0 0' }}>alhamdcollection.pk · Style Meets Comfort</p>
+        <p style={{ margin: 0 }}>Thank you for shopping with {general.siteName || 'AlhamdCollection'}! For support: {general.contactEmail || 'info@alhamdcollection.pk'}</p>
+        <p style={{ margin: '4px 0 0' }}>{general.siteTagline || 'Style Meets Comfort'}</p>
       </div>
     </div>
   );

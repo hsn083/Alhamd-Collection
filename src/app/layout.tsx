@@ -85,7 +85,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        {children}
+        <SettingsProvider>
+          {children}
+        </SettingsProvider>
 
         <SpeedInsights />
 

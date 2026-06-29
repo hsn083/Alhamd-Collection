@@ -14,6 +14,9 @@ import {
   ArrowRight, RefreshCw
 } from 'lucide-react';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 const STATUS_FLOW = [
   { value: 'pending', label: 'Order Placed', desc: 'Your order has been placed successfully', icon: Clock },
   { value: 'confirmed', label: 'Order Confirmed', desc: 'Order confirmed by seller', icon: CheckCircle },

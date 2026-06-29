@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { readSettings, writeSettings, initializeSettings, AllSettings } from '@/lib/server-settings';
+import { revalidatePath } from 'next/cache';
 
 // Force dynamic rendering to prevent caching
 export const dynamic = 'force-dynamic';
@@ -13,10 +14,19 @@ export async function GET(request: NextRequest) {
     
     const settings = await readSettings();
     
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
       settings
     });
+    
+    // Add cache control headers to prevent caching (including Vercel CDN)
+    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0, s-maxage=0');
+    response.headers.set('Pragma', 'no-cache');
+    response.headers.set('Expires', '0');
+    response.headers.set('CDN-Cache-Control', 'no-store');
+    response.headers.set('Vercel-CDN-Cache-Control', 'no-store');
+    
+    return response;
   } catch (error) {
     console.error('[SETTINGS] Error fetching settings:', error);
     return NextResponse.json(
@@ -39,14 +49,13 @@ export async function POST(request: NextRequest) {
     
     const currentSettings = await readSettings();
     
-    // Merge updates with current settings
+    // Deep merge nested objects
     const updatedSettings: AllSettings = {
       ...currentSettings,
       ...body,
       updatedAt: new Date().toISOString()
     };
     
-    // Deep merge nested objects
     if (body.general) {
       updatedSettings.general = { ...currentSettings.general, ...body.general };
     }
@@ -68,11 +77,28 @@ export async function POST(request: NextRequest) {
     
     await writeSettings(updatedSettings);
     
-    return NextResponse.json({
+    // Revalidate all paths that use settings
+    revalidatePath('/');
+    revalidatePath('/checkout');
+    revalidatePath('/contact');
+    revalidatePath('/products');
+    revalidatePath('/shop');
+    revalidatePath('/category');
+    revalidatePath('/product');
+    
+    const response = NextResponse.json({
       success: true,
       settings: updatedSettings,
       message: 'Settings updated successfully'
     });
+    
+    // Add cache control headers to prevent caching
+    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+    response.headers.set('Pragma', 'no-cache');
+    response.headers.set('Expires', '0');
+    response.headers.set('CDN-Cache-Control', 'no-store');
+    
+    return response;
   } catch (error) {
     console.error('[SETTINGS] Error updating settings:', error);
     return NextResponse.json(

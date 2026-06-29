@@ -1,5 +1,9 @@
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { useSettingsStore } from '@/store/settingsStore';
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 const faqs = [
   {
@@ -45,6 +49,8 @@ const faqs = [
 ];
 
 export default function FAQPage() {
+  const general = useSettingsStore(state => state.settings.general);
+
   return (
     <>
       <Header />
@@ -52,7 +58,7 @@ export default function FAQPage() {
         <section className="bg-gradient-to-r from-emerald-700 to-teal-700 text-white py-16">
           <div className="container mx-auto px-4 text-center">
             <h1 className="text-4xl font-bold mb-4">Frequently Asked Questions</h1>
-            <p className="text-xl text-emerald-100">Everything you need to know about AlhamdCollection</p>
+            <p className="text-xl text-emerald-100">Everything you need to know about {general.siteName || 'AlhamdCollection'}</p>
           </div>
         </section>
 

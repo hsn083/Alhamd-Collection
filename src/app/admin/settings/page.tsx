@@ -30,6 +30,7 @@ export default function AdminSettingsPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const { success, error } = useToast();
+  const refreshSettings = useSettingsStore(state => state.refreshSettings);
 
   const [settings, setSettings] = useState<AllSettings | null>(null);
 
@@ -42,7 +43,12 @@ export default function AdminSettingsPage() {
   const loadSettings = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch('/api/settings');
+      const response = await fetch('/api/settings', {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache',
+        },
+      });
       if (response.ok) {
         const data = await response.json();
         if (data.success && data.settings) {
@@ -75,6 +81,8 @@ export default function AdminSettingsPage() {
       if (data.success) {
         success('Settings saved successfully!');
         setSettings(data.settings);
+        // Trigger global settings refresh to update all components
+        await refreshSettings();
       } else {
         error(data.error || 'Failed to save settings');
       }

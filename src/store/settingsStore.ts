@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 import type { 
   GeneralSettings, 
   SEOSettings, 
@@ -21,9 +20,11 @@ export interface SiteSettings {
 
 interface SettingsStore {
   settings: SiteSettings;
+  isLoading: boolean;
   updateSettings: (settings: Partial<SiteSettings>) => void;
   resetSettings: () => void;
   setSettings: (settings: SiteSettings) => void;
+  refreshSettings: () => Promise<void>;
 }
 
 const defaultSettings: SiteSettings = {
@@ -145,27 +146,43 @@ const defaultSettings: SiteSettings = {
   updatedAt: new Date().toISOString()
 };
 
-export const useSettingsStore = create<SettingsStore>()(
-  persist(
-    (set) => ({
-      settings: defaultSettings,
-      
-      updateSettings: (newSettings) => {
-        set((state) => ({
-          settings: { ...state.settings, ...newSettings }
-        }));
-      },
-      
-      setSettings: (newSettings) => {
-        set({ settings: newSettings });
-      },
-      
-      resetSettings: () => {
-        set({ settings: defaultSettings });
-      },
-    }),
-    {
-      name: 'settings-storage',
+export const useSettingsStore = create<SettingsStore>((set, get) => ({
+  settings: defaultSettings,
+  isLoading: false,
+  
+  updateSettings: (newSettings) => {
+    set((state) => ({
+      settings: { ...state.settings, ...newSettings }
+    }));
+  },
+  
+  setSettings: (newSettings) => {
+    set({ settings: newSettings });
+  },
+  
+  resetSettings: () => {
+    set({ settings: defaultSettings });
+  },
+
+  refreshSettings: async () => {
+    set({ isLoading: true });
+    try {
+      const response = await fetch('/api/settings', {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache',
+        },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.settings) {
+          set({ settings: data.settings });
+        }
+      }
+    } catch (error) {
+      console.error('Failed to refresh settings:', error);
+    } finally {
+      set({ isLoading: false });
     }
-  )
-);
+  },
+}));

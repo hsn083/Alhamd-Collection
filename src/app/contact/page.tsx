@@ -15,8 +15,14 @@ import {
   Send,
   MessageSquare
 } from 'lucide-react';
+import { useSettingsStore } from '@/store/settingsStore';
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default function ContactPage() {
+  const general = useSettingsStore(state => state.settings.general);
+  const socialMedia = useSettingsStore(state => state.settings.socialMedia);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -31,25 +37,27 @@ export default function ContactPage() {
     setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
   };
 
+  // Parse address from settings
+  const addressLines = general.companyAddress ? general.companyAddress.split(',').map(s => s.trim()) : ['ALHAMD COLLECTION', 'ALJANNAT MARKET', 'ADDA MONGI BANGLA', 'GOJRA, PUNJAB, PAKISTAN'];
+
   const contactInfo = [
     {
       icon: MapPin,
       title: 'Address',
-      details: ['ALHAMD COLLECTION', 'ALJANNAT MARKET', 'ADDA MONGI BANGLA', 'GOJRA, PUNJAB, PAKISTAN'],
+      details: addressLines,
     },
     {
       icon: Phone,
       title: 'Phone',
       details: [
-        <a key="phone1" href="tel:+923457791198" className="hover:text-emerald-600 transition-colors">+92 345 7791198</a>,
-        <a key="phone2" href="tel:+923171853183" className="hover:text-emerald-600 transition-colors">+92 317 1853183</a>
+        <a key="phone" href={`tel:${general.phoneNumber}`} className="hover:text-emerald-600 transition-colors">{general.phoneNumber}</a>
       ],
     },
     {
       icon: Mail,
       title: 'Email',
       details: [
-        <a key="email" href="mailto:alhamdcollection518@gmail.com" className="hover:text-emerald-600 transition-colors">alhamdcollection518@gmail.com</a>
+        <a key="email" href={`mailto:${general.contactEmail}`} className="hover:text-emerald-600 transition-colors">{general.contactEmail}</a>
       ],
     },
     {
@@ -157,30 +165,32 @@ export default function ContactPage() {
               </div>
 
               {/* WhatsApp */}
-              <Card className="bg-green-50 border-green-200">
-                <CardContent className="p-6">
-                  <div className="flex items-center space-x-3">
-                    <MessageSquare className="h-8 w-8 text-green-600" />
-                    <div>
-                      <h3 className="font-semibold text-green-900">Chat with us on WhatsApp</h3>
-                      <p className="text-sm text-green-700">
-                        Quick responses for instant support
-                      </p>
+              {socialMedia.whatsapp.enabled && socialMedia.whatsapp.url && (
+                <Card className="bg-green-50 border-green-200">
+                  <CardContent className="p-6">
+                    <div className="flex items-center space-x-3">
+                      <MessageSquare className="h-8 w-8 text-green-600" />
+                      <div>
+                        <h3 className="font-semibold text-green-900">Chat with us on WhatsApp</h3>
+                        <p className="text-sm text-green-700">
+                          Quick responses for instant support
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  <a
-                    href="https://wa.me/923171853183"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block"
-                  >
-                    <Button className="w-full mt-4 bg-green-600 hover:bg-green-700">
-                      <MessageSquare className="mr-2 h-4 w-4" />
-                      Chat on WhatsApp
-                    </Button>
-                  </a>
-                </CardContent>
-              </Card>
+                    <a
+                      href={socialMedia.whatsapp.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block"
+                    >
+                      <Button className="w-full mt-4 bg-green-600 hover:bg-green-700">
+                        <MessageSquare className="mr-2 h-4 w-4" />
+                        Chat on WhatsApp
+                      </Button>
+                    </a>
+                  </CardContent>
+                </Card>
+              )}
 
               {/* FAQ Link */}
               <Card>

@@ -1,5 +1,13 @@
 [
   {
+    "id": "AUDIT-1782735954937-sicrkcc",
+    "action": "DATA_RESET",
+    "adminId": "unknown",
+    "adminUsername": "unknown",
+    "details": "Reset data: revenue",
+    "timestamp": "2026-06-29T12:25:54.937Z"
+  },
+  {
     "action": "LOGIN_SUCCESS",
     "adminId": "ADMIN-1780244625271",
     "adminUsername": "hassan83",

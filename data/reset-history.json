@@ -1,5 +1,53 @@
 [
   {
+    "id": "RESET-1782735954935-eghphe4",
+    "adminId": "unknown",
+    "adminUsername": "unknown",
+    "selectedOptions": [
+      "revenue"
+    ],
+    "results": {
+      "revenue": {
+        "success": true,
+        "message": "Cleared 0 orders (PKR 0 revenue)",
+        "count": 0
+      },
+      "orders": {
+        "success": false,
+        "message": "",
+        "count": 0
+      },
+      "customers": {
+        "success": false,
+        "message": "",
+        "count": 0
+      },
+      "products": {
+        "success": false,
+        "message": "",
+        "count": 0
+      },
+      "categories": {
+        "success": false,
+        "message": "",
+        "count": 0
+      },
+      "customerStatistics": {
+        "success": false,
+        "message": ""
+      },
+      "orderStatistics": {
+        "success": false,
+        "message": ""
+      },
+      "salesAnalytics": {
+        "success": false,
+        "message": ""
+      }
+    },
+    "timestamp": "2026-06-29T12:25:54.935Z"
+  },
+  {
     "id": "RESET-1782734234225-3r63wwd",
     "adminId": "unknown",
     "adminUsername": "unknown",
