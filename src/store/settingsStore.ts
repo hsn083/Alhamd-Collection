@@ -103,22 +103,26 @@ const defaultSettings: SiteSettings = {
       accountNumber: '1234567890',
       bankName: 'HBL',
       iban: 'PK36HABB0000123456789012',
+      branchName: 'Main Branch',
+      receiverName: 'AlhamdCollection',
       order: 2
     },
     jazzcash: {
       enabled: true,
       displayName: 'JazzCash',
       instructions: 'Send payment to our JazzCash account.',
+      accountTitle: 'AlhamdCollection',
       accountNumber: '03001234567',
-      accountName: 'AlhamdCollection',
+      receiverName: 'AlhamdCollection',
       order: 3
     },
     easypaisa: {
       enabled: true,
       displayName: 'EasyPaisa',
       instructions: 'Send payment to our EasyPaisa account.',
+      accountTitle: 'AlhamdCollection',
       accountNumber: '03001234567',
-      accountName: 'AlhamdCollection',
+      receiverName: 'AlhamdCollection',
       order: 4
     },
     stripe: {

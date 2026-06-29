@@ -72,6 +72,8 @@ export interface PaymentMethod {
   accountNumber?: string;
   bankName?: string;
   iban?: string;
+  branchName?: string;
+  receiverName?: string;
   accountName?: string;
   publicKey?: string;
   secretKey?: string;

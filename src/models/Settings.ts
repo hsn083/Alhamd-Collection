@@ -80,23 +80,26 @@ export interface ISettings extends Document {
       accountNumber?: string;
       bankName?: string;
       iban?: string;
-      accountName?: string;
+      branchName?: string;
+      receiverName?: string;
       order: number;
     };
     jazzcash: {
       enabled: boolean;
       displayName: string;
       instructions: string;
+      accountTitle?: string;
       accountNumber?: string;
-      accountName?: string;
+      receiverName?: string;
       order: number;
     };
     easypaisa: {
       enabled: boolean;
       displayName: string;
       instructions: string;
+      accountTitle?: string;
       accountNumber?: string;
-      accountName?: string;
+      receiverName?: string;
       order: number;
     };
     stripe: {
@@ -214,22 +217,26 @@ const SettingsSchema = new Schema<ISettings>(
         accountNumber: { type: String, default: '1234567890' },
         bankName: { type: String, default: 'HBL' },
         iban: { type: String, default: 'PK36HABB0000123456789012' },
+        branchName: { type: String, default: 'Main Branch' },
+        receiverName: { type: String, default: 'AlhamdCollection' },
         order: { type: Number, default: 2 },
       },
       jazzcash: {
         enabled: { type: Boolean, default: true },
         displayName: { type: String, default: 'JazzCash' },
         instructions: { type: String, default: 'Send payment to our JazzCash account.' },
+        accountTitle: { type: String, default: 'AlhamdCollection' },
         accountNumber: { type: String, default: '03001234567' },
-        accountName: { type: String, default: 'AlhamdCollection' },
+        receiverName: { type: String, default: 'AlhamdCollection' },
         order: { type: Number, default: 3 },
       },
       easypaisa: {
         enabled: { type: Boolean, default: true },
         displayName: { type: String, default: 'EasyPaisa' },
         instructions: { type: String, default: 'Send payment to our EasyPaisa account.' },
+        accountTitle: { type: String, default: 'AlhamdCollection' },
         accountNumber: { type: String, default: '03001234567' },
-        accountName: { type: String, default: 'AlhamdCollection' },
+        receiverName: { type: String, default: 'AlhamdCollection' },
         order: { type: Number, default: 4 },
       },
       stripe: {

@@ -31,7 +31,7 @@ const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
 export default function CheckoutPage() {
   const router = useRouter();
   const { items, subtotal, discount, total, couponCode, clearCart } = useCartStore();
-  const { settings } = useSettingsStore();
+  const { settings, refreshSettings } = useSettingsStore();
   const enabledPaymentMethods = useEnabledPaymentMethods();
   const [shippingMethod, setShippingMethod] = useState('standard');
   const [paymentMethod, setPaymentMethod] = useState('');
@@ -71,6 +71,8 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     fetchUser();
+    // Refresh settings on mount to ensure latest payment details
+    refreshSettings();
   }, []);
 
   const fetchUser = async () => {
@@ -766,6 +768,10 @@ export default function CheckoutPage() {
                         {paymentMethod === 'jazzcash' && settings.payments.jazzcash && (
                           <div className="space-y-2 text-sm">
                             <div className="flex justify-between">
+                              <span className="text-gray-600">Receiver Name:</span>
+                              <span className="font-medium">{settings.payments.jazzcash.receiverName || settings.payments.jazzcash.accountTitle}</span>
+                            </div>
+                            <div className="flex justify-between">
                               <span className="text-gray-600">Account Title:</span>
                               <span className="font-medium">{settings.payments.jazzcash.accountTitle}</span>
                             </div>
@@ -774,13 +780,17 @@ export default function CheckoutPage() {
                               <span className="font-medium font-mono">{settings.payments.jazzcash.accountNumber}</span>
                             </div>
                             <div className="flex justify-between">
-                              <span className="text-gray-600">Receiver Name:</span>
-                              <span className="font-medium">{settings.payments.jazzcash.receiverName}</span>
+                              <span className="text-gray-600">Instructions:</span>
+                              <span className="font-medium">{settings.payments.jazzcash.instructions}</span>
                             </div>
                           </div>
                         )}
                         {paymentMethod === 'easypaisa' && settings.payments.easypaisa && (
                           <div className="space-y-2 text-sm">
+                            <div className="flex justify-between">
+                              <span className="text-gray-600">Receiver Name:</span>
+                              <span className="font-medium">{settings.payments.easypaisa.receiverName || settings.payments.easypaisa.accountTitle}</span>
+                            </div>
                             <div className="flex justify-between">
                               <span className="text-gray-600">Account Title:</span>
                               <span className="font-medium">{settings.payments.easypaisa.accountTitle}</span>
@@ -790,8 +800,8 @@ export default function CheckoutPage() {
                               <span className="font-medium font-mono">{settings.payments.easypaisa.accountNumber}</span>
                             </div>
                             <div className="flex justify-between">
-                              <span className="text-gray-600">Receiver Name:</span>
-                              <span className="font-medium">{settings.payments.easypaisa.receiverName}</span>
+                              <span className="text-gray-600">Instructions:</span>
+                              <span className="font-medium">{settings.payments.easypaisa.instructions}</span>
                             </div>
                           </div>
                         )}
@@ -813,13 +823,21 @@ export default function CheckoutPage() {
                               <span className="text-gray-600">IBAN:</span>
                               <span className="font-medium font-mono text-xs">{settings.payments.bankTransfer.iban}</span>
                             </div>
+                            {settings.payments.bankTransfer.branchName && (
+                              <div className="flex justify-between">
+                                <span className="text-gray-600">Branch:</span>
+                                <span className="font-medium">{settings.payments.bankTransfer.branchName}</span>
+                              </div>
+                            )}
+                            {settings.payments.bankTransfer.receiverName && (
+                              <div className="flex justify-between">
+                                <span className="text-gray-600">Receiver Name:</span>
+                                <span className="font-medium">{settings.payments.bankTransfer.receiverName}</span>
+                              </div>
+                            )}
                             <div className="flex justify-between">
-                              <span className="text-gray-600">Branch:</span>
-                              <span className="font-medium">{settings.payments.bankTransfer.branchName}</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-gray-600">Receiver Name:</span>
-                              <span className="font-medium">{settings.payments.bankTransfer.receiverName}</span>
+                              <span className="text-gray-600">Instructions:</span>
+                              <span className="font-medium">{settings.payments.bankTransfer.instructions}</span>
                             </div>
                           </div>
                         )}
