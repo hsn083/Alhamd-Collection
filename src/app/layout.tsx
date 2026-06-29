@@ -4,6 +4,7 @@ import "./globals.css";
 import Analytics from "@/components/Analytics";
 import SettingsProvider from "@/components/SettingsProvider";
 import { ToastContainer } from "@/components/ui/toast";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const inter = Inter({ subsets: ["latin"], variable: '--font-inter' });
 const poppins = Poppins({ 
@@ -73,17 +74,16 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${poppins.variable} font-sans`}>
-        <SettingsProvider>
-          <Analytics />
-          <ToastContainer />
-          {children}
-        </SettingsProvider>
+      <body>
+        {children}
+
+        <SpeedInsights />
+
       </body>
     </html>
   );
