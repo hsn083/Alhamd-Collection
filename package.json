@@ -37,6 +37,7 @@
     "mongodb": "^7.4.0",
     "mongoose": "^9.7.3",
     "next": "14.2.3",
+    "next-cloudinary": "^6.17.5",
     "next-themes": "^0.3.0",
     "nodemailer": "^8.0.10",
     "pdfkit": "^0.18.0",
