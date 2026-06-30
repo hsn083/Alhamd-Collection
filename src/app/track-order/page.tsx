@@ -1,7 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import Image from 'next/image';
+import { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -9,54 +8,33 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import {
-  Truck, Package, CheckCircle, Clock, XCircle, RotateCcw,
-  MapPin, Phone, Mail, Calendar, Loader2, Search, AlertCircle,
-  ArrowRight, RefreshCw
+  Truck, Package, CheckCircle, Clock, XCircle,
+  MapPin, Phone, Mail, Calendar, Loader2, Search, AlertCircle
 } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-// Error boundary component
-function ErrorBoundary({ children, fallback }: { children: React.ReactNode; fallback: React.ReactNode }) {
-  const [hasError, setHasError] = useState(false);
-
-  useEffect(() => {
-    const handleError = () => setHasError(true);
-    window.addEventListener('error', handleError);
-    return () => window.removeEventListener('error', handleError);
-  }, []);
-
-  if (hasError) {
-    return <>{fallback}</>;
-  }
-
-  return <>{children}</>;
-}
-
+// Status flow matching the actual Order model enum
 const STATUS_FLOW = [
   { value: 'pending', label: 'Order Placed', desc: 'Your order has been placed successfully', icon: Clock },
   { value: 'confirmed', label: 'Order Confirmed', desc: 'Order confirmed by seller', icon: CheckCircle },
   { value: 'processing', label: 'Processing', desc: 'Preparing your items for shipment', icon: Package },
-  { value: 'packed', label: 'Packed', desc: 'Order packed and ready for dispatch', icon: Package },
   { value: 'shipped', label: 'Shipped', desc: 'Handed to courier service', icon: Truck },
-  { value: 'in_transit', label: 'In Transit', desc: 'On the way to your location', icon: Truck },
-  { value: 'out_for_delivery', label: 'Out for Delivery', desc: 'Arriving at your doorstep today', icon: Truck },
   { value: 'delivered', label: 'Delivered', desc: 'Order delivered successfully!', icon: CheckCircle },
   { value: 'cancelled', label: 'Cancelled', desc: 'Order has been cancelled', icon: XCircle },
-  { value: 'returned', label: 'Returned', desc: 'Order returned by customer', icon: RotateCcw },
+  { value: 'refunded', label: 'Refunded', desc: 'Order has been refunded', icon: XCircle },
+  { value: 'returned', label: 'Returned', desc: 'Order returned by customer', icon: XCircle },
 ];
 
 const STATUS_BADGE: Record<string, string> = {
   pending: 'bg-amber-100 text-amber-700 border-amber-200',
   confirmed: 'bg-blue-100 text-blue-700 border-blue-200',
   processing: 'bg-purple-100 text-purple-700 border-purple-200',
-  packed: 'bg-indigo-100 text-indigo-700 border-indigo-200',
   shipped: 'bg-teal-100 text-teal-700 border-teal-200',
-  in_transit: 'bg-cyan-100 text-cyan-700 border-cyan-200',
-  out_for_delivery: 'bg-orange-100 text-orange-700 border-orange-200',
   delivered: 'bg-emerald-100 text-emerald-700 border-emerald-200',
   cancelled: 'bg-red-100 text-red-700 border-red-200',
+  refunded: 'bg-gray-100 text-gray-700 border-gray-200',
   returned: 'bg-gray-100 text-gray-700 border-gray-200',
 };
 
@@ -67,17 +45,13 @@ export default function TrackOrderPage() {
   const [order, setOrder] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const [searched, setSearched] = useState(false);
-  const [componentError, setComponentError] = useState<string | null>(null);
 
   const handleTrack = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setOrder(null);
     setIsLoading(true);
-    setSearched(true);
 
-    // Trim whitespace
     const trimmedOrderId = orderId.trim();
     const trimmedPhone = phone.trim();
     const trimmedEmail = email.trim();
@@ -92,6 +66,7 @@ export default function TrackOrderPage() {
           email: trimmedEmail
         }),
       });
+      
       const data = await res.json();
 
       if (data.success) {
@@ -107,43 +82,14 @@ export default function TrackOrderPage() {
   };
 
   const currentIdx = STATUS_FLOW.findIndex(s => s.value === order?.status);
-  const isTerminal = ['cancelled', 'returned'].includes(order?.status || '');
+  const isTerminal = ['cancelled', 'refunded', 'returned'].includes(order?.status || '');
   const badgeClass = STATUS_BADGE[order?.status] || 'bg-gray-100 text-gray-700';
 
   const progressPct = isTerminal ? 0 : currentIdx >= 0
     ? Math.round(((currentIdx + 1) / STATUS_FLOW.length) * 100) : 0;
 
-  // Fallback UI for component errors
-  if (componentError) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <Card className="max-w-md w-full">
-          <CardContent className="p-6 text-center">
-            <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-            <h2 className="text-xl font-bold text-gray-900 mb-2">Something went wrong</h2>
-            <p className="text-gray-600 mb-4">{componentError}</p>
-            <Button onClick={() => window.location.reload()}>Reload Page</Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
   return (
-    <ErrorBoundary
-      fallback={
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-          <Card className="max-w-md w-full">
-            <CardContent className="p-6 text-center">
-              <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-              <h2 className="text-xl font-bold text-gray-900 mb-2">Something went wrong</h2>
-              <p className="text-gray-600 mb-4">An error occurred while loading this page. Please try refreshing.</p>
-              <Button onClick={() => window.location.reload()}>Reload Page</Button>
-            </CardContent>
-          </Card>
-        </div>
-      }
-    >
+    <>
       <Header />
       <main className="min-h-screen bg-gradient-to-b from-emerald-50 to-white py-12">
         <div className="container mx-auto px-4 max-w-4xl">
@@ -154,7 +100,7 @@ export default function TrackOrderPage() {
             </div>
             <h1 className="text-4xl font-bold text-gray-900 mb-3">Track Your Order</h1>
             <p className="text-gray-600 max-w-md mx-auto">
-              Enter your order ID and email or phone number to track your shipment in real-time
+              Enter your order ID to track your shipment in real-time
             </p>
           </div>
 
@@ -163,29 +109,30 @@ export default function TrackOrderPage() {
             <CardContent className="p-6">
               <form onSubmit={handleTrack} className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-gray-700 mb-2 block">Order ID </label>
+                  <label className="text-sm font-medium text-gray-700 mb-2 block">Order ID *</label>
                   <Input
                     type="text"
                     placeholder="e.g., 100001 or Order# (100001)"
                     value={orderId}
                     onChange={(e) => setOrderId(e.target.value)}
                     className="border-emerald-200 focus:border-emerald-400"
+                    disabled={isLoading}
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-700 mb-2 block">Phone Number </label>
+                  <label className="text-sm font-medium text-gray-700 mb-2 block">Phone Number (Optional)</label>
                   <Input
                     type="tel"
                     placeholder="0300-xxxxxxx or +923xxxxxxxxx"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     className="border-emerald-200 focus:border-emerald-400"
+                    disabled={isLoading}
                   />
-                  <p className="text-xs text-gray-500 mt-1"> </p>
                 </div>
                 <Button
                   type="submit"
-                  disabled={isLoading || (!orderId && !phone && !email)}
+                  disabled={isLoading || !orderId}
                   className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
                   size="lg"
                 >
@@ -217,7 +164,7 @@ export default function TrackOrderPage() {
 
           {/* Order Tracking Result */}
           {order && (
-            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="space-y-6">
               {/* Order Header */}
               <Card className="border border-emerald-100 shadow-lg">
                 <CardContent className="p-6">
@@ -281,17 +228,15 @@ export default function TrackOrderPage() {
                   </CardHeader>
                   <CardContent className="p-6">
                     <div className="space-y-0">
-                      {STATUS_FLOW.filter(s => !['cancelled', 'returned'].includes(s.value)).map((step, i) => {
+                      {STATUS_FLOW.filter(s => !['cancelled', 'refunded', 'returned'].includes(s.value)).map((step, i) => {
                         const isDone = currentIdx > i;
                         const isCurrent = currentIdx === i;
                         const Icon = step.icon;
                         return (
                           <div key={step.value} className="flex gap-4 pb-8 last:pb-0 relative">
-                            {/* Line */}
-                            {i < STATUS_FLOW.length - 2 && (
+                            {i < STATUS_FLOW.length - 3 && (
                               <div className={`absolute left-4 top-8 w-0.5 h-full ${isDone ? 'bg-emerald-400' : 'bg-gray-200'}`} />
                             )}
-                            {/* Icon */}
                             <div className={`relative z-10 w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center border-2 ${
                               isCurrent ? 'border-emerald-500 bg-emerald-500 text-white shadow-lg shadow-emerald-200 animate-pulse' :
                               isDone ? 'border-emerald-400 bg-emerald-50 text-emerald-600' :
@@ -299,7 +244,6 @@ export default function TrackOrderPage() {
                             }`}>
                               {isDone ? <CheckCircle className="h-5 w-5" /> : <Icon className="h-4 w-4" />}
                             </div>
-                            {/* Text */}
                             <div className="pt-1 flex-1">
                               <p className={`text-sm font-semibold ${isCurrent ? 'text-emerald-700' : isDone ? 'text-gray-700' : 'text-gray-400'}`}>
                                 {step.label}
@@ -311,46 +255,6 @@ export default function TrackOrderPage() {
                                 <Badge className="mt-2 bg-emerald-100 text-emerald-700 border-emerald-200">
                                   Current Status
                                 </Badge>
-                              )}
-                              {isDone && order.statusHistory && (
-                                <p className="text-xs text-gray-400 mt-1">
-                                  {order.statusHistory[i]?.timestamp ? new Date(order.statusHistory[i].timestamp).toLocaleString('en-PK') : ''}
-                                </p>
-                              )}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* Status History */}
-              {order.statusHistory && order.statusHistory.length > 0 && (
-                <Card className="border border-gray-100 shadow-lg">
-                  <CardHeader className="pb-4">
-                    <CardTitle className="text-lg font-semibold text-gray-800 flex items-center gap-2">
-                      <RefreshCw className="h-5 w-5 text-emerald-600" /> Status History
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-6">
-                    <div className="space-y-3">
-                      {order.statusHistory.map((history: any, index: number) => {
-                        const statusConfig = STATUS_FLOW.find(s => s.value === history.status);
-                        const Icon = statusConfig?.icon || Clock;
-                        return (
-                          <div key={index} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                            <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
-                              <Icon className="h-4 w-4 text-emerald-600" />
-                            </div>
-                            <div className="flex-1">
-                              <p className="font-medium text-gray-800">{statusConfig?.label || history.status}</p>
-                              <p className="text-xs text-gray-500 mt-1">
-                                {history.timestamp ? new Date(history.timestamp).toLocaleString('en-PK') : ''}
-                              </p>
-                              {history.note && (
-                                <p className="text-sm text-gray-600 mt-1">{history.note}</p>
                               )}
                             </div>
                           </div>
@@ -381,14 +285,6 @@ export default function TrackOrderPage() {
                         <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-100">
                           <p className="text-xs text-emerald-600 mb-1">Tracking Number</p>
                           <p className="font-mono text-sm font-bold text-emerald-800">{order.shipping.trackingNumber}</p>
-                        </div>
-                      )}
-                      {order.shipping?.estimatedDelivery && (
-                        <div className="flex justify-between">
-                          <span className="text-gray-500">Est. Delivery</span>
-                          <span className="font-medium text-emerald-700">
-                            {new Date(order.shipping.estimatedDelivery).toLocaleDateString('en-PK')}
-                          </span>
                         </div>
                       )}
                       {order.shipping?.deliveryNotes && (
@@ -429,16 +325,8 @@ export default function TrackOrderPage() {
                     {order.items?.map((item: any, i: number) => (
                       <div key={i} className="flex items-center gap-4 p-3 bg-gray-50 rounded-xl">
                         {item.product?.images?.[0] ? (
-                          <div className="relative w-14 h-14">
-                            <Image 
-                              src={item.product.images[0]} 
-                              alt={item.product.name || 'Product'}
-                              fill
-                              className="object-cover rounded-lg border border-gray-100" 
-                              onError={(e) => {
-                                e.currentTarget.style.display = 'none';
-                              }}
-                            />
+                          <div className="w-14 h-14 bg-emerald-50 rounded-lg flex items-center justify-center">
+                            <span className="text-2xl">👗</span>
                           </div>
                         ) : (
                           <div className="w-14 h-14 bg-emerald-50 rounded-lg flex items-center justify-center text-2xl">👗</div>
@@ -498,6 +386,6 @@ export default function TrackOrderPage() {
         </div>
       </main>
       <Footer />
-    </ErrorBoundary>
+    </>
   );
 }
