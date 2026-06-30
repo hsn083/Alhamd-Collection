@@ -8,6 +8,11 @@ export const revalidate = 0;
 // GET - Fetch audit logs
 export async function GET(request: NextRequest) {
   try {
+    // Skip during build time
+    if (process.env.NEXT_BUILD_PHASE === 'building') {
+      return NextResponse.json({ success: true, logs: [], total: 0 });
+    }
+
     const { searchParams } = new URL(request.url);
     const limit = parseInt(searchParams.get('limit') || '50');
     const action = searchParams.get('action');

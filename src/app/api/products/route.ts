@@ -110,14 +110,12 @@ export async function POST(request: NextRequest) {
     await connectDB();
     
     const body = await request.json();
-    console.log('[PRODUCT_POST] Received product data:', body);
 
     // Validate required fields
     const requiredFields = ['name', 'category', 'price', 'stock', 'description'];
     const missingFields = requiredFields.filter(field => !body[field]);
     
     if (missingFields.length > 0) {
-      console.log('[PRODUCT_POST] Missing required fields:', missingFields);
       return NextResponse.json(
         { success: false, error: `Missing required fields: ${missingFields.join(', ')}` },
         { status: 400 }
@@ -127,22 +125,18 @@ export async function POST(request: NextRequest) {
     // Check if category exists
     const category = await Category.findById(body.category);
     if (!category) {
-      console.log('[PRODUCT_POST] Category not found:', body.category);
       return NextResponse.json(
         { success: false, error: 'Category not found' },
         { status: 404 }
       );
     }
-    console.log('[PRODUCT_POST] Category found:', category.name);
 
     // Generate slug
     const slug = body.slug || body.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-    console.log('[PRODUCT_POST] Generated slug:', slug);
 
     // Check if slug already exists
     const existingProduct = await Product.findOne({ slug });
     if (existingProduct) {
-      console.log('[PRODUCT_POST] Product with slug already exists:', slug);
       return NextResponse.json(
         { success: false, error: 'Product with this slug already exists' },
         { status: 400 }
@@ -150,14 +144,6 @@ export async function POST(request: NextRequest) {
     }
 
     // Create new product
-    console.log('[PRODUCT_POST] Creating product with data:', {
-      name: body.name,
-      slug,
-      price: body.price,
-      category: body.category,
- categoryId: body.categoryId,
-      images: body.images?.length || 0
-    });
     
     const newProduct = await Product.create({
       name: body.name,
@@ -181,13 +167,10 @@ export async function POST(request: NextRequest) {
       status: body.status || 'active',
     });
 
-    console.log('[PRODUCT_POST] Product created successfully:', newProduct._id.toString());
-
     // Update category product count
     await Category.findByIdAndUpdate(body.category, {
       $inc: { productCount: 1 }
     });
-    console.log('[PRODUCT_POST] Category product count updated');
 
     // Transform product to match frontend type expectations
     const transformedProduct = {
@@ -203,7 +186,6 @@ export async function POST(request: NextRequest) {
       features: [],
     };
 
-    console.log('[PRODUCT_POST] Returning transformed product');
     return NextResponse.json({
       success: true,
       data: transformedProduct,
@@ -211,12 +193,7 @@ export async function POST(request: NextRequest) {
       message: 'Product created successfully'
     }, { status: 201 });
   } catch (error: any) {
-    console.error('[PRODUCT_POST] Error creating product:', error);
-    console.error('[PRODUCT_POST] Error details:', {
-      message: error.message,
-      name: error.name,
-      stack: error.stack
-    });
+    console.error('Error creating product:', error);
     return NextResponse.json(
       { success: false, error: error.message || 'Failed to create product' },
       { status: 500 }

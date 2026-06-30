@@ -9,6 +9,11 @@ export const revalidate = 0;
 // POST - Request password reset
 export async function POST(request: NextRequest) {
   try {
+    // Skip during build time
+    if (process.env.NEXT_BUILD_PHASE === 'building') {
+      return NextResponse.json({ success: true, message: 'Skipped during build' });
+    }
+
     const body = await request.json();
     const { email } = body;
     
@@ -65,6 +70,11 @@ export async function POST(request: NextRequest) {
 // PUT - Reset password with token
 export async function PUT(request: NextRequest) {
   try {
+    // Skip during build time
+    if (process.env.NEXT_BUILD_PHASE === 'building') {
+      return NextResponse.json({ success: false, error: 'Not available during build' }, { status: 503 });
+    }
+
     const body = await request.json();
     const { token, newPassword } = body;
     

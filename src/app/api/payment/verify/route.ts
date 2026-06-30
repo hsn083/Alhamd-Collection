@@ -5,12 +5,21 @@ import connectDB from '@/lib/db';
 import Payment from '@/models/Payment';
 import PaymentVerification from '@/models/PaymentVerification';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+const stripe = process.env.STRIPE_SECRET_KEY 
+  ? new Stripe(process.env.STRIPE_SECRET_KEY) 
+  : null;
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
   try {
+    if (!stripe) {
+      return NextResponse.json(
+        { error: 'Stripe is not configured' },
+        { status: 500 }
+      );
+    }
+
     await connectDB();
     
     const { searchParams } = new URL(request.url);

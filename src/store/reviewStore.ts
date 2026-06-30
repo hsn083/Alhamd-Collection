@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 import { Review } from '@/types';
 
 interface ReviewStore {
@@ -17,9 +16,8 @@ interface ReviewStore {
 }
 
 export const useReviewStore = create<ReviewStore>()(
-  persist(
-    (set, get) => ({
-      reviews: [],
+  (set, get) => ({
+    reviews: [],
 
       setReviews: (reviews) => set({ reviews }),
 
@@ -154,9 +152,5 @@ export const useReviewStore = create<ReviewStore>()(
           console.error('Error adding seller reply:', error);
         }
       },
-    }),
-    {
-      name: 'review-storage',
-    }
-  )
+    })
 );

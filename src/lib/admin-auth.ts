@@ -56,6 +56,10 @@ export function getAdminUsers(): AdminUser[] {
     const data = fs.readFileSync(ADMIN_USERS_FILE, 'utf-8');
     return data ? JSON.parse(data) : [];
   } catch (error) {
+    // Return empty array during build time or on error
+    if (process.env.NEXT_BUILD_PHASE === 'building' || (error as any).code === 'ENOENT') {
+      return [];
+    }
     console.error('Error reading admin users:', error);
     return [];
   }
@@ -81,6 +85,10 @@ export function getAuditLogs(): AuditLog[] {
     const data = fs.readFileSync(AUDIT_LOGS_FILE, 'utf-8');
     return data ? JSON.parse(data) : [];
   } catch (error) {
+    // Return empty array during build time or on error
+    if (process.env.NEXT_BUILD_PHASE === 'building' || (error as any).code === 'ENOENT') {
+      return [];
+    }
     console.error('Error reading audit logs:', error);
     return [];
   }

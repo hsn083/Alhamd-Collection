@@ -17,7 +17,8 @@ import {
   EyeOff, 
   Loader2,
   AlertCircle,
-  CheckCircle
+  CheckCircle,
+  Shield
 } from 'lucide-react';
 
 export default function RegisterPage() {
@@ -96,7 +97,7 @@ export default function RegisterPage() {
                   id="fullName"
                   name="fullName"
                   type="text"
-                  placeholder="John Doe"
+                  placeholder="Your Name"
                   value={formData.fullName}
                   onChange={handleChange}
                   className="pl-10 bg-gray-700 border-gray-600 text-white placeholder-gray-500"
@@ -235,6 +236,18 @@ export default function RegisterPage() {
               Sign in
             </Link>
           </p>
+          <div className="w-full border-t border-gray-700 pt-4">
+            <Link href="/admin/login">
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full border-black-600 text-black-300 hover:bg-green-700 hover:text-black"
+              >
+                <Shield className="mr-2 h-4 w-4" />
+                Admin Login
+              </Button>
+            </Link>
+          </div>
         </CardFooter>
       </Card>
     </div>

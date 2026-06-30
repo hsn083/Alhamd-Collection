@@ -54,10 +54,12 @@ export default function ProductPage() {
   const [userRating, setUserRating] = useState<number>(0);
   const [hoverRating, setHoverRating] = useState<number>(0);
   const [ratingSubmitted, setRatingSubmitted] = useState<boolean>(false);
+  const [isSubmittingRating, setIsSubmittingRating] = useState<boolean>(false);
   const [isWishlisted, setIsWishlisted] = useState<boolean>(false);
   const [wishlistCount, setWishlistCount] = useState<number>(0);
   const [showReviewForm, setShowReviewForm] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isReviewsLoading, setIsReviewsLoading] = useState<boolean>(false);
   const REVIEWS_PER_PAGE = 5;
   
   // Filter state - moved from ReviewFilters to parent to avoid circular dependency
@@ -190,10 +192,13 @@ export default function ProductPage() {
 
   const fetchReviews = async () => {
     if (!product) return;
+    setIsReviewsLoading(true);
     try {
-      await refetchReviews(product.id);
+      await refetchReviews(product.id, 'approved');
     } catch (err) {
       console.error('Error fetching reviews:', err);
+    } finally {
+      setIsReviewsLoading(false);
     }
   };
 
@@ -255,6 +260,7 @@ export default function ProductPage() {
       return;
     }
 
+    setIsSubmittingRating(true);
     try {
       const response = await fetch('/api/ratings', {
         method: 'POST',
@@ -280,6 +286,8 @@ export default function ProductPage() {
       }
     } catch (error) {
       toastError('Failed to submit rating. Please try again.');
+    } finally {
+      setIsSubmittingRating(false);
     }
   };
 
@@ -621,8 +629,16 @@ export default function ProductPage() {
                         onClick={handleRatingSubmit}
                         className="mt-3"
                         size="sm"
+                        disabled={isSubmittingRating}
                       >
-                        Submit Rating
+                        {isSubmittingRating ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Submitting...
+                          </>
+                        ) : (
+                          'Submit Rating'
+                        )}
                       </Button>
                     )}
                   </div>
@@ -815,7 +831,18 @@ export default function ProductPage() {
 
                   {/* Reviews List */}
                   <div className="space-y-4">
-                    {filteredReviews.length === 0 ? (
+                    {isReviewsLoading ? (
+                      <div className="text-center py-12 bg-white rounded-xl border border-gray-100">
+                        <Loader2 className="h-16 w-16 mx-auto mb-4 animate-spin text-muted-foreground" />
+                        <h3 className="text-xl font-semibold mb-2">Loading Reviews...</h3>
+                      </div>
+                    ) : productReviews.length === 0 ? (
+                      <div className="text-center py-12 bg-white rounded-xl border border-gray-100">
+                        <MessageCircle className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
+                        <h3 className="text-xl font-semibold mb-2">No Reviews Yet</h3>
+                        <p className="text-muted-foreground">Be the first to review this product!</p>
+                      </div>
+                    ) : filteredReviews.length === 0 ? (
                       <div className="text-center py-12 bg-white rounded-xl border border-gray-100">
                         <MessageCircle className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
                         <h3 className="text-xl font-semibold mb-2">No Reviews Found</h3>

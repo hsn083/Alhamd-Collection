@@ -116,7 +116,7 @@ export default function AdminProductsPage() {
       const response = await fetch(`/api/products/${productId}`);
       const data = await response.json();
       if (data.success) {
-        const product = data.product;
+        const product = data.product || data.data;
         setEditingProduct(product);
         setProductImages(product.images || []);
         setSelectedCategory(product.categoryId || product.category || '');
@@ -144,9 +144,16 @@ export default function AdminProductsPage() {
   const handleDeleteProduct = async (productId: string) => {
     if (confirm('Are you sure you want to delete this product? This action cannot be undone.')) {
       try {
-        const response = await fetch(`/api/products/${productId}`, {
+        const response = await fetch(`/api/admin/products?id=${productId}`, {
           method: 'DELETE',
         });
+        
+        if (!response.ok) {
+          const text = await response.text();
+          console.error('API Error Response:', text);
+          throw new Error(text || 'API request failed');
+        }
+        
         const data = await response.json();
         if (data.success) {
           success('Product deleted successfully');
@@ -228,44 +235,52 @@ export default function AdminProductsPage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    console.log('=== SUBMIT CLICKED ===');
     setIsSubmitting(true);
 
     // Validate required fields
+    console.log('=== FORM VALIDATION START ===');
+    console.log('formData:', formData);
+    console.log('selectedCategory:', selectedCategory);
+    console.log('productImages:', productImages);
+    
     if (!formData.name.trim()) {
+      console.error('VALIDATION FAILED: Product name is required');
       error('Product name is required');
       setIsSubmitting(false);
       return;
     }
     if (!formData.brand.trim()) {
+      console.error('VALIDATION FAILED: Brand is required');
       error('Brand is required');
       setIsSubmitting(false);
       return;
     }
     if (!selectedCategory) {
+      console.error('VALIDATION FAILED: Please select a category');
       error('Please select a category');
       setIsSubmitting(false);
       return;
     }
     if (!formData.price || Number(formData.price) <= 0) {
+      console.error('VALIDATION FAILED: Price must be greater than 0');
       error('Price must be greater than 0');
       setIsSubmitting(false);
       return;
     }
     if (!formData.stock || Number(formData.stock) < 0) {
+      console.error('VALIDATION FAILED: Stock cannot be negative');
       error('Stock cannot be negative');
       setIsSubmitting(false);
       return;
     }
     if (!formData.description.trim()) {
+      console.error('VALIDATION FAILED: Description is required');
       error('Description is required');
       setIsSubmitting(false);
       return;
     }
-    if (productImages.length === 0) {
-      error('Please upload at least one product image');
-      setIsSubmitting(false);
-      return;
-    }
+    console.log('=== FORM VALIDATION PASSED ===');
 
     const productData = {
       name: formData.name,
@@ -284,49 +299,67 @@ export default function AdminProductsPage() {
       tags: [],
       status: 'active'
     };
-
-    console.log('[ADMIN_PRODUCTS] Submitting product data:', productData);
+    console.log('=== PRODUCT DATA PREPARED ===');
+    console.log('productData:', JSON.stringify(productData, null, 2));
 
     try {
+      console.log('=== API CALL START ===');
+      console.log('Method:', editingProduct ? 'PUT' : 'POST');
+      console.log('URL:', '/api/admin/products');
+      
       let response;
       if (editingProduct) {
-        response = await fetch(`/api/products/${editingProduct.id}`, {
+        console.log('Editing product ID:', editingProduct.id);
+        response = await fetch('/api/admin/products', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(productData),
+          body: JSON.stringify({ ...productData, id: editingProduct.id }),
         });
       } else {
-        response = await fetch('/api/products', {
+        console.log('Creating new product');
+        response = await fetch('/api/admin/products', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(productData),
         });
       }
 
+      console.log('=== API RESPONSE RECEIVED ===');
+      console.log('Response status:', response.status);
+      console.log('Response ok:', response.ok);
+      
       const data = await response.json();
-      console.log('[ADMIN_PRODUCTS] API response:', data);
+      console.log('Response data:', JSON.stringify(data, null, 2));
 
-      if (data.success) {
-        success(editingProduct ? 'Product updated successfully' : 'Product added successfully');
-        
-        // Update store directly for real-time updates
-        const { addProduct, updateProduct } = useProductStore.getState();
-        if (editingProduct) {
-          updateProduct(editingProduct.id, data.data);
-        } else {
-          addProduct(data.data);
-        }
-        
-        resetForm();
-        fetchProducts();
-      } else {
-        console.error('[ADMIN_PRODUCTS] API error:', data.error);
-        error(data.error || 'Failed to save product');
+      if (!response.ok || !data.success) {
+        console.error('=== API FAILED ===');
+        console.error('Error:', data.error);
+        const errorMessage = data.error || 'Failed to save product';
+        error(errorMessage);
+        return; // Don't reset form on error, allow retry
       }
+
+      console.log('=== API SUCCESS ===');
+      console.log('Success message:', editingProduct ? 'Product updated successfully' : 'Product added successfully');
+      success(editingProduct ? 'Product updated successfully' : 'Product added successfully');
+      
+      // Update store directly for real-time updates
+      const { addProduct, updateProduct } = useProductStore.getState();
+      if (editingProduct) {
+        updateProduct(editingProduct.id, data.data);
+      } else {
+        addProduct(data.data);
+      }
+      
+      resetForm();
+      fetchProducts();
     } catch (err) {
-      console.error('[ADMIN_PRODUCTS] Error saving product:', err);
-      error('Failed to save product');
+      console.error('=== API CALL ERROR ===');
+      console.error('Error:', err);
+      const errorMessage = err instanceof Error ? err.message : 'Failed to save product';
+      error(errorMessage);
     } finally {
+      console.log('=== SUBMIT END ===');
       setIsSubmitting(false);
     }
   };
@@ -388,7 +421,7 @@ export default function AdminProductsPage() {
                 <form onSubmit={handleSubmit} className="space-y-4">
                   {/* Image Upload */}
                   <div>
-                    <Label>Product Images *</Label>
+                    <Label>Product Images (Optional)</Label>
                     <div className="mt-2 border-2 border-dashed border-emerald-100 rounded-lg p-6 bg-white">
                       <div className="flex flex-col items-center justify-center">
                         <Upload className="h-12 w-12 text-emerald-700 mb-2" />
@@ -656,7 +689,7 @@ export default function AdminProductsPage() {
                                     />
                                   ) : (
                                     <div className="w-full h-full flex items-center justify-center text-2xl">
-                                      🎮
+                                      
                                     </div>
                                   )}
                                 </div>

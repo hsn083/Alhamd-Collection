@@ -17,6 +17,10 @@ export const revalidate = 0;
 let initialized = false;
 
 async function ensureInitialized() {
+  // Skip initialization during build time
+  if (process.env.NEXT_BUILD_PHASE === 'building') {
+    return;
+  }
   if (!initialized) {
     await initializeDefaultAdmin();
     initialized = true;
@@ -31,7 +35,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const username = searchParams.get('username');
     
-    const users = getAdminUsers();
+    const users = getAdminUsers() || [];
     
     if (username) {
       const user = users.find((u) => u.username === username);
@@ -76,7 +80,7 @@ export async function POST(request: NextRequest) {
         );
       }
       
-      const users = getAdminUsers();
+      const users = getAdminUsers() || [];
       console.log('[ADMIN-LOGIN] Total admin users in system:', users.length);
       console.log('[ADMIN-LOGIN] Available usernames:', users.map(u => u.username));
       

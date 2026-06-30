@@ -15,6 +15,11 @@ export const revalidate = 0;
 // PUT - Update admin credentials
 export async function PUT(request: NextRequest) {
   try {
+    // Skip during build time
+    if (process.env.NEXT_BUILD_PHASE === 'building') {
+      return NextResponse.json({ success: false, error: 'Not available during build' }, { status: 503 });
+    }
+
     const body = await request.json();
     const { adminId, currentPassword, updateType, newUsername, newPassword, newEmail, recoveryEmail } = body;
     

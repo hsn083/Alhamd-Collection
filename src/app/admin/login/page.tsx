@@ -40,7 +40,7 @@ export default function AdminLoginPage() {
         localStorage.setItem('adminAuth', 'true');
         localStorage.setItem('adminUser', JSON.stringify(data.user));
         document.cookie = 'adminAuth=true; path=/; max-age=86400';
-        window.location.href = '/admin';
+        window.location.href = '/admin/dashboard';
       } else {
         setError(data.error || 'Invalid username or password');
       }

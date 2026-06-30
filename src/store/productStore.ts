@@ -79,8 +79,10 @@ export const useProductStore = create<ProductStore>()(
           });
           const result = await response.json();
           
-          if (result.success && Array.isArray(result.products)) {
-            set({ products: result.products });
+          if (result.success) {
+            const products = Array.isArray(result.products) ? result.products : 
+                           Array.isArray(result.data) ? result.data : [];
+            set({ products });
           }
         } catch (error) {
           console.error('Error refetching products:', error);
