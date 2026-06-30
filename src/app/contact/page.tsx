@@ -13,7 +13,10 @@ import {
   Mail, 
   Clock,
   Send,
-  MessageSquare
+  MessageSquare,
+  Loader2,
+  CheckCircle,
+  AlertCircle
 } from 'lucide-react';
 import { useSettingsStore } from '@/store/settingsStore';
 
@@ -30,11 +33,36 @@ export default function ContactPage() {
     subject: '',
     message: '',
   });
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert('Message sent successfully! We will get back to you soon.');
-    setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
+    setError('');
+    setSuccess(false);
+    setIsLoading(true);
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        setSuccess(true);
+        setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
+      } else {
+        setError(data.error || 'Failed to send message. Please try again.');
+      }
+    } catch (err) {
+      setError('Network error. Please check your connection and try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // Parse address from settings
@@ -71,7 +99,7 @@ export default function ContactPage() {
     <>
       <Header />
       <main className="min-h-screen">
-        <div className="bg-gradient-to-br from-blue-600 to-purple-600 text-white py-16">
+        <div className="bg-gradient-to-br from-emerald-600 to-teal-600 text-white py-16">
           <div className="container mx-auto px-4">
             <h1 className="text-4xl font-bold mb-4">Contact Us</h1>
             <p className="text-xl text-white/90">We'd love to hear from you</p>
@@ -86,6 +114,22 @@ export default function ContactPage() {
                 <CardTitle>Send us a Message</CardTitle>
               </CardHeader>
               <CardContent>
+                {/* Success Message */}
+                {success && (
+                  <div className="mb-6 p-4 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center gap-3">
+                    <CheckCircle className="h-5 w-5 text-emerald-600 flex-shrink-0" />
+                    <p className="text-emerald-700">Your message has been sent successfully. We will get back to you soon!</p>
+                  </div>
+                )}
+
+                {/* Error Message */}
+                {error && (
+                  <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-3">
+                    <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0" />
+                    <p className="text-red-700">{error}</p>
+                  </div>
+                )}
+
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
                     <Label htmlFor="name">Full Name *</Label>
@@ -94,6 +138,7 @@ export default function ContactPage() {
                       required
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      disabled={isLoading}
                     />
                   </div>
                   <div>
@@ -104,6 +149,7 @@ export default function ContactPage() {
                       required
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      disabled={isLoading}
                     />
                   </div>
                   <div>
@@ -114,6 +160,7 @@ export default function ContactPage() {
                       placeholder="+92 3XX XXXXXXX"
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      disabled={isLoading}
                     />
                   </div>
                   <div>
@@ -123,6 +170,7 @@ export default function ContactPage() {
                       required
                       value={formData.subject}
                       onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                      disabled={isLoading}
                     />
                   </div>
                   <div>
@@ -134,11 +182,21 @@ export default function ContactPage() {
                       className="flex min-h-[120px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                      disabled={isLoading}
                     />
                   </div>
-                  <Button type="submit" className="w-full">
-                    <Send className="mr-2 h-4 w-4" />
-                    Send Message
+                  <Button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-700" disabled={isLoading}>
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="mr-2 h-4 w-4" />
+                        Send Message
+                      </>
+                    )}
                   </Button>
                 </form>
               </CardContent>
@@ -191,6 +249,28 @@ export default function ContactPage() {
                   </CardContent>
                 </Card>
               )}
+
+              {/* Google Map */}
+              <Card>
+                <CardContent className="p-6">
+                  <h3 className="font-semibold mb-4 flex items-center gap-2">
+                    <MapPin className="h-4 w-4 text-emerald-600" />
+                    Find Us on Map
+                  </h3>
+                  <div className="w-full h-48 bg-gray-100 rounded-lg flex items-center justify-center">
+                    <iframe
+                      width="100%"
+                      height="100%"
+                      frameBorder="0"
+                      scrolling="no"
+                      marginHeight={0}
+                      marginWidth={0}
+                      src="https://maps.google.com/maps?q=Gojra,Punjab,Pakistan&t=&z=13&ie=UTF8&iwloc=&output=embed"
+                      className="rounded-lg"
+                    />
+                  </div>
+                </CardContent>
+              </Card>
 
               {/* FAQ Link */}
               <Card>
