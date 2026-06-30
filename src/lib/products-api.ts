@@ -11,7 +11,6 @@ interface StoredProduct {
   id: string;
   name: string;
   slug: string;
-  sku: string;
   description: string;
   price: number;
   discountPrice?: number;
@@ -117,20 +116,10 @@ export async function POST(request: NextRequest) {
     const formData = validationResult.data;
     const products = await loadProducts();
 
-    const skuExists = products.some(p => p.sku === formData.sku);
-    if (skuExists) {
-      console.error('SKU already exists:', formData.sku);
-      return NextResponse.json(
-        { success: false, error: 'Product with this SKU already exists' },
-        { status: 409 }
-      );
-    }
-
     const newProduct: StoredProduct = {
       id: String(Math.max(...products.map(p => parseInt(p.id) || 0), 0) + 1),
       name: formData.name,
       slug: generateSlug(formData.name),
-      sku: formData.sku,
       description: formData.description,
       price: formData.price,
       discountPrice: formData.discountPrice || undefined,
@@ -212,20 +201,10 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    const skuExists = products.some(p => p.sku === formData.sku && p.id !== body.id);
-    if (skuExists) {
-      console.error('SKU already exists:', formData.sku);
-      return NextResponse.json(
-        { success: false, error: 'Product with this SKU already exists' },
-        { status: 409 }
-      );
-    }
-
     const updatedProduct: StoredProduct = {
       ...products[productIndex],
       name: formData.name,
       slug: generateSlug(formData.name),
-      sku: formData.sku,
       description: formData.description,
       price: formData.price,
       discountPrice: formData.discountPrice || undefined,

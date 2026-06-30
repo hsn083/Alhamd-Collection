@@ -37,7 +37,6 @@ export async function GET(request: NextRequest) {
       $or: [
         { name: { $regex: searchTerm, $options: 'i' } },
         { description: { $regex: searchTerm, $options: 'i' } },
-        { sku: { $regex: searchTerm, $options: 'i' } },
       ],
     };
 

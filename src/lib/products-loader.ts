@@ -10,7 +10,6 @@ interface StoredProduct {
   id: string;
   name: string;
   slug: string;
-  sku: string;
   description: string;
   price: number;
   discountPrice?: number;

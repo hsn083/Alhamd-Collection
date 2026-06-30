@@ -149,18 +149,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if SKU already exists
-    if (body.sku) {
-      const existingSku = await Product.findOne({ sku: body.sku });
-      if (existingSku) {
-        console.log('[PRODUCT_POST] Product with SKU already exists:', body.sku);
-        return NextResponse.json(
-          { success: false, error: 'Product with this SKU already exists' },
-          { status: 400 }
-        );
-      }
-    }
-
     // Create new product
     console.log('[PRODUCT_POST] Creating product with data:', {
       name: body.name,
@@ -174,7 +162,6 @@ export async function POST(request: NextRequest) {
     const newProduct = await Product.create({
       name: body.name,
       slug,
-      sku: body.sku,
       description: body.description,
       price: Number(body.price),
       discountPrice: body.discountPrice ? Number(body.discountPrice) : undefined,

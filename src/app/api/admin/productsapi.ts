@@ -99,22 +99,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if SKU already exists
-    if (body.sku) {
-      const existingSku = await Product.findOne({ sku: body.sku });
-      if (existingSku) {
-        return NextResponse.json(
-          { success: false, error: 'Product with this SKU already exists' },
-          { status: 400 }
-        );
-      }
-    }
-
     // Create new product
     const newProduct = await Product.create({
       name: body.name,
       slug,
-      sku: body.sku,
       description: body.description,
       price: Number(body.price),
       discountPrice: body.discountPrice ? Number(body.discountPrice) : undefined,
@@ -185,17 +173,6 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    // Check if SKU already exists (excluding current product)
-    if (body.sku && body.sku !== product.sku) {
-      const existingProduct = await Product.findOne({ sku: body.sku, _id: { $ne: body.id } });
-      if (existingProduct) {
-        return NextResponse.json(
-          { success: false, error: 'Product with this SKU already exists' },
-          { status: 400 }
-        );
-      }
-    }
-
     // Check if slug already exists (excluding current product)
     if (body.name || body.slug) {
       const newSlug = body.slug || generateSlug(body.name);
@@ -215,7 +192,6 @@ export async function PUT(request: NextRequest) {
     if (body.name) updateData.name = body.name;
     if (body.slug) updateData.slug = body.slug;
     else if (body.name) updateData.slug = generateSlug(body.name);
-    if (body.sku !== undefined) updateData.sku = body.sku;
     if (body.description) updateData.description = body.description;
     if (body.price !== undefined) updateData.price = Number(body.price);
     if (body.discountPrice !== undefined) updateData.discountPrice = body.discountPrice ? Number(body.discountPrice) : null;

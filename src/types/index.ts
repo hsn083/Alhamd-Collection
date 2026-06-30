@@ -3,7 +3,6 @@ export interface Product {
   id: string;
   name: string;
   slug: string;
-  sku: string;
   description: string;
   price: number;
   discountPrice?: number;
@@ -48,7 +47,6 @@ export interface StockAlert {
   id: string;
   productId: string;
   productName: string;
-  sku: string;
   currentQuantity: number;
   threshold: number;
   alertType: 'low_stock' | 'out_of_stock';

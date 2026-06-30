@@ -70,7 +70,6 @@ export default function AdminProductsPage() {
 
   const [formData, setFormData] = useState({
     name: '',
-    sku: '',
     brand: '',
     price: '',
     discountPrice: '',
@@ -126,7 +125,6 @@ export default function AdminProductsPage() {
         setIsBestSeller(product.isBestSeller || false);
         setFormData({
           name: product.name || '',
-          sku: product.sku || '',
           brand: product.brand || '',
           price: product.price?.toString() || '',
           discountPrice: product.discountPrice?.toString() || '',
@@ -176,7 +174,6 @@ export default function AdminProductsPage() {
     setIsBestSeller(false);
     setFormData({
       name: '',
-      sku: '',
       brand: '',
       price: '',
       discountPrice: '',
@@ -239,11 +236,6 @@ export default function AdminProductsPage() {
       setIsSubmitting(false);
       return;
     }
-    if (!formData.sku.trim()) {
-      error('SKU is required');
-      setIsSubmitting(false);
-      return;
-    }
     if (!formData.brand.trim()) {
       error('Brand is required');
       setIsSubmitting(false);
@@ -277,7 +269,6 @@ export default function AdminProductsPage() {
 
     const productData = {
       name: formData.name,
-      sku: formData.sku,
       brand: formData.brand,
       category: selectedCategory,
       categoryId: selectedCategory,
@@ -475,16 +466,6 @@ export default function AdminProductsPage() {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="sku">SKU *</Label>
-                      <Input
-                        id="sku"
-                        placeholder="e.g., RAZ-DV2-001"
-                        value={formData.sku}
-                        onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
-                        required
-                      />
-                    </div>
-                    <div>
                       <Label htmlFor="brand">Brand *</Label>
                       <Input
                         id="brand"
@@ -611,7 +592,7 @@ export default function AdminProductsPage() {
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                 <Input
                   type="search"
-                  placeholder="Search products by name, SKU, brand, category, or description..."
+                  placeholder="Search products by name, brand, category, or description..."
                   className="pl-10"
                   value={searchQuery}
                   onChange={(e) => {

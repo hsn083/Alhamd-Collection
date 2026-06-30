@@ -123,17 +123,6 @@ export async function PUT(
       );
     }
 
-    // Check if SKU already exists (excluding current product)
-    if (body.sku && body.sku !== product.sku) {
-      const existingProduct = await Product.findOne({ sku: body.sku, _id: { $ne: params.id } });
-      if (existingProduct) {
-        return NextResponse.json(
-          { success: false, error: 'Product with this SKU already exists' },
-          { status: 400 }
-        );
-      }
-    }
-
     // Check if slug already exists (excluding current product)
     if (body.name || body.slug) {
       const newSlug = body.slug || body.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
@@ -153,7 +142,6 @@ export async function PUT(
     if (body.name) updateData.name = body.name;
     if (body.slug) updateData.slug = body.slug;
     else if (body.name) updateData.slug = body.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-    if (body.sku !== undefined) updateData.sku = body.sku;
     if (body.description) updateData.description = body.description;
     if (body.price !== undefined) updateData.price = Number(body.price);
     if (body.discountPrice !== undefined) updateData.discountPrice = body.discountPrice ? Number(body.discountPrice) : null;

@@ -100,17 +100,6 @@ export function ProductForm({
           {errors.name && <FormMessage>{errors.name.message}</FormMessage>}
         </FormField>
 
-        {/* SKU */}
-        <FormField>
-          <FormLabel>SKU *</FormLabel>
-          <Input
-            {...register('sku')}
-            placeholder='e.g., RAZ-DV2-001'
-            className='fashion-input'
-          />
-          {errors.sku && <FormMessage>{errors.sku.message}</FormMessage>}
-        </FormField>
-
         {/* Category */}
         <FormField>
           <FormLabel>Category *</FormLabel>

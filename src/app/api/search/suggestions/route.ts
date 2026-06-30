@@ -31,7 +31,6 @@ export async function GET(request: NextRequest) {
       $or: [
         { name: { $regex: searchTerm, $options: 'i' } },
         { description: { $regex: searchTerm, $options: 'i' } },
-        { sku: { $regex: searchTerm, $options: 'i' } },
       ],
     })
       .populate('category', 'name slug')
@@ -91,7 +90,6 @@ export async function GET(request: NextRequest) {
       $or: [
         { name: { $regex: searchTerm, $options: 'i' } },
         { description: { $regex: searchTerm, $options: 'i' } },
-        { sku: { $regex: searchTerm, $options: 'i' } },
       ],
     });
 

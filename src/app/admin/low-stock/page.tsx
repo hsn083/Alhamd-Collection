@@ -62,8 +62,7 @@ export default function LowStockPage() {
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(p =>
-        p.name?.toLowerCase().includes(query) ||
-        p.sku?.toLowerCase().includes(query)
+        p.name?.toLowerCase().includes(query)
       );
     }
 
@@ -94,10 +93,9 @@ export default function LowStockPage() {
   };
 
   const exportCSV = () => {
-    const headers = ['Product Name', 'SKU', 'Category', 'Current Stock', 'Threshold', 'Status', 'Last Updated'];
+    const headers = ['Product Name', 'Category', 'Current Stock', 'Threshold', 'Status', 'Last Updated'];
     const rows = filteredProducts.map(p => [
       p.name,
-      p.sku,
       p.category,
       p.stockQuantity,
       p.lowStockThreshold,
@@ -203,7 +201,7 @@ export default function LowStockPage() {
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                   <Input
-                    placeholder="Search by name or SKU..."
+                    placeholder="Search by name..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="pl-10"
@@ -256,7 +254,6 @@ export default function LowStockPage() {
                   <thead>
                     <tr className="border-b border-gray-200">
                       <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Product</th>
-                      <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">SKU</th>
                       <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Category</th>
                       <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Current Stock</th>
                       <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Threshold</th>
@@ -286,7 +283,6 @@ export default function LowStockPage() {
                             </div>
                           </div>
                         </td>
-                        <td className="py-4 px-4 text-sm text-gray-600">{product.sku}</td>
                         <td className="py-4 px-4 text-sm text-gray-600 capitalize">
                           {product.category?.replace(/-/g, ' ')}
                         </td>

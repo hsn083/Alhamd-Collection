@@ -24,12 +24,11 @@ export async function GET(request: NextRequest) {
       products = products.filter((p: any) => p.stockStatus === status);
     }
 
-    // Search by name or SKU
+    // Search by name
     if (search) {
       const searchTerm = search.toLowerCase();
       products = products.filter((p: any) =>
-        p.name?.toLowerCase().includes(searchTerm) ||
-        p.sku?.toLowerCase().includes(searchTerm)
+        p.name?.toLowerCase().includes(searchTerm)
       );
     }
 
