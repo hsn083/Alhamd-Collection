@@ -233,6 +233,13 @@ export default function AdminProductsPage() {
     e.preventDefault();
     setIsSubmitting(true);
 
+    // Validate category selection
+    if (!selectedCategory) {
+      error('Please select a category');
+      setIsSubmitting(false);
+      return;
+    }
+
     const productData = {
       name: formData.name,
       sku: formData.sku,
@@ -251,6 +258,8 @@ export default function AdminProductsPage() {
       tags: []
     };
 
+    console.log('[ADMIN_PRODUCTS] Submitting product data:', productData);
+
     try {
       let response;
       if (editingProduct) {
@@ -268,6 +277,7 @@ export default function AdminProductsPage() {
       }
 
       const data = await response.json();
+      console.log('[ADMIN_PRODUCTS] API response:', data);
 
       if (data.success) {
         success(editingProduct ? 'Product updated successfully' : 'Product added successfully');
@@ -283,10 +293,11 @@ export default function AdminProductsPage() {
         resetForm();
         fetchProducts();
       } else {
+        console.error('[ADMIN_PRODUCTS] API error:', data.error);
         error(data.error || 'Failed to save product');
       }
     } catch (err) {
-      console.error('Error saving product:', err);
+      console.error('[ADMIN_PRODUCTS] Error saving product:', err);
       error('Failed to save product');
     } finally {
       setIsSubmitting(false);

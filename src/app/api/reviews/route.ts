@@ -149,15 +149,50 @@ export async function POST(request: NextRequest) {
     const totalRating = allReviews.reduce((sum: number, r: any) => sum + r.rating, 0);
     const averageRating = totalRating / allReviews.length;
 
-    await Product.findByIdAndUpdate(productId, {
-      rating: Math.round(averageRating * 10) / 10,
-      reviewCount: allReviews.length,
-    });
+    const updatedProduct = await Product.findByIdAndUpdate(
+      productId,
+      {
+        rating: Math.round(averageRating * 10) / 10,
+        reviewCount: allReviews.length,
+      },
+      { new: true }
+    );
+
+    // Transform review to match frontend type expectations
+    const reviewObj = newReview.toObject();
+    const transformedReview = {
+      ...reviewObj,
+      id: newReview._id.toString(),
+      productId: reviewObj.product?.toString() || productId,
+    };
+
+    // Transform product to match frontend type expectations
+    if (!updatedProduct) {
+      return NextResponse.json({
+        success: true,
+        message: 'Review submitted successfully',
+        review: transformedReview,
+      }, {
+        headers: {
+          'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+        }
+      });
+    }
+
+    const productObj = updatedProduct.toObject();
+    const transformedProduct = {
+      ...productObj,
+      id: updatedProduct._id.toString(),
+      reviewCount: productObj.reviewCount || 0,
+    };
 
     return NextResponse.json({
       success: true,
       message: 'Review submitted successfully',
-      review: newReview,
+      review: transformedReview,
+      product: transformedProduct,
     }, {
       headers: {
         'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
@@ -208,10 +243,22 @@ export async function GET(request: NextRequest) {
 
     const total = await Review.countDocuments(query);
 
+    // Transform reviews to match frontend type expectations
+    const transformedReviews = reviews.map(review => {
+      const reviewObj = review.toObject();
+      return {
+        ...reviewObj,
+        id: review._id.toString(),
+        productId: reviewObj.product?._id?.toString() || reviewObj.product?.toString() || '',
+        // Keep the product object for display purposes
+        product: reviewObj.product,
+      };
+    });
+
     return NextResponse.json({
       success: true,
-      reviews,
-      count: reviews.length,
+      reviews: transformedReviews,
+      count: transformedReviews.length,
       total,
       page,
       totalPages: Math.ceil(total / limit),
@@ -271,22 +318,80 @@ export async function PUT(request: NextRequest) {
       { new: true }
     ).populate('product', 'name slug');
 
-    // Update product rating if status changed to approved
-    if (status === 'approved' && review.status !== 'approved') {
+    if (!updatedReview) {
+      return NextResponse.json(
+        { success: false, error: 'Failed to update review' },
+        { status: 500 }
+      );
+    }
+
+    // Update product rating if status changed
+    if (status) {
       const allReviews = await Review.find({ product: review.product, status: 'approved' });
       const totalRating = allReviews.reduce((sum: number, r: any) => sum + r.rating, 0);
-      const averageRating = totalRating / allReviews.length;
+      const averageRating = allReviews.length > 0 ? totalRating / allReviews.length : 0;
 
-      await Product.findByIdAndUpdate(review.product, {
+      const updatedProduct = await Product.findByIdAndUpdate(review.product, {
         rating: Math.round(averageRating * 10) / 10,
         reviewCount: allReviews.length,
+      }, { new: true });
+
+      // Transform review to match frontend type expectations
+      const reviewObj = updatedReview.toObject();
+      const transformedReview = {
+        ...reviewObj,
+        id: updatedReview._id.toString(),
+        productId: reviewObj.product?._id?.toString() || reviewObj.product?.toString() || '',
+      };
+
+      // Transform product to match frontend type expectations
+      if (updatedProduct) {
+        const productObj = updatedProduct.toObject();
+        const transformedProduct = {
+          ...productObj,
+          id: updatedProduct._id.toString(),
+          reviewCount: productObj.reviewCount || 0,
+        };
+
+        return NextResponse.json({
+          success: true,
+          message: 'Review updated successfully',
+          review: transformedReview,
+          product: transformedProduct,
+        }, {
+          headers: {
+            'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0',
+          }
+        });
+      }
+
+      return NextResponse.json({
+        success: true,
+        message: 'Review updated successfully',
+        review: transformedReview,
+      }, {
+        headers: {
+          'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+        }
       });
     }
+
+    // Transform review to match frontend type expectations
+    const reviewObj = updatedReview.toObject();
+    const transformedReview = {
+      ...reviewObj,
+      id: updatedReview._id.toString(),
+      productId: reviewObj.product?._id?.toString() || reviewObj.product?.toString() || '',
+    };
 
     return NextResponse.json({
       success: true,
       message: 'Review updated successfully',
-      review: updatedReview,
+      review: transformedReview,
     }, {
       headers: {
         'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',

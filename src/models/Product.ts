@@ -18,6 +18,7 @@ export interface IProduct extends Document {
   rating: number;
   reviewCount: number;
   isFeatured: boolean;
+  isNew: boolean;
   isBestSeller: boolean;
   status: 'active' | 'inactive' | 'draft';
   warranty?: string;
@@ -111,6 +112,10 @@ const ProductSchema = new Schema<IProduct>(
       min: [0, 'Review count cannot be negative'],
     },
     isFeatured: {
+      type: Boolean,
+      default: false,
+    },
+    isNew: {
       type: Boolean,
       default: false,
     },

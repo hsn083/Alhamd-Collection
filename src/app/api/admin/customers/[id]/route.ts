@@ -65,6 +65,12 @@ export async function GET(
     // Calculate total spending
     const totalSpending = orders.reduce((sum: number, order: any) => sum + (order.total || 0), 0);
 
+    // Ensure createdAt has a value with fallback to ObjectId timestamp
+    let createdAt = customer.createdAt;
+    if (!createdAt) {
+      createdAt = customer._id.getTimestamp();
+    }
+
     // Return customer without password
     const customerObj = customer.toObject();
     const { password, ...customerWithoutPassword } = customerObj;
@@ -77,7 +83,8 @@ export async function GET(
         customerId: customer.customerId,
         fullName: customer.name,
         emailVerified: customer.isEmailVerified,
-        joinedDate: customer.createdAt,
+        createdAt: createdAt,
+        joinedDate: createdAt,
         totalOrders: orders.length,
         totalSpending,
         orders,

@@ -63,6 +63,12 @@ export async function GET(request: NextRequest) {
         const totalOrders = orders.length;
         const totalSpending = orders.reduce((sum: number, order: any) => sum + (order.total || 0), 0);
         
+        // Ensure createdAt has a value with fallback to ObjectId timestamp
+        let createdAt = customer.createdAt;
+        if (!createdAt) {
+          createdAt = customer._id.getTimestamp();
+        }
+        
         return {
           ...customer.toObject(),
           id: customer._id.toString(),
@@ -72,7 +78,8 @@ export async function GET(request: NextRequest) {
           password: undefined,
           totalOrders,
           totalSpending,
-          joinedDate: customer.createdAt,
+          createdAt: createdAt,
+          joinedDate: createdAt,
           isBlocked: customer.isBlocked || false,
           isDeleted: customer.isDeleted || false,
         };
@@ -85,6 +92,12 @@ export async function GET(request: NextRequest) {
     
     allOrders.forEach((order: any) => {
       if (order.customerEmail && !orderCustomersMap.has(order.customerEmail.toLowerCase())) {
+        // Ensure createdAt has a value with fallback to ObjectId timestamp
+        let createdAt = order.createdAt;
+        if (!createdAt) {
+          createdAt = order._id.getTimestamp();
+        }
+        
         orderCustomersMap.set(order.customerEmail.toLowerCase(), {
           id: order.customer?.toString() || `guest-${order.customerEmail}`,
           fullName: order.customerName || order.customerEmail.split('@')[0],
@@ -92,12 +105,13 @@ export async function GET(request: NextRequest) {
           phone: order.customerPhone,
           role: 'customer',
           emailVerified: true,
-          createdAt: order.createdAt,
-          joinedDate: order.createdAt,
+          createdAt: createdAt,
+          joinedDate: createdAt,
           totalOrders: 0,
           totalSpending: 0,
           isBlocked: false,
           isDeleted: false,
+          isGuest: true, // Mark as guest customer
         });
       }
     });
@@ -174,6 +188,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Check if this is a guest customer (guest customers cannot be blocked/deleted)
+    if (customerId.startsWith('guest-')) {
+      console.log('[CUSTOMER_POST] Guest customer detected, cannot modify');
+      return NextResponse.json(
+        { success: false, error: 'Guest customers cannot be modified. They do not have an account.' },
+        { status: 400 }
+      );
+    }
+
     // Find customer by either _id or customerId
     let customer = null;
     let lookupMethod = '';
@@ -202,7 +225,7 @@ export async function POST(request: NextRequest) {
     if (!customer) {
       console.log('[CUSTOMER_POST] Customer NOT found with ID:', customerId);
       return NextResponse.json(
-        { success: false, message: 'Customer not found' },
+        { success: false, error: 'Customer not found in database' },
         { status: 404 }
       );
     }
@@ -301,6 +324,15 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
+    // Check if this is a guest customer (guest customers cannot be blocked/deleted)
+    if (id.startsWith('guest-')) {
+      console.log('[CUSTOMER_DELETE] Guest customer detected, cannot delete');
+      return NextResponse.json(
+        { success: false, error: 'Guest customers cannot be deleted. They do not have an account.' },
+        { status: 400 }
+      );
+    }
+
     // Find customer by either _id or customerId
     let customer = null;
     let lookupMethod = '';
@@ -329,7 +361,7 @@ export async function DELETE(request: NextRequest) {
     if (!customer) {
       console.log('[CUSTOMER_DELETE] Customer NOT found with ID:', id);
       return NextResponse.json(
-        { success: false, message: 'Customer not found' },
+        { success: false, error: 'Customer not found in database' },
         { status: 404 }
       );
     }

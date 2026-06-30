@@ -95,8 +95,8 @@ export default function ProductCard({ product }: ProductCardProps) {
         
         <div className="flex items-center space-x-1 mb-2">
           <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-          <span className="text-sm font-medium text-gray-700">{product.rating}</span>
-          <span className="text-sm text-muted-foreground">({product.reviews})</span>
+          <span className="text-sm font-medium text-gray-700">{product.rating.toFixed(1)}</span>
+          <span className="text-sm text-muted-foreground">({product.reviewCount || product.reviews})</span>
         </div>
         
         <div className="flex items-center space-x-2">

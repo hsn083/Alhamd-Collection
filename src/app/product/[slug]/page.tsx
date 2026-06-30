@@ -70,7 +70,7 @@ export default function ProductPage() {
   const [isBuyingNow, setIsBuyingNow] = useState<boolean>(false);
   const { success: toastSuccess, error: toastError } = useToast();
   
-  const { products, refetchProducts } = useProductStore();
+  const { products, refetchProducts, updateSingleProduct } = useProductStore();
   const { reviews, addReview, getApprovedReviewsByProduct, refetchReviews } = useReviewStore();
   const { addItem } = useCartStore();
 
@@ -81,10 +81,13 @@ export default function ProductPage() {
     return product ? getApprovedReviewsByProduct(product.id) : [];
   }, [product, getApprovedReviewsByProduct]);
   
-  const actualReviewCount = productReviews.length;
-  const actualAverageRating = actualReviewCount > 0
-    ? (productReviews.reduce((sum: number, r: any) => sum + r.rating, 0) / actualReviewCount).toFixed(1)
-    : '0.0';
+  // Use product's rating data if available, otherwise calculate from reviews
+  const actualReviewCount = product?.reviewCount ?? productReviews.length;
+  const actualAverageRating = product?.rating 
+    ? product.rating.toFixed(1)
+    : (actualReviewCount > 0
+      ? (productReviews.reduce((sum: number, r: any) => sum + r.rating, 0) / actualReviewCount).toFixed(1)
+      : '0.0');
 
   // Compute filtered reviews from filter state (derived state, no circular dependency)
   const filteredReviews = useMemo(() => {
@@ -349,7 +352,21 @@ export default function ProductPage() {
       if (data.success) {
         toastSuccess('Review submitted successfully');
         setShowReviewForm(false);
-        // Refresh reviews to update the UI
+        
+        // Add the new review to the store immediately
+        if (data.review) {
+          addReview(data.review);
+        }
+        
+        // Update the product in the store immediately with new rating
+        if (data.product) {
+          updateSingleProduct(data.product);
+        }
+        
+        // Refresh product data to ensure sync
+        await refetchProducts();
+        
+        // Refresh reviews to ensure sync
         await fetchReviews();
       } else {
         toastError(data.error || 'Failed to submit review');

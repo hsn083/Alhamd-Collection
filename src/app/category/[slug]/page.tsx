@@ -215,8 +215,18 @@ export default function CategorySlugPage() {
                 <Card key={product.id} className="border border-emerald-100 bg-white hover:border-emerald-200 transition-colors shadow-sm">
                   <CardContent className="p-4">
                     <div className="flex items-center space-x-4">
-                      <div className="w-24 h-24 bg-gradient-to-br from-emerald-500/5 to-teal-600/5 rounded flex items-center justify-center text-4xl">
-                        {category.slug === 'mens-clothing' ? '👔' : category.slug === 'womens-clothing' ? '👗' : '🛍️'}
+                      <div className="relative w-24 h-24 bg-gradient-to-br from-gray-50 to-emerald-50/30 rounded flex items-center justify-center overflow-hidden">
+                        {product.images && product.images.length > 0 ? (
+                          <Image
+                            src={product.images[0]}
+                            alt={product.name}
+                            fill
+                            className="object-contain p-2"
+                            sizes="96px"
+                          />
+                        ) : (
+                          <span className="text-4xl">🛍️</span>
+                        )}
                       </div>
                       <div className="flex-1">
                         <h3 className="font-semibold mb-1 text-emerald-950">{product.name}</h3>

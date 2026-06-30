@@ -7,6 +7,7 @@ interface ProductStore {
   setProducts: (products: Product[]) => void;
   addProduct: (product: Product) => void;
   updateProduct: (id: string, product: Partial<Product>) => void;
+  updateSingleProduct: (updatedProduct: Product) => void;
   deleteProduct: (id: string) => void;
   getProductById: (id: string) => Product | undefined;
   getProductBySlug: (slug: string) => Product | undefined;
@@ -37,6 +38,15 @@ export const useProductStore = create<ProductStore>()(
                   updatedAt: new Date().toISOString(),
                 }
               : prod
+          ),
+        }));
+      },
+
+      // Method to update a single product in the store (useful for rating updates)
+      updateSingleProduct: (updatedProduct: Product) => {
+        set((state) => ({
+          products: state.products.map((prod) =>
+            prod.id === updatedProduct.id ? updatedProduct : prod
           ),
         }));
       },

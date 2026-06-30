@@ -230,16 +230,20 @@ export default function CustomerProfilePage({ params }: { params: { id: string }
   };
 
   const formatJoinedDate = (customer: Customer) => {
-    const date = customer.joinedDate || customer.createdAt;
+    // Use createdAt as primary, joinedDate as fallback
+    const date = customer.createdAt || customer.joinedDate;
     if (!date) return 'N/A';
     
     try {
       const d = new Date(date);
+      // Check if date is valid
+      if (isNaN(d.getTime())) return 'N/A';
+      
       // Format: 29 Jun 2026, 10:45 AM
       const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true };
       return d.toLocaleDateString('en-GB', options);
     } catch (error) {
-      return 'Invalid Date';
+      return 'N/A';
     }
   };
 

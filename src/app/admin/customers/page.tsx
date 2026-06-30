@@ -53,6 +53,7 @@ interface Customer {
   totalSpending?: number;
   isBlocked?: boolean;
   isDeleted?: boolean;
+  isGuest?: boolean;
 }
 
 export default function AdminCustomersPage() {
@@ -163,6 +164,12 @@ export default function AdminCustomersPage() {
   };
 
   const handleBlockCustomer = async (customerId: string, block: boolean) => {
+    // Check if this is a guest customer
+    if (customerId.startsWith('guest-')) {
+      alert('Guest customers cannot be blocked. They do not have an account.');
+      return;
+    }
+
     if (!confirm(`Are you sure you want to ${block ? 'block' : 'unblock'} this customer?`)) {
       return;
     }
@@ -197,6 +204,12 @@ export default function AdminCustomersPage() {
   };
 
   const handleDeleteCustomer = async (customerId: string) => {
+    // Check if this is a guest customer
+    if (customerId.startsWith('guest-')) {
+      alert('Guest customers cannot be deleted. They do not have an account.');
+      return;
+    }
+
     if (!confirm('Are you sure you want to permanently delete this customer? This action cannot be undone.')) {
       return;
     }
@@ -286,6 +299,9 @@ export default function AdminCustomersPage() {
     if (customer.isBlocked) {
       return 'bg-red-500/20 text-red-400 border-red-500/50';
     }
+    if (customer.isGuest) {
+      return 'bg-purple-500/20 text-purple-400 border-purple-500/50';
+    }
     if (customer.emailVerified) {
       return 'bg-emerald-100 text-emerald-700 border-emerald-300';
     }
@@ -294,21 +310,26 @@ export default function AdminCustomersPage() {
 
   const getStatusText = (customer: Customer) => {
     if (customer.isBlocked) return 'Blocked';
+    if (customer.isGuest) return 'Guest';
     if (customer.emailVerified) return 'Verified';
     return 'Unverified';
   };
 
   const formatJoinedDate = (customer: Customer) => {
-    const date = customer.joinedDate || customer.createdAt;
+    // Use createdAt as primary, joinedDate as fallback
+    const date = customer.createdAt || customer.joinedDate;
     if (!date) return 'N/A';
     
     try {
       const d = new Date(date);
+      // Check if date is valid
+      if (isNaN(d.getTime())) return 'N/A';
+      
       // Format: 29 Jun 2026
       const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short', year: 'numeric' };
       return d.toLocaleDateString('en-GB', options);
     } catch (error) {
-      return 'Invalid Date';
+      return 'N/A';
     }
   };
 
@@ -592,30 +613,41 @@ export default function AdminCustomersPage() {
                                 <Eye className="mr-2 h-4 w-4" />
                                 View Details
                               </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => handleVerifyCustomer(customer.id, !customer.emailVerified)}>
-                                <CheckCircle className="mr-2 h-4 w-4" />
-                                {customer.emailVerified ? 'Unverify' : 'Verify'}
-                              </DropdownMenuItem>
-                              <DropdownMenuSeparator />
-                              {customer.isBlocked ? (
-                                <DropdownMenuItem onClick={() => handleBlockCustomer(customer.id, false)}>
-                                  <Shield className="mr-2 h-4 w-4" />
-                                  Unblock
-                                </DropdownMenuItem>
-                              ) : (
-                                <DropdownMenuItem onClick={() => handleBlockCustomer(customer.id, true)} className="text-red-400">
-                                  <Ban className="mr-2 h-4 w-4" />
-                                  Block
+                              {!customer.isGuest && (
+                                <DropdownMenuItem onClick={() => handleVerifyCustomer(customer.id, !customer.emailVerified)}>
+                                  <CheckCircle className="mr-2 h-4 w-4" />
+                                  {customer.emailVerified ? 'Unverify' : 'Verify'}
                                 </DropdownMenuItem>
                               )}
-                              <DropdownMenuSeparator />
-                              <DropdownMenuItem 
-                                onClick={() => handleDeleteCustomer(customer.id)}
-                                className="text-red-400"
-                              >
-                                <Trash2 className="mr-2 h-4 w-4" />
-                                Delete Permanently
-                              </DropdownMenuItem>
+                              {!customer.isGuest && <DropdownMenuSeparator />}
+                              {!customer.isGuest && (
+                                <>
+                                  {customer.isBlocked ? (
+                                    <DropdownMenuItem onClick={() => handleBlockCustomer(customer.id, false)}>
+                                      <Shield className="mr-2 h-4 w-4" />
+                                      Unblock
+                                    </DropdownMenuItem>
+                                  ) : (
+                                    <DropdownMenuItem onClick={() => handleBlockCustomer(customer.id, true)} className="text-red-400">
+                                      <Ban className="mr-2 h-4 w-4" />
+                                      Block
+                                    </DropdownMenuItem>
+                                  )}
+                                  <DropdownMenuSeparator />
+                                  <DropdownMenuItem 
+                                    onClick={() => handleDeleteCustomer(customer.id)}
+                                    className="text-red-400"
+                                  >
+                                    <Trash2 className="mr-2 h-4 w-4" />
+                                    Delete Permanently
+                                  </DropdownMenuItem>
+                                </>
+                              )}
+                              {customer.isGuest && (
+                                <div className="px-2 py-1 text-xs text-muted-foreground italic">
+                                  Guest customers cannot be modified
+                                </div>
+                              )}
                             </DropdownMenuContent>
                           </DropdownMenu>
                         </td>

@@ -20,6 +20,7 @@ export interface Product {
   features: string[];
   warranty: string;
   rating: number;
+  reviewCount: number;
   reviews: number;
   isNew: boolean;
   isFeatured: boolean;
