@@ -5,6 +5,7 @@ import Analytics from "@/components/Analytics";
 import SettingsProvider from "@/components/SettingsProvider";
 import { ToastContainer } from "@/components/ui/toast";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { OrganizationSchema, WebsiteSchema, OnlineStoreSchema } from "@/components/StructuredData";
 
 // Force dynamic rendering to avoid build-time fetch issues
 export const dynamic = 'force-dynamic';
@@ -37,43 +38,79 @@ async function getSettings() {
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSettings();
   
-  const siteName = settings?.general?.siteName || 'AlhamdCollection';
-  const metaTitle = settings?.seo?.metaTitle || 'AlhamdCollection | Premium Clothing & Shoes';
-  const metaDescription = settings?.seo?.metaDescription || 'Shop premium clothing, shoes, and fashion accessories at AlhamdCollection. Style meets comfort.';
-  const metaKeywords = settings?.seo?.metaKeywords || 'clothing, shoes, fashion, sneakers, apparel, men\'s fashion, women\'s fashion, footwear, AlhamdCollection';
-  const ogImage = settings?.seo?.ogImage || '/images/og-image.jpg';
+  const siteName = settings?.general?.siteName || 'ALHAMD COLLECTION';
+  const metaTitle = settings?.seo?.metaTitle || 'ALHAMD COLLECTION | Premium Pakistani Clothing & Shoes Online Store';
+  const metaDescription = settings?.seo?.metaDescription || 'Shop premium Pakistani clothing, shoes, and fashion accessories at ALHAMD COLLECTION. Discover the latest trends in men\'s and women\'s fashion with nationwide delivery across Pakistan. Quality meets affordability.';
+  const metaKeywords = settings?.seo?.metaKeywords || 'Pakistani clothing, online clothing store Pakistan, men\'s fashion Pakistan, women\'s fashion Pakistan, shoes Pakistan, sneakers, apparel, formal wear, casual wear, traditional clothing, ALHAMD COLLECTION, fashion online Pakistan, clothing brand Pakistan';
+  const ogImage = settings?.seo?.ogImage || '/Logo.jpeg';
   const canonicalUrl = settings?.seo?.canonicalUrl || 'https://alhamdcollection.pk';
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://alhamdcollection.pk';
 
   return {
-    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://alhamdcollection.pk'),
-    title: metaTitle,
+    metadataBase: new URL(siteUrl),
+    title: {
+      default: metaTitle,
+      template: '%s | ALHAMD COLLECTION'
+    },
     description: metaDescription,
     keywords: metaKeywords,
+    authors: [{ name: 'ALHAMD COLLECTION' }],
+    creator: 'ALHAMD COLLECTION',
+    publisher: 'ALHAMD COLLECTION',
+    formatDetection: {
+      email: false,
+      address: false,
+      telephone: false,
+    },
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
       title: settings?.seo?.ogTitle || metaTitle,
       description: settings?.seo?.ogDescription || metaDescription,
       url: canonicalUrl,
       siteName: siteName,
-      locale: "en_PK",
-      type: "website",
+      locale: 'en_PK',
+      type: 'website',
       images: [
         {
           url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: `${siteName} - Premium Pakistani Clothing & Shoes`,
         }
-      ]
+      ],
     },
     twitter: {
-      card: settings?.seo?.twitterCard || "summary_large_image",
+      card: 'summary_large_image',
       title: settings?.seo?.twitterTitle || metaTitle,
       description: settings?.seo?.twitterDescription || metaDescription,
       images: [settings?.seo?.twitterImage || ogImage],
+      creator: '@alhamdcollection',
+      site: '@alhamdcollection',
     },
     robots: {
-      index: settings?.seo?.robots === 'index, follow',
-      follow: settings?.seo?.robots === 'index, follow',
+      index: settings?.seo?.robots !== 'noindex',
+      follow: settings?.seo?.robots !== 'nofollow',
+      googleBot: {
+        index: settings?.seo?.robots !== 'noindex',
+        follow: settings?.seo?.robots !== 'nofollow',
+        'max-video-preview': -1,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+      },
     },
-    alternates: {
-      canonical: canonicalUrl,
+    verification: {
+      google: process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION,
+      yandex: process.env.NEXT_PUBLIC_YANDEX_VERIFICATION,
+    },
+    category: 'ecommerce',
+    other: {
+      'theme-color': '#0F766E',
+      'msapplication-TileColor': '#0F766E',
+      'apple-mobile-web-app-capable': 'yes',
+      'apple-mobile-web-app-status-bar-style': 'default',
+      'apple-mobile-web-app-title': 'ALHAMD COLLECTION',
     },
   };
 }
@@ -84,8 +121,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body>
+    <html lang="en" className="scroll-smooth">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://images.unsplash.com" />
+        <link rel="preconnect" href="https://res.cloudinary.com" />
+      </head>
+      <body className={`${inter.variable} ${poppins.variable}`}>
+        <OrganizationSchema />
+        <WebsiteSchema />
+        <OnlineStoreSchema />
         <SettingsProvider>
           {children}
         </SettingsProvider>
