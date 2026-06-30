@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -16,6 +16,23 @@ import {
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
+
+// Error boundary component
+function ErrorBoundary({ children, fallback }: { children: React.ReactNode; fallback: React.ReactNode }) {
+  const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    const handleError = () => setHasError(true);
+    window.addEventListener('error', handleError);
+    return () => window.removeEventListener('error', handleError);
+  }, []);
+
+  if (hasError) {
+    return <>{fallback}</>;
+  }
+
+  return <>{children}</>;
+}
 
 const STATUS_FLOW = [
   { value: 'pending', label: 'Order Placed', desc: 'Your order has been placed successfully', icon: Clock },
@@ -51,6 +68,7 @@ export default function TrackOrderPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [searched, setSearched] = useState(false);
+  const [componentError, setComponentError] = useState<string | null>(null);
 
   const handleTrack = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -95,8 +113,37 @@ export default function TrackOrderPage() {
   const progressPct = isTerminal ? 0 : currentIdx >= 0
     ? Math.round(((currentIdx + 1) / STATUS_FLOW.length) * 100) : 0;
 
+  // Fallback UI for component errors
+  if (componentError) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <Card className="max-w-md w-full">
+          <CardContent className="p-6 text-center">
+            <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+            <h2 className="text-xl font-bold text-gray-900 mb-2">Something went wrong</h2>
+            <p className="text-gray-600 mb-4">{componentError}</p>
+            <Button onClick={() => window.location.reload()}>Reload Page</Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
-    <>
+    <ErrorBoundary
+      fallback={
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+          <Card className="max-w-md w-full">
+            <CardContent className="p-6 text-center">
+              <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+              <h2 className="text-xl font-bold text-gray-900 mb-2">Something went wrong</h2>
+              <p className="text-gray-600 mb-4">An error occurred while loading this page. Please try refreshing.</p>
+              <Button onClick={() => window.location.reload()}>Reload Page</Button>
+            </CardContent>
+          </Card>
+        </div>
+      }
+    >
       <Header />
       <main className="min-h-screen bg-gradient-to-b from-emerald-50 to-white py-12">
         <div className="container mx-auto px-4 max-w-4xl">
@@ -181,9 +228,9 @@ export default function TrackOrderPage() {
                       <div className="flex items-center gap-2 mt-2">
                         <Calendar className="h-4 w-4 text-gray-400" />
                         <p className="text-sm text-gray-500">
-                          Placed on {new Date(order.createdAt).toLocaleDateString('en-PK', { 
+                          Placed on {order.createdAt ? new Date(order.createdAt).toLocaleDateString('en-PK', { 
                             day: 'numeric', month: 'long', year: 'numeric' 
-                          })}
+                          }) : 'N/A'}
                         </p>
                       </div>
                     </div>
@@ -191,8 +238,8 @@ export default function TrackOrderPage() {
                       <Badge className={`text-sm px-4 py-2 border ${badgeClass}`}>
                         {STATUS_FLOW.find(s => s.value === order.status)?.label || order.status}
                       </Badge>
-                      <p className="text-3xl font-bold text-emerald-700 mt-2">PKR {order.total?.toLocaleString()}</p>
-                      <p className="text-sm text-gray-400">{order.items?.length} item(s)</p>
+                      <p className="text-3xl font-bold text-emerald-700 mt-2">PKR {order.total?.toLocaleString() || '0'}</p>
+                      <p className="text-sm text-gray-400">{order.items?.length || 0} item(s)</p>
                     </div>
                   </div>
 
@@ -267,7 +314,7 @@ export default function TrackOrderPage() {
                               )}
                               {isDone && order.statusHistory && (
                                 <p className="text-xs text-gray-400 mt-1">
-                                  {new Date(order.statusHistory[i]?.timestamp || order.createdAt).toLocaleString('en-PK')}
+                                  {order.statusHistory[i]?.timestamp ? new Date(order.statusHistory[i].timestamp).toLocaleString('en-PK') : ''}
                                 </p>
                               )}
                             </div>
@@ -300,7 +347,7 @@ export default function TrackOrderPage() {
                             <div className="flex-1">
                               <p className="font-medium text-gray-800">{statusConfig?.label || history.status}</p>
                               <p className="text-xs text-gray-500 mt-1">
-                                {new Date(history.timestamp).toLocaleString('en-PK')}
+                                {history.timestamp ? new Date(history.timestamp).toLocaleString('en-PK') : ''}
                               </p>
                               {history.note && (
                                 <p className="text-sm text-gray-600 mt-1">{history.note}</p>
@@ -361,11 +408,11 @@ export default function TrackOrderPage() {
                       <MapPin className="h-4 w-4 text-emerald-600" /> Delivery Address
                     </h3>
                     <div className="space-y-2 text-sm">
-                      <p className="font-medium text-gray-800">{order.address?.fullName}</p>
-                      <p className="text-gray-600">{order.address?.city}, {order.address?.province}</p>
+                      <p className="font-medium text-gray-800">{order.address?.fullName || 'N/A'}</p>
+                      <p className="text-gray-600">{order.address?.city || 'N/A'}, {order.address?.province || 'N/A'}</p>
                       <div className="flex items-center gap-2 text-gray-500 mt-2">
                         <Phone className="h-4 w-4" />
-                        <span>{order.address?.phone}</span>
+                        <span>{order.address?.phone || 'N/A'}</span>
                       </div>
                     </div>
                   </CardContent>
@@ -376,16 +423,22 @@ export default function TrackOrderPage() {
               <Card className="border border-gray-100 shadow-lg">
                 <CardContent className="p-6">
                   <h3 className="text-sm font-semibold text-gray-700 mb-4 flex items-center gap-2">
-                    <Package className="h-4 w-4 text-emerald-600" /> Ordered Items ({order.items?.length})
+                    <Package className="h-4 w-4 text-emerald-600" /> Ordered Items ({order.items?.length || 0})
                   </h3>
                   <div className="space-y-3">
                     {order.items?.map((item: any, i: number) => (
                       <div key={i} className="flex items-center gap-4 p-3 bg-gray-50 rounded-xl">
                         {item.product?.images?.[0] ? (
                           <div className="relative w-14 h-14">
-                            <Image src={item.product.images[0]} alt={item.product.name}
+                            <Image 
+                              src={item.product.images[0]} 
+                              alt={item.product.name || 'Product'}
                               fill
-                              className="object-cover rounded-lg border border-gray-100" />
+                              className="object-cover rounded-lg border border-gray-100" 
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none';
+                              }}
+                            />
                           </div>
                         ) : (
                           <div className="w-14 h-14 bg-emerald-50 rounded-lg flex items-center justify-center text-2xl">👗</div>
@@ -395,23 +448,23 @@ export default function TrackOrderPage() {
                           <p className="text-xs text-gray-400">{item.product?.brand || 'AlhamdCollection'} · Qty: {item.quantity}</p>
                         </div>
                         <div className="text-right">
-                          <p className="font-semibold text-gray-800">PKR {(item.price * item.quantity)?.toLocaleString()}</p>
-                          <p className="text-xs text-gray-400">PKR {item.price?.toLocaleString()} each</p>
+                          <p className="font-semibold text-gray-800">PKR {((item.price || 0) * (item.quantity || 0))?.toLocaleString()}</p>
+                          <p className="text-xs text-gray-400">PKR {(item.price || 0)?.toLocaleString()} each</p>
                         </div>
                       </div>
                     ))}
                   </div>
                   <div className="border-t border-gray-100 mt-4 pt-4 space-y-2">
                     <div className="flex justify-between text-sm text-gray-500">
-                      <span>Subtotal</span><span>PKR {order.subtotal?.toLocaleString()}</span>
+                      <span>Subtotal</span><span>PKR {(order.subtotal || 0)?.toLocaleString()}</span>
                     </div>
-                    {order.discount > 0 && (
+                    {(order.discount || 0) > 0 && (
                       <div className="flex justify-between text-sm text-emerald-600">
-                        <span>Discount</span><span>-PKR {order.discount?.toLocaleString()}</span>
+                        <span>Discount</span><span>-PKR {(order.discount || 0)?.toLocaleString()}</span>
                       </div>
                     )}
                     <div className="flex justify-between font-bold text-gray-900 border-t border-gray-100 pt-2 text-base">
-                      <span>Total</span><span className="text-emerald-700">PKR {order.total?.toLocaleString()}</span>
+                      <span>Total</span><span className="text-emerald-700">PKR {(order.total || 0)?.toLocaleString()}</span>
                     </div>
                   </div>
                 </CardContent>
@@ -445,6 +498,6 @@ export default function TrackOrderPage() {
         </div>
       </main>
       <Footer />
-    </>
+    </ErrorBoundary>
   );
 }
