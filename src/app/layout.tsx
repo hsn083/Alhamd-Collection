@@ -43,8 +43,8 @@ export async function generateMetadata(): Promise<Metadata> {
   const metaDescription = settings?.seo?.metaDescription || 'Shop premium Pakistani clothing, shoes, and fashion accessories at ALHAMD COLLECTION. Discover the latest trends in men\'s and women\'s fashion with nationwide delivery across Pakistan. Quality meets affordability.';
   const metaKeywords = settings?.seo?.metaKeywords || 'Pakistani clothing, online clothing store Pakistan, men\'s fashion Pakistan, women\'s fashion Pakistan, shoes Pakistan, sneakers, apparel, formal wear, casual wear, traditional clothing, ALHAMD COLLECTION, fashion online Pakistan, clothing brand Pakistan';
   const ogImage = settings?.seo?.ogImage || '/Logo.jpeg';
-  const canonicalUrl = settings?.seo?.canonicalUrl || 'https://alhamdcollection.pk';
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://alhamdcollection.pk';
+  const canonicalUrl = settings?.seo?.canonicalUrl || 'https://alhamd-collection.vercel.app/';
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://alhamd-collection.vercel.app/';
 
   return {
     metadataBase: new URL(siteUrl),
