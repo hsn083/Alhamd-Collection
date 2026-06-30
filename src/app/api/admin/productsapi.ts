@@ -129,7 +129,7 @@ export async function POST(request: NextRequest) {
       warranty: body.warranty,
       tags: body.tags || [],
       isFeatured: body.isFeatured || false,
-      isNew: body.isNew || false,
+      newArrival: body.isNew || false,
       isBestSeller: body.isBestSeller || false,
       status: body.status || 'active',
     });
@@ -230,7 +230,7 @@ export async function PUT(request: NextRequest) {
     if (body.warranty !== undefined) updateData.warranty = body.warranty;
     if (body.tags !== undefined) updateData.tags = body.tags;
     if (body.isFeatured !== undefined) updateData.isFeatured = body.isFeatured;
-    if (body.isNew !== undefined) updateData.isNew = body.isNew;
+    if (body.newArrival !== undefined) updateData.newArrival = body.newArrival;
     if (body.isBestSeller !== undefined) updateData.isBestSeller = body.isBestSeller;
     if (body.status !== undefined) updateData.status = body.status;
 

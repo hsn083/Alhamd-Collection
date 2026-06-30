@@ -40,7 +40,7 @@ interface Product {
   warranty: string;
   rating: number;
   reviews: number;
-  isNew: boolean;
+  newArrival: boolean;
   isFeatured: boolean;
   isBestSeller: boolean;
   tags: string[];
@@ -122,7 +122,7 @@ export default function AdminProductsPage() {
         setProductImages(product.images || []);
         setSelectedCategory(product.categoryId || product.category || '');
         setIsFeatured(product.isFeatured || false);
-        setIsNew(product.isNew || false);
+        setIsNew(product.newArrival || false);
         setIsBestSeller(product.isBestSeller || false);
         setFormData({
           name: product.name || '',
@@ -663,7 +663,7 @@ export default function AdminProductsPage() {
                             </td>
                             <td className="p-4">
                               <div className="flex space-x-1">
-                                {product.isNew && <Badge className="bg-emerald-600">New</Badge>}
+                                {product.newArrival && <Badge className="bg-emerald-600">New</Badge>}
                                 {product.isFeatured && <Badge className="bg-blue-500">Featured</Badge>}
                                 {product.isBestSeller && <Badge className="bg-orange-500">Best Seller</Badge>}
                               </div>

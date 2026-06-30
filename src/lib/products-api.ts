@@ -24,7 +24,7 @@ interface StoredProduct {
   warranty: string;
   rating: number;
   reviews: number;
-  isNew: boolean;
+  newArrival: boolean;
   isFeatured: boolean;
   isBestSeller: boolean;
   tags: string[];
@@ -143,7 +143,7 @@ export async function POST(request: NextRequest) {
       warranty: formData.warranty || '',
       rating: 0,
       reviews: 0,
-      isNew: formData.isNew || false,
+      newArrival: formData.isNew || false,
       isFeatured: formData.isFeatured || false,
       isBestSeller: formData.isBestSeller || false,
       tags: formData.tags || [],
@@ -235,7 +235,7 @@ export async function PUT(request: NextRequest) {
       images: formData.images || [],
       features: formData.features || [],
       warranty: formData.warranty || '',
-      isNew: formData.isNew || false,
+      newArrival: formData.isNew || false,
       isFeatured: formData.isFeatured || false,
       isBestSeller: formData.isBestSeller || false,
       tags: formData.tags || [],

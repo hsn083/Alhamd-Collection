@@ -63,7 +63,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             </Badge>
           )}
           
-          {product.isNew && (
+          {product.newArrival && (
             <Badge className="absolute top-2 right-10 bg-gradient-to-r from-emerald-500 to-teal-600 z-10 text-white">
               New
             </Badge>

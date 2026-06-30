@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import User from '@/models/User';
 import Order from '@/models/Order';
+import mongoose from 'mongoose';
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic';
@@ -69,7 +70,8 @@ export async function GET(request: NextRequest) {
 
     orders.forEach((order) => {
       const customerId = order.customer?.toString();
-      if (customerId) {
+      // Only process valid Mongo ObjectIds (ignore "guest", "", null, undefined)
+      if (customerId && mongoose.Types.ObjectId.isValid(customerId)) {
         if (!customerSpending[customerId]) {
           customerSpending[customerId] = 0;
           customerOrderCounts[customerId] = 0;
@@ -111,11 +113,14 @@ export async function GET(request: NextRequest) {
       }))
       .slice(0, 5);
 
-    // Calculate customers with orders
+    // Calculate customers with orders - filter valid ObjectIds only
+    const validCustomerIds = Object.keys(customerSpending).filter(id => 
+      mongoose.Types.ObjectId.isValid(id)
+    );
     const customersWithOrders = await User.countDocuments({
       role: 'customer',
       isDeleted: false,
-      _id: { $in: Object.keys(customerSpending) },
+      _id: { $in: validCustomerIds },
     });
 
     const customersWithoutOrders = totalUniqueCustomers - customersWithOrders;

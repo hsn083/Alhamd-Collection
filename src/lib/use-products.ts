@@ -19,7 +19,7 @@ export interface Product {
   warranty: string;
   rating: number;
   reviews: number;
-  isNew: boolean;
+  newArrival: boolean;
   isFeatured: boolean;
   isBestSeller: boolean;
   tags: string[];

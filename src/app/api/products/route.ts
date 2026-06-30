@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
     }
 
     if (isNew) {
-      query.isNew = true;
+      query.newArrival = true;
     }
 
     if (bestSellers) {
@@ -189,7 +189,7 @@ export async function POST(request: NextRequest) {
       warranty: body.warranty,
       tags: body.tags || [],
       isFeatured: body.isFeatured || false,
-      isNew: body.isNew || false,
+      newArrival: body.isNew || false,
       isBestSeller: body.isBestSeller || false,
       status: body.status || 'active',
     });

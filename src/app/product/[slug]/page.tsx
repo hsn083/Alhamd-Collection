@@ -551,7 +551,7 @@ export default function ProductPage() {
             <div>
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  {product.isNew && (
+                  {product.newArrival && (
                     <Badge className="mb-2 bg-green-500">New</Badge>
                   )}
                   {product.isBestSeller && (

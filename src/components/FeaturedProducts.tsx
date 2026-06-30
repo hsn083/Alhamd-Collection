@@ -29,7 +29,7 @@ export default function FeaturedProducts() {
 
   const featuredProducts = products.filter(p => p.isFeatured).slice(0, 8);
   const bestSellers = products.filter(p => p.isBestSeller).slice(0, 4);
-  const newArrivals = products.filter(p => p.isNew).slice(0, 4);
+  const newArrivals = products.filter(p => p.newArrival).slice(0, 4);
 
   if (isLoading) {
     return (

@@ -22,7 +22,7 @@ export interface Product {
   rating: number;
   reviewCount: number;
   reviews: number;
-  isNew: boolean;
+  newArrival: boolean;
   isFeatured: boolean;
   isBestSeller: boolean;
   tags: string[];
