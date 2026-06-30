@@ -233,9 +233,44 @@ export default function AdminProductsPage() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Validate category selection
+    // Validate required fields
+    if (!formData.name.trim()) {
+      error('Product name is required');
+      setIsSubmitting(false);
+      return;
+    }
+    if (!formData.sku.trim()) {
+      error('SKU is required');
+      setIsSubmitting(false);
+      return;
+    }
+    if (!formData.brand.trim()) {
+      error('Brand is required');
+      setIsSubmitting(false);
+      return;
+    }
     if (!selectedCategory) {
       error('Please select a category');
+      setIsSubmitting(false);
+      return;
+    }
+    if (!formData.price || Number(formData.price) <= 0) {
+      error('Price must be greater than 0');
+      setIsSubmitting(false);
+      return;
+    }
+    if (!formData.stock || Number(formData.stock) < 0) {
+      error('Stock cannot be negative');
+      setIsSubmitting(false);
+      return;
+    }
+    if (!formData.description.trim()) {
+      error('Description is required');
+      setIsSubmitting(false);
+      return;
+    }
+    if (productImages.length === 0) {
+      error('Please upload at least one product image');
       setIsSubmitting(false);
       return;
     }
@@ -246,16 +281,17 @@ export default function AdminProductsPage() {
       brand: formData.brand,
       category: selectedCategory,
       categoryId: selectedCategory,
-      price: formData.price,
-      discountPrice: formData.discountPrice || undefined,
-      stock: formData.stock,
+      price: Number(formData.price),
+      discountPrice: formData.discountPrice ? Number(formData.discountPrice) : undefined,
+      stock: Number(formData.stock),
       description: formData.description,
       images: productImages,
       isFeatured,
       isNew,
       isBestSeller,
       warranty: '1 Year',
-      tags: []
+      tags: [],
+      status: 'active'
     };
 
     console.log('[ADMIN_PRODUCTS] Submitting product data:', productData);
@@ -439,6 +475,16 @@ export default function AdminProductsPage() {
                       />
                     </div>
                     <div>
+                      <Label htmlFor="sku">SKU *</Label>
+                      <Input
+                        id="sku"
+                        placeholder="e.g., RAZ-DV2-001"
+                        value={formData.sku}
+                        onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
+                        required
+                      />
+                    </div>
+                    <div>
                       <Label htmlFor="brand">Brand *</Label>
                       <Input
                         id="brand"
@@ -495,14 +541,16 @@ export default function AdminProductsPage() {
                         required
                       />
                     </div>
-                    <div>
+                    <div className="md:col-span-2">
                       <Label htmlFor="description">Description *</Label>
-                      <Input
+                      <textarea
                         id="description"
-                        placeholder="Product description"
+                        placeholder="Enter detailed product description"
                         value={formData.description}
                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                         required
+                        rows={4}
+                        className="w-full px-3 py-2 border border-emerald-100 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
                       />
                     </div>
                   </div>

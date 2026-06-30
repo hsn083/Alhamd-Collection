@@ -169,6 +169,7 @@ export async function PUT(
     if (body.tags !== undefined) updateData.tags = body.tags;
     if (body.isFeatured !== undefined) updateData.isFeatured = body.isFeatured;
     if (body.newArrival !== undefined) updateData.newArrival = body.newArrival;
+    if (body.isNew !== undefined) updateData.newArrival = body.isNew;
     if (body.isBestSeller !== undefined) updateData.isBestSeller = body.isBestSeller;
     if (body.status !== undefined) updateData.status = body.status;
 
