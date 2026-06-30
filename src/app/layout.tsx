@@ -19,8 +19,9 @@ const poppins = Poppins({
 
 async function getSettings() {
   try {
-    // Use relative URL for internal API call during runtime
-    const response = await fetch('/api/settings', {
+    // Use absolute URL for server-side fetch
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    const response = await fetch(`${baseUrl}/api/settings`, {
       cache: 'no-store',
     });
     if (response.ok) {

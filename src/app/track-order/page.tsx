@@ -12,9 +12,6 @@ import {
   MapPin, Phone, Mail, Calendar, Loader2, Search, AlertCircle
 } from 'lucide-react';
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
-
 // Status flow matching the actual Order model enum
 const STATUS_FLOW = [
   { value: 'pending', label: 'Order Placed', desc: 'Your order has been placed successfully', icon: Clock },
@@ -112,7 +109,7 @@ export default function TrackOrderPage() {
                   <label className="text-sm font-medium text-gray-700 mb-2 block">Order ID *</label>
                   <Input
                     type="text"
-                    placeholder="e.g., 100001 or Order# (100001)"
+                    placeholder="e.g., 100001 "
                     value={orderId}
                     onChange={(e) => setOrderId(e.target.value)}
                     className="border-emerald-200 focus:border-emerald-400"
@@ -120,7 +117,7 @@ export default function TrackOrderPage() {
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-700 mb-2 block">Phone Number (Optional)</label>
+                  <label className="text-sm font-medium text-gray-700 mb-2 block">Phone Number </label>
                   <Input
                     type="tel"
                     placeholder="0300-xxxxxxx or +923xxxxxxxxx"
@@ -325,8 +322,16 @@ export default function TrackOrderPage() {
                     {order.items?.map((item: any, i: number) => (
                       <div key={i} className="flex items-center gap-4 p-3 bg-gray-50 rounded-xl">
                         {item.product?.images?.[0] ? (
-                          <div className="w-14 h-14 bg-emerald-50 rounded-lg flex items-center justify-center">
-                            <span className="text-2xl">👗</span>
+                          <div className="w-14 h-14 bg-emerald-50 rounded-lg overflow-hidden flex items-center justify-center">
+                            <img
+                              src={item.product.images[0]}
+                              alt={item.product?.name || 'Product'}
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none';
+                                e.currentTarget.parentElement?.classList.add('flex');
+                              }}
+                            />
                           </div>
                         ) : (
                           <div className="w-14 h-14 bg-emerald-50 rounded-lg flex items-center justify-center text-2xl">👗</div>

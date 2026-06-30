@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -19,9 +20,6 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { useSettingsStore } from '@/store/settingsStore';
-
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
 
 export default function ContactPage() {
   const general = useSettingsStore(state => state.settings.general);
@@ -279,9 +277,11 @@ export default function ContactPage() {
                   <p className="text-sm text-muted-foreground mb-4">
                     Check our FAQ section for quick answers to common questions.
                   </p>
-                  <Button variant="outline" className="w-full">
-                    View FAQ
-                  </Button>
+                  <Link href="/faq">
+                    <Button variant="outline" className="w-full cursor-pointer hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
+                      View FAQ
+                    </Button>
+                  </Link>
                 </CardContent>
               </Card>
             </div>

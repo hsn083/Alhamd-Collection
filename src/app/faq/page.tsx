@@ -1,9 +1,8 @@
+'use client';
+
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useSettingsStore } from '@/store/settingsStore';
-
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
 
 const faqs = [
   {
