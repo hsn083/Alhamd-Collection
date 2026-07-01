@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import Review from '@/models/Review';
 import Product from '@/models/Product';
+import mongoose from 'mongoose';
 
 // Force dynamic rendering to prevent caching
 export const dynamic = 'force-dynamic';
@@ -20,9 +21,14 @@ function sanitizeInput(input: string): string {
 function validateReviewData(data: any): { isValid: boolean; error?: string; sanitized?: any } {
   const { productId, customerName, customerEmail, rating, title, comment, images, video, variant } = data;
 
-  // Sanitize string inputs
+  // Validate productId is a valid ObjectId or string
+  if (!productId || (typeof productId === 'string' && !productId.trim())) {
+    return { isValid: false, error: 'Product ID is required' };
+  }
+
+  // Don't sanitize productId - keep it as-is for ObjectId conversion
   const sanitized: any = {
-    productId: sanitizeInput(String(productId || '')),
+    productId: productId, // Keep original for ObjectId conversion
     customerName: sanitizeInput(String(customerName || '')),
     customerEmail: sanitizeInput(String(customerEmail || '')),
     rating: parseInt(rating, 10),
@@ -50,10 +56,7 @@ function validateReviewData(data: any): { isValid: boolean; error?: string; sani
     };
   }
 
-  // Validate required fields
-  if (!sanitized.productId || sanitized.productId.length === 0) {
-    return { isValid: false, error: 'Product ID is required' };
-  }
+  // Validate required fields (productId already validated above)
 
   if (!sanitized.customerName || sanitized.customerName.length < 2 || sanitized.customerName.length > 100) {
     return { isValid: false, error: 'Name must be between 2 and 100 characters' };
@@ -82,9 +85,12 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { sessionId, userId } = body;
 
+    console.log('[DEBUG POST REVIEW] Received body:', body);
+
     // Validate and sanitize review data
     const validation = validateReviewData(body);
     if (!validation.isValid) {
+      console.log('[DEBUG POST REVIEW] Validation failed:', validation.error);
       return NextResponse.json(
         { success: false, error: validation.error },
         { status: 400 }
@@ -93,19 +99,37 @@ export async function POST(request: NextRequest) {
 
     const { productId, customerName, customerEmail, rating, title, comment, images, video, variant } = validation.sanitized!;
 
+    console.log('[DEBUG POST REVIEW] Sanitized data:', { productId, customerName, customerEmail, rating, comment });
+
+    // Convert productId to ObjectId
+    let productObjectId;
+    try {
+      productObjectId = new mongoose.Types.ObjectId(productId);
+    } catch (err) {
+      console.log('[DEBUG POST REVIEW] Invalid productId format:', productId);
+      return NextResponse.json(
+        { success: false, error: 'Invalid product ID format' },
+        { status: 400 }
+      );
+    }
+
     // Check if product exists
-    const product = await Product.findById(productId);
+    const product = await Product.findById(productObjectId);
     if (!product) {
+      console.log('[DEBUG POST REVIEW] Product not found:', productId);
       return NextResponse.json(
         { success: false, error: 'Product not found' },
         { status: 404 }
       );
     }
 
+    console.log('[DEBUG POST REVIEW] Product found:', product.name);
+
     // Check if user already reviewed (1-hour cooldown for guests, 1 review per user)
     if (userId) {
-      const existingReview = await Review.findOne({ product: productId, user: userId });
+      const existingReview = await Review.findOne({ product: productObjectId, user: userId });
       if (existingReview) {
+        console.log('[DEBUG POST REVIEW] User already reviewed');
         return NextResponse.json(
           { success: false, error: 'You have already reviewed this product' },
           { status: 400 }
@@ -114,11 +138,12 @@ export async function POST(request: NextRequest) {
     } else if (sessionId) {
       const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
       const recentReview = await Review.findOne({
-        product: productId,
+        product: productObjectId,
         sessionId,
         createdAt: { $gte: oneHourAgo }
       });
       if (recentReview) {
+        console.log('[DEBUG POST REVIEW] Recent review found for session');
         return NextResponse.json(
           { success: false, error: 'You have already reviewed this product. Please wait before reviewing again.' },
           { status: 429 }
@@ -128,7 +153,7 @@ export async function POST(request: NextRequest) {
 
     // Create new review
     const newReview = await Review.create({
-      product: productId,
+      product: productObjectId,
       user: userId,
       customerName,
       customerEmail,
@@ -144,13 +169,18 @@ export async function POST(request: NextRequest) {
       sessionId,
     });
 
+    console.log('[DEBUG POST REVIEW] Review created:', JSON.stringify(newReview, null, 2));
+
     // Update product rating and review count
-    const allReviews = await Review.find({ product: productId, status: 'approved' });
+    const allReviews = await Review.find({ product: productObjectId, status: 'approved' });
     const totalRating = allReviews.reduce((sum: number, r: any) => sum + r.rating, 0);
-    const averageRating = totalRating / allReviews.length;
+    const averageRating = allReviews.length > 0 ? totalRating / allReviews.length : 0;
+
+    console.log('[DEBUG POST REVIEW] All approved reviews count:', allReviews.length);
+    console.log('[DEBUG POST REVIEW] Average rating:', averageRating);
 
     const updatedProduct = await Product.findByIdAndUpdate(
-      productId,
+      productObjectId,
       {
         rating: Math.round(averageRating * 10) / 10,
         reviewCount: allReviews.length,
@@ -158,12 +188,14 @@ export async function POST(request: NextRequest) {
       { new: true }
     );
 
+    console.log('[DEBUG POST REVIEW] Updated product:', JSON.stringify(updatedProduct, null, 2));
+
     // Transform review to match frontend type expectations
     const reviewObj = newReview.toObject();
     const transformedReview = {
       ...reviewObj,
       id: newReview._id.toString(),
-      productId: reviewObj.product?.toString() || productId,
+      productId: productObjectId.toString(), // Use the ObjectId as string
     };
 
     // Transform product to match frontend type expectations
@@ -210,10 +242,11 @@ export async function POST(request: NextRequest) {
 }
 
 // GET - Get reviews for a product or all reviews (for admin)
+// This endpoint is PUBLIC - no authentication required
 export async function GET(request: NextRequest) {
   try {
     await connectDB();
-    
+
     const { searchParams } = new URL(request.url);
     const productId = searchParams.get('productId');
     const status = searchParams.get('status');
@@ -221,10 +254,21 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '50');
 
+    console.log('[DEBUG GET REVIEWS] Request params:', { productId, status, allReviews, page, limit });
+
     const query: any = {};
-    
+
+    // Convert productId to ObjectId if provided
     if (productId && !allReviews) {
-      query.product = productId;
+      try {
+        query.product = new mongoose.Types.ObjectId(productId);
+      } catch (err) {
+        console.log('[DEBUG GET REVIEWS] Invalid productId format:', productId);
+        return NextResponse.json(
+          { success: false, error: 'Invalid product ID format' },
+          { status: 400 }
+        );
+      }
     }
 
     if (status) {
@@ -233,15 +277,21 @@ export async function GET(request: NextRequest) {
       query.status = 'approved';
     }
 
+    console.log('[DEBUG GET REVIEWS] Query:', query);
+
     const skip = (page - 1) * limit;
     const reviews = await Review.find(query)
-      .populate('product', 'name slug')
+      .populate('product', '_id name slug')
       .populate('user', 'name email')
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
 
+    console.log('[DEBUG GET REVIEWS] Found reviews count:', reviews.length);
+    console.log('[DEBUG GET REVIEWS] Reviews:', JSON.stringify(reviews, null, 2));
+
     const total = await Review.countDocuments(query);
+    console.log('[DEBUG GET REVIEWS] Total reviews in DB:', total);
 
     // Transform reviews to match frontend type expectations
     const transformedReviews = reviews.map(review => {
@@ -255,6 +305,71 @@ export async function GET(request: NextRequest) {
       };
     });
 
+    console.log('[DEBUG GET REVIEWS] Transformed reviews count:', transformedReviews.length);
+    console.log('[DEBUG GET REVIEWS] Transformed reviews:', JSON.stringify(transformedReviews, null, 2));
+
+    // Calculate rating statistics if fetching for a specific product
+    let ratingStats = null;
+    if (productId && !allReviews) {
+      try {
+        const productObjectId = new mongoose.Types.ObjectId(productId);
+        const approvedReviews = await Review.find({ product: productObjectId, status: 'approved' });
+        const totalReviews = approvedReviews.length;
+
+        console.log('[DEBUG GET REVIEWS] Approved reviews for rating stats:', totalReviews);
+
+        if (totalReviews > 0) {
+          const totalRating = approvedReviews.reduce((sum: number, r: any) => sum + r.rating, 0);
+          const averageRating = totalRating / totalReviews;
+
+          // Calculate rating distribution
+          const ratingDistribution = [5, 4, 3, 2, 1].map(stars => ({
+            stars,
+            count: approvedReviews.filter((r: any) => r.rating === stars).length,
+            percentage: (approvedReviews.filter((r: any) => r.rating === stars).length / totalReviews) * 100
+          }));
+
+          ratingStats = {
+            averageRating: parseFloat(averageRating.toFixed(1)),
+            totalReviews,
+            ratingDistribution
+          };
+        } else {
+          ratingStats = {
+            averageRating: 0,
+            totalReviews: 0,
+            ratingDistribution: [5, 4, 3, 2, 1].map(stars => ({
+              stars,
+              count: 0,
+              percentage: 0
+            }))
+          };
+        }
+      } catch (err) {
+        console.log('[DEBUG GET REVIEWS] Error calculating rating stats:', err);
+        ratingStats = {
+          averageRating: 0,
+          totalReviews: 0,
+          ratingDistribution: [5, 4, 3, 2, 1].map(stars => ({
+            stars,
+            count: 0,
+            percentage: 0
+          }))
+        };
+      }
+    }
+
+    console.log('[DEBUG GET REVIEWS] Rating stats:', ratingStats);
+    console.log('[DEBUG GET REVIEWS] Final response:', JSON.stringify({
+      success: true,
+      reviews: transformedReviews,
+      count: transformedReviews.length,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit),
+      ratingStats,
+    }, null, 2));
+
     return NextResponse.json({
       success: true,
       reviews: transformedReviews,
@@ -262,6 +377,7 @@ export async function GET(request: NextRequest) {
       total,
       page,
       totalPages: Math.ceil(total / limit),
+      ratingStats,
     }, {
       headers: {
         'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
@@ -316,7 +432,7 @@ export async function PUT(request: NextRequest) {
       id,
       updateData,
       { new: true }
-    ).populate('product', 'name slug');
+    ).populate('product', '_id name slug');
 
     if (!updatedReview) {
       return NextResponse.json(

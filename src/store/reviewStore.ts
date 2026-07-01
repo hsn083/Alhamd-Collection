@@ -3,6 +3,8 @@ import { Review } from '@/types';
 
 interface ReviewStore {
   reviews: Review[];
+  isLoading: boolean;
+  error: string | null;
   setReviews: (reviews: Review[]) => void;
   addReview: (review: Review) => void;
   updateReview: (id: string, data: Partial<Review>) => void;
@@ -13,11 +15,14 @@ interface ReviewStore {
   markHelpful: (reviewId: string, sessionId: string) => Promise<void>;
   reportReview: (reviewId: string, sessionId: string, reason: string) => Promise<void>;
   addSellerReply: (reviewId: string, reply: string, sellerName: string) => Promise<void>;
+  clearError: () => void;
 }
 
 export const useReviewStore = create<ReviewStore>()(
   (set, get) => ({
     reviews: [],
+    isLoading: false,
+    error: null,
 
       setReviews: (reviews) => set({ reviews }),
 
@@ -58,32 +63,49 @@ export const useReviewStore = create<ReviewStore>()(
 
       refetchReviews: async (productId, status) => {
         try {
+          set({ isLoading: true, error: null });
           const params = new URLSearchParams();
           if (productId) params.append('productId', productId);
           if (status) params.append('status', status);
 
           const url = `/api/reviews${params.toString() ? '?' + params.toString() : ''}`;
+          console.log('[DEBUG REVIEW STORE] Fetching reviews from:', url);
+          console.log('[DEBUG REVIEW STORE] Product ID:', productId);
+          console.log('[DEBUG REVIEW STORE] Status:', status);
+
           const response = await fetch(url, {
             cache: 'no-store',
           });
           const result = await response.json();
 
+          console.log('[DEBUG REVIEW STORE] API response:', result);
+
           if (result.success && Array.isArray(result.reviews)) {
-            // If fetching specific product reviews, merge with existing reviews
+            console.log('[DEBUG REVIEW STORE] Reviews count:', result.reviews.length);
+            console.log('[DEBUG REVIEW STORE] Reviews:', result.reviews);
+
+            // If fetching specific product reviews, replace only those reviews
             if (productId) {
               set((state) => {
                 // Remove existing reviews for this product
                 const otherReviews = state.reviews.filter(r => r.productId !== productId);
                 // Add the new reviews for this product
-                return { reviews: [...otherReviews, ...result.reviews] };
+                const newReviews = [...otherReviews, ...result.reviews];
+                console.log('[DEBUG REVIEW STORE] Updated store reviews count:', newReviews.length);
+                return { reviews: newReviews, isLoading: false, error: null };
               });
             } else {
               // If fetching all reviews, replace the entire store
-              set({ reviews: result.reviews });
+              console.log('[DEBUG REVIEW STORE] Replacing all reviews in store');
+              set({ reviews: result.reviews, isLoading: false, error: null });
             }
+          } else {
+            console.log('[DEBUG REVIEW STORE] API returned error:', result.error);
+            set({ isLoading: false, error: result.error || 'Failed to fetch reviews' });
           }
         } catch (error) {
-          console.error('Error refetching reviews:', error);
+          console.error('[DEBUG REVIEW STORE] Error refetching reviews:', error);
+          set({ isLoading: false, error: 'Failed to fetch reviews. Please try again.' });
         }
       },
 
@@ -152,5 +174,7 @@ export const useReviewStore = create<ReviewStore>()(
           console.error('Error adding seller reply:', error);
         }
       },
+
+      clearError: () => set({ error: null }),
     })
 );

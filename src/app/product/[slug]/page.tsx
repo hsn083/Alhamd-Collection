@@ -59,7 +59,6 @@ export default function ProductPage() {
   const [wishlistCount, setWishlistCount] = useState<number>(0);
   const [showReviewForm, setShowReviewForm] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [isReviewsLoading, setIsReviewsLoading] = useState<boolean>(false);
   const REVIEWS_PER_PAGE = 5;
   
   // Filter state - moved from ReviewFilters to parent to avoid circular dependency
@@ -73,14 +72,18 @@ export default function ProductPage() {
   const { success: toastSuccess, error: toastError } = useToast();
   
   const { products, refetchProducts, updateSingleProduct } = useProductStore();
-  const { reviews, addReview, getApprovedReviewsByProduct, refetchReviews } = useReviewStore();
+  const { reviews, addReview, getApprovedReviewsByProduct, refetchReviews, isLoading: reviewsLoading, error: reviewsError } = useReviewStore();
   const { addItem } = useCartStore();
 
   const product = products.find(p => p.slug === slug);
 
   // Calculate dynamic review count and rating from actual reviews
   const productReviews = useMemo(() => {
-    return product ? getApprovedReviewsByProduct(product.id) : [];
+    const reviews = product ? getApprovedReviewsByProduct(product.id) : [];
+    console.log('[DEBUG PRODUCT PAGE] Product ID:', product?.id);
+    console.log('[DEBUG PRODUCT PAGE] Product reviews from store:', reviews);
+    console.log('[DEBUG PRODUCT PAGE] Product reviews count:', reviews.length);
+    return reviews;
   }, [product, getApprovedReviewsByProduct]);
   
   // Use product's rating data if available, otherwise calculate from reviews
@@ -142,6 +145,40 @@ export default function ProductPage() {
     setCurrentPage(1);
   }, [sortBy, selectedRatings, filterVerified, filterWithPhotos, filterWithVideos]);
 
+  // Function declarations - must be before useEffect hooks that use them
+
+  const checkWishlistStatus = useCallback(async () => {
+    if (!product || !sessionId) return;
+    try {
+      const response = await fetch(`/api/wishlist?sessionId=${sessionId}`);
+      const data = await response.json();
+      if (data.success) {
+        const isInWishlist = data.wishlist.some((item: any) => item.productId === product.id);
+        setIsWishlisted(isInWishlist);
+        setWishlistCount(data.wishlist.length);
+      }
+    } catch (err) {
+      console.error('Error checking wishlist:', err);
+    }
+  }, [product, sessionId]);
+
+  const checkUserRating = useCallback(async () => {
+    if (!product || !sessionId) return;
+    try {
+      const response = await fetch(`/api/ratings?productId=${product.id}`);
+      const data = await response.json();
+      if (data.success) {
+        const userRating = data.ratings.find((r: any) => r.sessionId === sessionId);
+        if (userRating) {
+          setUserRating(userRating.rating);
+          setRatingSubmitted(true);
+        }
+      }
+    } catch (err) {
+      console.error('Error checking user rating:', err);
+    }
+  }, [product, sessionId]);
+
   useEffect(() => {
     // Generate or retrieve session ID
     let storedSessionId = localStorage.getItem('guest_session_id');
@@ -163,61 +200,36 @@ export default function ProductPage() {
     fetchData();
   }, [refetchProducts]);
 
+  // Fetch reviews as soon as product is available (no sessionId needed for reading)
+  // This ensures all users see reviews immediately, regardless of login status
+  useEffect(() => {
+    if (product?.id) {
+      console.log('[DEBUG PRODUCT PAGE] Product available, fetching reviews for:', product.id);
+      refetchReviews(product.id, 'approved');
+    }
+  }, [product?.id, refetchReviews]);
+
+  // Refresh reviews periodically to ensure real-time updates across all users
+  useEffect(() => {
+    if (product?.id) {
+      const interval = setInterval(() => {
+        console.log('[DEBUG PRODUCT PAGE] Auto-refreshing reviews for:', product.id);
+        refetchReviews(product.id, 'approved');
+      }, 30000); // Refresh every 30 seconds
+
+      return () => clearInterval(interval);
+    }
+  }, [product?.id, refetchReviews]);
+
+  // User-specific actions that require sessionId
   useEffect(() => {
     if (product && sessionId) {
       // Check if product is in wishlist
       checkWishlistStatus();
-      // Fetch reviews
-      fetchReviews();
       // Check if user has already rated
       checkUserRating();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [product, sessionId]);
-
-  const checkWishlistStatus = async () => {
-    if (!product) return;
-    try {
-      const response = await fetch(`/api/wishlist?sessionId=${sessionId}`);
-      const data = await response.json();
-      if (data.success) {
-        const isInWishlist = data.wishlist.some((item: any) => item.productId === product.id);
-        setIsWishlisted(isInWishlist);
-        setWishlistCount(data.wishlist.length);
-      }
-    } catch (err) {
-      console.error('Error checking wishlist:', err);
-    }
-  };
-
-  const fetchReviews = async () => {
-    if (!product) return;
-    setIsReviewsLoading(true);
-    try {
-      await refetchReviews(product.id, 'approved');
-    } catch (err) {
-      console.error('Error fetching reviews:', err);
-    } finally {
-      setIsReviewsLoading(false);
-    }
-  };
-
-  const checkUserRating = async () => {
-    if (!product) return;
-    try {
-      const response = await fetch(`/api/ratings?productId=${product.id}`);
-      const data = await response.json();
-      if (data.success) {
-        const userRating = data.ratings.find((r: any) => r.sessionId === sessionId);
-        if (userRating) {
-          setUserRating(userRating.rating);
-          setRatingSubmitted(true);
-        }
-      }
-    } catch (err) {
-      console.error('Error checking user rating:', err);
-    }
-  };
+  }, [product, sessionId, checkWishlistStatus, checkUserRating]);
 
   if (isLoading) {
     return (
@@ -361,7 +373,7 @@ export default function ProductPage() {
         toastSuccess('Review submitted successfully');
         setShowReviewForm(false);
         
-        // Add the new review to the store immediately
+        // Add the new review to the store immediately for real-time display
         if (data.review) {
           addReview(data.review);
         }
@@ -371,11 +383,13 @@ export default function ProductPage() {
           updateSingleProduct(data.product);
         }
         
-        // Refresh product data to ensure sync
+        // Refresh product data to ensure sync across all users
         await refetchProducts();
         
-        // Refresh reviews to ensure sync
-        await fetchReviews();
+        // Refresh reviews to ensure sync across all users
+        await refetchReviews(product.id, 'approved');
+        
+        console.log('[DEBUG PRODUCT PAGE] Review submitted and data refreshed');
       } else {
         toastError(data.error || 'Failed to submit review');
       }
@@ -831,10 +845,17 @@ export default function ProductPage() {
 
                   {/* Reviews List */}
                   <div className="space-y-4">
-                    {isReviewsLoading ? (
+                    {reviewsLoading ? (
                       <div className="text-center py-12 bg-white rounded-xl border border-gray-100">
                         <Loader2 className="h-16 w-16 mx-auto mb-4 animate-spin text-muted-foreground" />
                         <h3 className="text-xl font-semibold mb-2">Loading Reviews...</h3>
+                      </div>
+                    ) : reviewsError ? (
+                      <div className="text-center py-12 bg-white rounded-xl border border-gray-100">
+                        <MessageCircle className="h-16 w-16 mx-auto mb-4 text-red-500" />
+                        <h3 className="text-xl font-semibold mb-2">Error Loading Reviews</h3>
+                        <p className="text-muted-foreground mb-4">{reviewsError}</p>
+                        <Button onClick={() => refetchReviews(product.id, 'approved')} variant="outline">Try Again</Button>
                       </div>
                     ) : productReviews.length === 0 ? (
                       <div className="text-center py-12 bg-white rounded-xl border border-gray-100">

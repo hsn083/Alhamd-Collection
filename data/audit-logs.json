@@ -1,5 +1,21 @@
 [
   {
+    "action": "LOGIN_SUCCESS",
+    "adminId": "ADMIN-1780244625271",
+    "adminUsername": "hassan83",
+    "details": "Successful login",
+    "id": "AUDIT-1782875379080-8dkw55lrx",
+    "timestamp": "2026-07-01T03:09:39.080Z"
+  },
+  {
+    "action": "LOGIN_SUCCESS",
+    "adminId": "ADMIN-1780244625271",
+    "adminUsername": "hassan83",
+    "details": "Successful login",
+    "id": "AUDIT-1782832423635-6qq1wg8il",
+    "timestamp": "2026-06-30T15:13:43.635Z"
+  },
+  {
     "id": "AUDIT-1782735954937-sicrkcc",
     "action": "DATA_RESET",
     "adminId": "unknown",

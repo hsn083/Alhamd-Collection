@@ -23,6 +23,30 @@ export default function RatingSummary({ reviews }: RatingSummaryProps) {
     return { stars, count, percentage };
   });
 
+  // Show skeleton if reviews is undefined/null (loading state)
+  if (!reviews) {
+    return (
+      <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl p-6 shadow-sm border border-gray-100">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="flex flex-col items-center justify-center">
+            <div className="h-16 w-32 bg-gray-200 rounded animate-pulse mb-2"></div>
+            <div className="h-4 w-20 bg-gray-200 rounded animate-pulse mb-3"></div>
+            <div className="h-6 w-24 bg-gray-200 rounded animate-pulse"></div>
+          </div>
+          <div className="space-y-3">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="flex items-center space-x-3">
+                <div className="h-4 w-16 bg-gray-200 rounded animate-pulse"></div>
+                <div className="flex-1 h-3 bg-gray-200 rounded animate-pulse"></div>
+                <div className="h-4 w-20 bg-gray-200 rounded animate-pulse"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl p-6 shadow-sm border border-gray-100">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

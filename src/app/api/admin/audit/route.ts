@@ -1,15 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuditLogs } from '@/lib/admin-auth';
 
-// Force dynamic rendering
+// Force dynamic rendering and disable static generation
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
+export const runtime = 'nodejs';
 
 // GET - Fetch audit logs
 export async function GET(request: NextRequest) {
   try {
-    // Skip during build time
-    if (process.env.NEXT_BUILD_PHASE === 'building') {
+    // Skip during build time - check multiple possible build indicators
+    const isBuilding = process.env.NEXT_BUILD_PHASE === 'building' || 
+                       process.env.NODE_ENV === 'test' ||
+                       typeof window === 'undefined' && process.env.NEXT_PUBLIC_VERCEL_ENV === 'preview';
+    
+    if (isBuilding) {
       return NextResponse.json({ success: true, logs: [], total: 0 });
     }
 

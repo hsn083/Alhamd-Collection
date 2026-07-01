@@ -1,77 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { readFile, writeFile } from 'fs/promises';
-import { join } from 'path';
-import { existsSync } from 'fs';
+import connectDB from '@/lib/db';
+import Review from '@/models/Review';
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-const REVIEWS_FILE = join(process.cwd(), 'data', 'reviews.json');
-
-interface Review {
-  id: string;
-  productId: string;
-  customerName: string;
-  customerEmail: string;
-  rating: number;
-  title?: string;
-  comment: string;
-  images?: string[];
-  video?: string;
-  variant?: {
-    color?: string;
-    size?: string;
-    material?: string;
-  };
-  isVerifiedPurchase: boolean;
-  likes: number;
-  helpful: number;
-  sellerReply?: {
-    reply: string;
-    date: string;
-    sellerName: string;
-  };
-  reports?: Array<{
-    userId: string;
-    reason: string;
-    date: string;
-  }>;
-  status: 'pending' | 'approved' | 'rejected';
-  sessionId?: string;
-  avatar?: string;
-  createdAt: string;
-  updatedAt: string;
-  helpfulUsers?: string[]; // Track users who marked as helpful
-}
-
-// Read reviews
-async function readReviews(): Promise<Review[]> {
-  try {
-    if (!existsSync(REVIEWS_FILE)) {
-      return [];
-    }
-    const data = await readFile(REVIEWS_FILE, 'utf-8');
-    return JSON.parse(data) || [];
-  } catch (error) {
-    console.error('Error reading reviews:', error);
-    return [];
-  }
-}
-
-// Write reviews
-async function writeReviews(reviews: Review[]): Promise<void> {
-  try {
-    await writeFile(REVIEWS_FILE, JSON.stringify(reviews, null, 2), 'utf-8');
-  } catch (error) {
-    console.error('Error writing reviews:', error);
-    throw error;
-  }
-}
-
 // POST - Mark review as helpful
 export async function POST(request: NextRequest) {
   try {
+    await connectDB();
+
     const body = await request.json();
     const { reviewId, sessionId } = body;
 
@@ -82,18 +21,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const reviews = await readReviews();
-    const reviewIndex = reviews.findIndex((r) => r.id === reviewId);
+    const review = await Review.findById(reviewId);
 
-    if (reviewIndex === -1) {
+    if (!review) {
       return NextResponse.json(
         { success: false, error: 'Review not found' },
         { status: 404 }
       );
     }
 
-    const review = reviews[reviewIndex];
-    
     // Initialize helpfulUsers array if it doesn't exist
     if (!review.helpfulUsers) {
       review.helpfulUsers = [];
@@ -111,10 +47,9 @@ export async function POST(request: NextRequest) {
     review.helpfulUsers.push(sessionId);
     review.helpful = (review.helpful || 0) + 1;
     review.likes = (review.likes || 0) + 1;
-    review.updatedAt = new Date().toISOString();
+    review.updatedAt = new Date();
 
-    reviews[reviewIndex] = review;
-    await writeReviews(reviews);
+    await review.save();
 
     return NextResponse.json({
       success: true,
