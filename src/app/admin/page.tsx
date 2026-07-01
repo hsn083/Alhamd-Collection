@@ -12,7 +12,7 @@ import {
   DollarSign, ShoppingCart, Users, Package, TrendingUp,
   ArrowUpRight, ArrowDownRight, RefreshCw, AlertTriangle,
   CheckCircle, Clock, XCircle, BarChart3, Activity, Eye,
-  Folder, Image, Shield, Ticket, AlertCircle, RotateCcw
+  Folder, Image, Shield, Ticket, AlertCircle, RotateCcw, Star
 } from 'lucide-react';
 import { useCartStore } from '@/store/cartStore';
 import { useWishlistStore } from '@/store/wishlistStore';
@@ -192,6 +192,7 @@ export default function AdminDashboard() {
     { href: '/admin/products', label: 'Manage Products', desc: 'Add, edit, delete products', icon: Package, color: 'bg-emerald-600' },
     { href: '/admin/orders', label: 'Manage Orders', desc: 'View and update order status', icon: ShoppingCart, color: 'bg-blue-600' },
     { href: '/admin/customers', label: 'Customers', desc: 'View and manage customers', icon: Users, color: 'bg-purple-600' },
+    { href: '/admin/reviews', label: 'Reviews', desc: 'Moderate customer reviews', icon: Star, color: 'bg-yellow-600' },
     { href: '/admin/categories', label: 'Categories', desc: 'Organize product categories', icon: Folder, color: 'bg-amber-600' },
     { href: '/admin/coupons', label: 'Coupons', desc: 'Create discount codes', icon: Ticket, color: 'bg-pink-600' },
     { href: '/admin/hero-banner', label: 'Hero Banner', desc: 'Manage homepage banner', icon: Image, color: 'bg-teal-600' },

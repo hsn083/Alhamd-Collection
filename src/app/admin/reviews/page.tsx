@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useToast, ToastContainer } from '@/components/ui/toast';
+import { useProductStore } from '@/store/productStore';
 import { 
   Search, 
   Filter, 
@@ -79,7 +80,10 @@ export default function AdminReviewsPage() {
   const [isReplyDialogOpen, setIsReplyDialogOpen] = useState(false);
   const [replyText, setReplyText] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [reviewToDelete, setReviewToDelete] = useState<Review | null>(null);
   const { success, error } = useToast();
+  const { refetchProducts } = useProductStore();
 
   useEffect(() => {
     fetchReviews();
@@ -164,17 +168,26 @@ export default function AdminReviewsPage() {
   };
 
   const handleDelete = async (reviewId: string) => {
-    if (!confirm('Are you sure you want to delete this review? This action cannot be undone.')) return;
+    setReviewToDelete(reviews.find(r => r.id === reviewId) || null);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!reviewToDelete) return;
     
     setIsProcessing(true);
     try {
-      const response = await fetch(`/api/reviews?id=${reviewId}`, {
+      const response = await fetch(`/api/reviews?id=${reviewToDelete.id}`, {
         method: 'DELETE',
       });
       const data = await response.json();
       if (data.success) {
         success('Review deleted successfully');
+        setIsDeleteDialogOpen(false);
+        setReviewToDelete(null);
         fetchReviews();
+        // Refresh product store to update rating and review count immediately on product pages
+        await refetchProducts();
       } else {
         error(data.error || 'Failed to delete review');
       }
@@ -641,16 +654,66 @@ export default function AdminReviewsPage() {
                           </Button>
                         )}
                         
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleDelete(review.id)}
-                          disabled={isProcessing}
-                          className="text-red-600 hover:text-red-700"
-                        >
-                          <Trash2 className="h-4 w-4 mr-1" />
-                          Delete
-                        </Button>
+                        <Dialog open={isDeleteDialogOpen && reviewToDelete?.id === review.id} onOpenChange={(open: boolean) => {
+                          setIsDeleteDialogOpen(open);
+                          if (!open) setReviewToDelete(null);
+                        }}>
+                          <DialogTrigger asChild>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleDelete(review.id)}
+                              disabled={isProcessing}
+                              className="text-red-600 hover:text-red-700"
+                            >
+                              <Trash2 className="h-4 w-4 mr-1" />
+                              Delete
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>Delete Review</DialogTitle>
+                            </DialogHeader>
+                            <div className="space-y-4">
+                              <p className="text-muted-foreground">
+                                Are you sure you want to delete this review by <strong>{reviewToDelete?.customerName}</strong>?
+                                This action cannot be undone.
+                              </p>
+                              {reviewToDelete && (
+                                <div className="p-3 bg-muted rounded-lg">
+                                  <p className="text-sm font-medium mb-1">{reviewToDelete.comment}</p>
+                                  <p className="text-xs text-muted-foreground">Product: {getProductName(reviewToDelete.productId)}</p>
+                                </div>
+                              )}
+                              <div className="flex justify-end space-x-2">
+                                <Button
+                                  variant="outline"
+                                  onClick={() => {
+                                    setIsDeleteDialogOpen(false);
+                                    setReviewToDelete(null);
+                                  }}
+                                  disabled={isProcessing}
+                                >
+                                  Cancel
+                                </Button>
+                                <Button
+                                  onClick={confirmDelete}
+                                  disabled={isProcessing}
+                                  className="bg-red-600 hover:bg-red-700"
+                                >
+                                  {isProcessing ? (
+                                    <>
+                                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                      Deleting...
+                                    </>
+                                  ) : (
+                                    'Delete Review'
+                                  )}
+                                </Button>
+                              </div>
+                            </div>
+                          </DialogContent>
+                        </Dialog>
                       </div>
                     </div>
                   </CardContent>
