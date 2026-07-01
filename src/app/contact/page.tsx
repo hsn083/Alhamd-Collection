@@ -234,7 +234,7 @@ export default function ContactPage() {
                       </div>
                     </div>
                     <a
-                      href={socialMedia.whatsapp.url}
+                      href="https://api.whatsapp.com/send/?phone=923171853183&text&type=phone_number&app_absent=0"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="block"
@@ -263,7 +263,7 @@ export default function ContactPage() {
                       scrolling="no"
                       marginHeight={0}
                       marginWidth={0}
-                      src="https://maps.google.com/maps?q=Gojra,Punjab,Pakistan&t=&z=13&ie=UTF8&iwloc=&output=embed"
+                      src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d213.69892500900818!2d72.70044584841838!3d31.02115623695946!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMzHCsDAxJzE2LjEiTiA3MsKwNDInMDIuMCJF!5e0!3m2!1sen!2s!4v1782893348542!5m2!1sen!2s" style={{ border: 0 }} allowFullScreen loading="lazy" referrerPolicy="strict-origin-when-cross-origin"
                       className="rounded-lg"
                     />
                   </div>

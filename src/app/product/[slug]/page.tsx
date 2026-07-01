@@ -200,6 +200,17 @@ export default function ProductPage() {
     fetchData();
   }, [refetchProducts]);
 
+  // Clear stale reviews when product changes
+  useEffect(() => {
+    if (product?.id) {
+      console.log('[DEBUG PRODUCT PAGE] Product changed, clearing stale reviews for:', product.id);
+      // Clear reviews for previous product by filtering out reviews that don't match current product
+      const { reviews } = useReviewStore.getState();
+      const currentProductReviews = reviews.filter(r => r.productId === product.id);
+      useReviewStore.getState().setReviews(currentProductReviews);
+    }
+  }, [product?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Fetch reviews as soon as product is available (no sessionId needed for reading)
   // This ensures all users see reviews immediately, regardless of login status
   useEffect(() => {

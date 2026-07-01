@@ -1,5 +1,13 @@
 [
   {
+    "id": "AUDIT-1782894232531-pkgznup",
+    "action": "DATA_RESET",
+    "adminId": "unknown",
+    "adminUsername": "unknown",
+    "details": "Reset data: revenue, salesAnalytics, dashboardStatistics",
+    "timestamp": "2026-07-01T08:23:52.531Z"
+  },
+  {
     "action": "LOGIN_SUCCESS",
     "adminId": "ADMIN-1780244625271",
     "adminUsername": "hassan83",

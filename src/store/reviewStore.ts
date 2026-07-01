@@ -92,6 +92,7 @@ export const useReviewStore = create<ReviewStore>()(
                 // Add the new reviews for this product
                 const newReviews = [...otherReviews, ...result.reviews];
                 console.log('[DEBUG REVIEW STORE] Updated store reviews count:', newReviews.length);
+                console.log('[DEBUG REVIEW STORE] Product ID in reviews:', result.reviews.map((r: Review) => r.productId));
                 return { reviews: newReviews, isLoading: false, error: null };
               });
             } else {

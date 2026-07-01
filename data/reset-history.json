@@ -1,5 +1,55 @@
 [
   {
+    "id": "RESET-1782894232529-lfame2z",
+    "adminId": "unknown",
+    "adminUsername": "unknown",
+    "selectedOptions": [
+      "revenue",
+      "salesAnalytics",
+      "dashboardStatistics"
+    ],
+    "results": {
+      "revenue": {
+        "success": true,
+        "message": "Cleared 1 orders (PKR 600 revenue)",
+        "count": 1
+      },
+      "orders": {
+        "success": false,
+        "message": "",
+        "count": 0
+      },
+      "customers": {
+        "success": false,
+        "message": "",
+        "count": 0
+      },
+      "products": {
+        "success": false,
+        "message": "",
+        "count": 0
+      },
+      "categories": {
+        "success": false,
+        "message": "",
+        "count": 0
+      },
+      "customerStatistics": {
+        "success": false,
+        "message": ""
+      },
+      "orderStatistics": {
+        "success": false,
+        "message": ""
+      },
+      "salesAnalytics": {
+        "success": true,
+        "message": "Sales analytics cleared (via revenue reset)"
+      }
+    },
+    "timestamp": "2026-07-01T08:23:52.529Z"
+  },
+  {
     "id": "RESET-1782735954935-eghphe4",
     "adminId": "unknown",
     "adminUsername": "unknown",
