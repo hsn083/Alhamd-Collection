@@ -10,12 +10,19 @@ interface HeroBannerStore {
 }
 
 const defaultHeroBanner: HeroBanner = {
-  id: '1',
-  image: '/images/hero-banner-default.jpg',
+  _id: '1',
+  desktopImage: '/images/hero-banner-default.jpg',
+  mobileImage: '/images/hero-banner-default.jpg',
   heading: 'Premium Clothing & Shoes Collection',
-  subheading: 'Discover the latest fashion trends, stylish clothing, and premium footwear crafted for comfort and elegance.',
+  subHeading: 'Discover the latest fashion trends, stylish clothing, and premium footwear crafted for comfort and elegance.',
   buttonText: 'Shop Now',
-  buttonLink: '/shop',
+  buttonUrl: '/shop',
+  textPosition: 'left',
+  overlayOpacity: 50,
+  overlayColor: '#000000',
+  textColor: '#ffffff',
+  buttonStyle: 'primary',
+  displayOrder: 1,
   isActive: true,
   createdAt: new Date('2024-01-01'),
   updatedAt: new Date('2024-01-01'),

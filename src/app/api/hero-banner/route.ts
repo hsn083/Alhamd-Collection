@@ -3,12 +3,19 @@ import { HeroBanner } from '@/types';
 
 // In-memory storage for hero banner (in production, use a database)
 let heroBanner: HeroBanner = {
-  id: '1',
-  image: '/images/hero-banner-default.jpg',
+  _id: '1',
+  desktopImage: '/images/hero-banner-default.jpg',
+  mobileImage: '/images/hero-banner-default.jpg',
   heading: 'Level Up Your Gaming Experience',
-  subheading: 'Discover the latest fashion trends, stylish clothing, and premium footwear crafted for comfort and elegance.',
+  subHeading: 'Discover the latest fashion trends, stylish clothing, and premium footwear crafted for comfort and elegance.',
   buttonText: 'Shop Now',
-  buttonLink: '/shop',
+  buttonUrl: '/shop',
+  textPosition: 'left',
+  overlayOpacity: 50,
+  overlayColor: '#000000',
+  textColor: '#ffffff',
+  buttonStyle: 'primary',
+  displayOrder: 1,
   isActive: true,
   createdAt: new Date('2024-01-01'),
   updatedAt: new Date('2024-01-01'),
@@ -40,11 +47,12 @@ export async function POST(request: NextRequest) {
 
     const updatedBanner: HeroBanner = {
       ...heroBanner,
-      image: image || heroBanner.image,
+      desktopImage: image || heroBanner.desktopImage,
+      mobileImage: image || heroBanner.mobileImage,
       heading: heading || heroBanner.heading,
-      subheading: subheading || heroBanner.subheading,
+      subHeading: subheading || heroBanner.subHeading,
       buttonText: buttonText || heroBanner.buttonText,
-      buttonLink: buttonLink || heroBanner.buttonLink,
+      buttonUrl: buttonLink || heroBanner.buttonUrl,
       isActive: isActive !== undefined ? isActive : heroBanner.isActive,
       updatedAt: new Date(),
     };

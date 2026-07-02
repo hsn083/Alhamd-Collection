@@ -33,7 +33,7 @@ export default function AdminHeroBannerPage() {
         const data = await response.json();
         if (data.success) {
           setHeroBanner(data.heroBanner);
-          setBannerImage(data.heroBanner.image);
+          setBannerImage(data.heroBanner.desktopImage);
         }
       } catch (error) {
         console.error('Error fetching hero banner:', error);
@@ -82,11 +82,12 @@ export default function AdminHeroBannerPage() {
 
     const formData = new FormData(e.currentTarget);
     const bannerData = {
-      image: bannerImage,
+      desktopImage: bannerImage,
+      mobileImage: bannerImage,
       heading: formData.get('heading') as string,
-      subheading: formData.get('subheading') as string,
+      subHeading: formData.get('subheading') as string,
       buttonText: formData.get('buttonText') as string,
-      buttonLink: formData.get('buttonLink') as string,
+      buttonUrl: formData.get('buttonLink') as string,
       isActive: formData.get('isActive') === 'on',
     };
 
@@ -188,13 +189,13 @@ export default function AdminHeroBannerPage() {
                         {heroBanner.heading}
                       </h1>
                       <p className="text-lg md:text-xl text-white/90 mb-6">
-                        {heroBanner.subheading}
+                        {heroBanner.subHeading}
                       </p>
                       {heroBanner.isActive && (
                         <Button 
                           size="lg" 
                           className="bg-emerald-600 text-black hover:bg-emerald-500 font-bold transition-all hover:scale-105"
-                          onClick={() => window.location.href = heroBanner.buttonLink}
+                          onClick={() => window.location.href = heroBanner.buttonUrl}
                         >
                           {heroBanner.buttonText}
                         </Button>
@@ -286,7 +287,7 @@ export default function AdminHeroBannerPage() {
                       id="subheading"
                       name="subheading"
                       placeholder="e.g., Discover premium clothing and footwear..."
-                      defaultValue={heroBanner?.subheading || ''}
+                      defaultValue={heroBanner?.subHeading || ''}
                       required
                     />
                   </div>
@@ -297,7 +298,7 @@ export default function AdminHeroBannerPage() {
                       id="buttonLink"
                       name="buttonLink"
                       placeholder="e.g., /shop"
-                      defaultValue={heroBanner?.buttonLink || ''}
+                      defaultValue={heroBanner?.buttonUrl || ''}
                       required
                     />
                   </div>
