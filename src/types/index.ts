@@ -291,13 +291,44 @@ export interface PaymentVerification {
 }
 
 export interface HeroBanner {
-  id: string;
-  image: string;
+  _id: string;
+  desktopImage: string;
+  mobileImage: string;
   heading: string;
-  subheading: string;
+  subHeading: string;
+  description?: string;
   buttonText: string;
-  buttonLink: string;
+  buttonUrl: string;
+  textPosition: 'left' | 'center' | 'right';
+  overlayOpacity: number;
+  overlayColor: string;
+  textColor: string;
+  buttonStyle: 'primary' | 'secondary' | 'outline' | 'ghost';
+  displayOrder: number;
   isActive: boolean;
+  scheduledPublishDate?: Date;
+  scheduledExpiryDate?: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface HeroBannerSettings {
+  _id?: string;
+  autoPlay: boolean;
+  autoPlayDelay: number;
+  animationType: 'fade' | 'slide';
+  transitionDuration: number;
+  showArrows: boolean;
+  showDots: boolean;
+  showOverlay: boolean;
+  overlayColor: string;
+  overlayOpacity: number;
+  sliderHeightDesktop: number;
+  sliderHeightTablet: number;
+  sliderHeightMobile: number;
+  pauseOnHover: boolean;
+  enableSwipe: boolean;
+  enableKeyboardNav: boolean;
   createdAt: Date;
   updatedAt: Date;
 }

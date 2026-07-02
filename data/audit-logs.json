@@ -1,5 +1,13 @@
 [
   {
+    "action": "LOGIN_SUCCESS",
+    "adminId": "ADMIN-1780244625271",
+    "adminUsername": "hassan83",
+    "details": "Successful login",
+    "id": "AUDIT-1782963999097-9cdt0zkon",
+    "timestamp": "2026-07-02T03:46:39.097Z"
+  },
+  {
     "id": "AUDIT-1782894232531-pkgznup",
     "action": "DATA_RESET",
     "adminId": "unknown",

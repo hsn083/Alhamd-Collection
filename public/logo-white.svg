@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80" fill="none">
+  <!-- Background -->
+  <rect width="200" height="80" fill="#FFFFFF" rx="8"/>
+  
+  <!-- ALHAMD - Modern Sans-Serif Bold -->
+  <text x="100" y="35" font-family="Poppins, sans-serif" font-weight="800" font-size="32" fill="#0F766E" letter-spacing="1.6" text-anchor="middle">
+    ALHAMD
+  </text>
+  
+  <!-- Collection - Small, Centered, Medium Weight -->
+  <text x="100" y="55" font-family="Poppins, sans-serif" font-weight="500" font-size="12" fill="#E8A300" letter-spacing="4.8" text-anchor="middle">
+    Collection
+  </text>
+</svg>

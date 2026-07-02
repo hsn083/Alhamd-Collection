@@ -16,7 +16,7 @@ const navItems = [
   { href: '/admin/categories', label: 'Categories', icon: Tag },
   { href: '/admin/customers', label: 'Customers', icon: Users },
   { href: '/admin/coupons', label: 'Coupons', icon: Ticket },
-  { href: '/admin/hero-banner', label: 'Hero Banner', icon: Image },
+  { href: '/admin/hero-banners', label: 'Hero Banners', icon: Image },
   { href: '/admin/low-stock', label: 'Low Stock', icon: AlertTriangle },
   { href: '/admin/settings', label: 'Settings', icon: Settings },
   { href: '/admin/settings/account', label: 'Admin Account', icon: Shield },

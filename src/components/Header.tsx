@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import Notifications from './Notifications';
+import BrandLogo from './BrandLogo';
 import { useCartStore } from '@/store/cartStore';
 import { useWishlistStore } from '@/store/wishlistStore';
 import { useSettingsStore } from '@/store/settingsStore';
@@ -142,39 +143,20 @@ export default function Header() {
           : 'bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 shadow-sm'
       }`}
     >
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-6">
         <div className={`flex items-center justify-between transition-all duration-300 ${
-          isScrolled ? 'h-14' : 'h-20'
+          isScrolled ? 'h-16' : 'h-24'
         }`}>
           {/* Logo */}
-          <Link 
-            href="/" 
-            className="group flex items-center hover:opacity-80 transition-opacity duration-200"
-            aria-label="ALHAMD Collection - Home"
-          >
-            {/* Brand Name */}
-            <div className="flex flex-col items-center leading-none" style={{ fontFamily: 'var(--font-poppins)' }}>
-              <span 
-                className={`font-extrabold tracking-wide transition-all duration-200 ${
-                  isScrolled ? 'text-xl' : 'text-2xl'
-                } text-[#0F766E]`}
-                style={{ fontWeight: 800 }}
-              >
-                ALHAMD
-              </span>
-              <span 
-                className={`font-bold tracking-[0.15em] capitalize transition-all duration-200 ${
-                  isScrolled ? 'text-[11px]' : 'text-xs'
-                } text-[#EAB308]`}
-                style={{ fontWeight: 700 }}
-              >
-                Collection
-              </span>
-            </div>
-          </Link>
+          <div className="pl-2">
+            <BrandLogo 
+              variant="light"
+              size={isScrolled ? "sm" : "md"}
+            />
+          </div>
 
           {/* Search Bar - Desktop */}
-          <div className="hidden md:flex flex-1 max-w-lg mx-6 lg:mx-10" ref={searchRef}>
+          <div className="hidden md:flex flex-1 max-w-lg mx-8 lg:mx-12" ref={searchRef}>
             <form onSubmit={handleDesktopSearchSubmit} className="relative w-full">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
               <Input

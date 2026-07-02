@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { Facebook, Instagram, Mail, Phone, MapPin } from 'lucide-react';
 import { useSettingsStore } from '@/store/settingsStore';
+import BrandLogo from './BrandLogo';
 
 // WhatsApp icon (not in lucide-react)
 function WhatsAppIcon({ className }: { className?: string }) {
@@ -42,13 +43,11 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Company Info */}
           <div>
-            <div className="mb-4">
-              <span className="text-xl font-extrabold bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent tracking-tight">
-                ALHAMD
-              </span>
-              <span className="ml-1 text-sm font-semibold text-yellow-400 tracking-widest uppercase">
-                Collection
-              </span>
+            <div className="mb-6">
+              <BrandLogo 
+                variant="dark"
+                size="lg"
+              />
             </div>
             <p className="text-sm text-gray-400 mb-4 leading-relaxed">
               {general.siteTagline}
