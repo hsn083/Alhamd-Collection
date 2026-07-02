@@ -47,8 +47,8 @@ export default function FeaturedProducts() {
   const SectionHeader = ({ title, subtitle }: { title: string; subtitle: string }) => (
     <div className="flex justify-between items-center mb-8">
       <div>
-        <h2 className="text-2xl font-bold mb-2 text-gray-900">{title}</h2>
-        <p className="text-sm text-muted-foreground">{subtitle}</p>
+        <h2 className="text-3xl font-bold mb-2 text-gray-900">{title}</h2>
+        <p className="text-muted-foreground">{subtitle}</p>
       </div>
       <Button variant="outline" className="border-emerald-600 text-emerald-700 hover:bg-emerald-50">
         View All

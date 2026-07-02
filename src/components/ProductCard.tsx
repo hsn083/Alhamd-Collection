@@ -38,13 +38,13 @@ export default function ProductCard({ product }: ProductCardProps) {
   return (
     <Card className="overflow-hidden group hover:shadow-xl transition-all duration-300 border border-gray-100 bg-white hover:border-emerald-200">
       <Link href={`/product/${product.slug}`}>
-        <div className="relative aspect-[4/5] bg-gradient-to-br from-gray-50 to-emerald-50/30 flex items-center justify-center overflow-hidden">
+        <div className="relative aspect-square bg-gradient-to-br from-gray-50 to-emerald-50/30 flex items-center justify-center overflow-hidden">
           {product.images && product.images.length > 0 && !imageError ? (
             <Image
               src={product.images[0]}
               alt={product.name}
               fill
-              className="object-contain p-3 group-hover:scale-105 transition-transform duration-300"
+              className="object-contain p-4 group-hover:scale-105 transition-transform duration-300"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               priority={false}
               onError={() => {
@@ -53,7 +53,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               }}
             />
           ) : null}
-          <div className="w-full h-full flex items-center justify-center text-5xl group-hover:scale-110 transition-transform" style={{ display: (product.images && product.images.length > 0 && !imageError) ? 'none' : 'flex' }}>
+          <div className="w-full h-full flex items-center justify-center text-6xl group-hover:scale-110 transition-transform" style={{ display: (product.images && product.images.length > 0 && !imageError) ? 'none' : 'flex' }}>
             👗
           </div>
           
@@ -83,50 +83,50 @@ export default function ProductCard({ product }: ProductCardProps) {
         </div>
       </Link>
       
-      <CardContent className="p-3">
+      <CardContent className="p-4">
         {product.brand && (
           <p className="text-xs text-emerald-600 font-medium mb-1 uppercase tracking-wide">{product.brand}</p>
         )}
         <Link href={`/product/${product.slug}`}>
-          <h3 className="font-semibold mb-1 line-clamp-2 group-hover:text-emerald-700 transition-colors text-gray-800 text-sm">
+          <h3 className="font-semibold mb-2 line-clamp-2 group-hover:text-emerald-700 transition-colors text-gray-800">
             {product.name}
           </h3>
         </Link>
         
-        <div className="flex items-center space-x-1 mb-1">
-          <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-          <span className="text-xs font-medium text-gray-700">{product.rating.toFixed(1)}</span>
-          <span className="text-xs text-muted-foreground">({product.reviewCount || product.reviews})</span>
+        <div className="flex items-center space-x-1 mb-2">
+          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+          <span className="text-sm font-medium text-gray-700">{product.rating.toFixed(1)}</span>
+          <span className="text-sm text-muted-foreground">({product.reviewCount || product.reviews})</span>
         </div>
         
         <div className="flex items-center space-x-2">
-          <span className="text-base font-bold text-emerald-700">
+          <span className="text-lg font-bold text-emerald-700">
             PKR {(product.discountPrice || product.price).toLocaleString()}
           </span>
           {product.discountPrice && (
-            <span className="text-xs text-muted-foreground line-through">
+            <span className="text-sm text-muted-foreground line-through">
               PKR {product.price.toLocaleString()}
             </span>
           )}
         </div>
       </CardContent>
       
-      <CardFooter className="p-3 pt-0 space-y-2">
+      <CardFooter className="p-4 pt-0 space-y-2">
         <Button 
-          className="w-full bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white font-semibold text-xs" 
+          className="w-full bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white font-semibold" 
           size="sm"
           onClick={handleAddToCart}
         >
-          <ShoppingCart className="mr-2 h-3 w-3" />
+          <ShoppingCart className="mr-2 h-4 w-4" />
           Add to Cart
         </Button>
         <Button 
-          className="w-full border-emerald-600 text-emerald-700 hover:bg-emerald-50 font-semibold text-xs" 
+          className="w-full border-emerald-600 text-emerald-700 hover:bg-emerald-50 font-semibold" 
           size="sm"
           variant="outline"
           onClick={handleBuyNow}
         >
-          <Zap className="mr-2 h-3 w-3" />
+          <Zap className="mr-2 h-4 w-4" />
           Buy Now
         </Button>
       </CardFooter>
