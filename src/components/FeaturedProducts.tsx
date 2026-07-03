@@ -1,10 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 import ProductCard from './ProductCard';
 import { Button } from '@/components/ui/button';
-import { Loader2, Package, ShoppingBag } from 'lucide-react';
+import { Loader2, Package } from 'lucide-react';
 import { Product } from '@/types';
 import { useProductStore } from '@/store/productStore';
 
@@ -57,62 +56,57 @@ export default function FeaturedProducts() {
   );
 
   const EmptyState = ({ message }: { message: string }) => (
-    <div className="text-center py-16">
-      <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
-        <ShoppingBag className="h-8 w-8 text-gray-400" />
-      </div>
-      <p className="text-muted-foreground mb-4">No products available at the moment.</p>
-      <Link href="/shop">
-        <Button className="bg-emerald-600 text-white hover:bg-emerald-700">
-          Continue Shopping
-        </Button>
-      </Link>
+    <div className="text-center py-12 text-muted-foreground">
+      <Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
+      <p>{message}</p>
     </div>
   );
 
   return (
-    <>
-      {/* Best Sellers */}
-      <div className="mb-16">
-        <SectionHeader title="Best Sellers" subtitle="Top-selling fashion favourites" />
-        {bestSellers.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {bestSellers.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        ) : (
-          <EmptyState message="No best sellers available" />
-        )}
-      </div>
-
-      {/* Trending Collection */}
-      <div className="mb-16">
-        <SectionHeader title="Trending Collection" subtitle="Our most-loved fashion picks" />
-        {featuredProducts.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {featuredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        ) : (
-          <EmptyState message="No featured products available" />
-        )}
-      </div>
-
-      {/* New Arrivals */}
-      <div>
-        <SectionHeader title="New Arrivals" subtitle="Fresh styles just dropped" />
-        {newArrivals.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {newArrivals.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+    <section className="py-16 bg-gray-50">
+      <div className="container mx-auto px-4">
+        {/* New Arrivals */}
+        <div className="mb-16">
+          <SectionHeader title="New Arrivals" subtitle="Fresh styles just dropped" />
+          {newArrivals.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {newArrivals.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          ) : (
+            <EmptyState message="No new arrivals yet" />
+          )}
         </div>
-        ) : (
-          <EmptyState message="No new arrivals yet" />
-        )}
+
+        {/* Featured Products */}
+        <div className="mb-16">
+          <SectionHeader title="Trending Collection" subtitle="Our most-loved fashion picks" />
+          {featuredProducts.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {featuredProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          ) : (
+            <EmptyState message="No featured products available" />
+          )}
+        </div>
+
+        {/* Best Sellers */}
+        <div>
+          <SectionHeader title="Best Sellers" subtitle="Top-selling fashion favourites" />
+          {bestSellers.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {bestSellers.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          ) : (
+            <EmptyState message="No best sellers available" />
+          )}
+        </div>
       </div>
-    </>
+    </section>
   );
 }

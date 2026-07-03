@@ -67,6 +67,11 @@ export interface IHeroBanner extends Document {
   isActive: boolean;
   displayOrder: number;
   
+  // SEO
+  imageAltText?: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  
   // Timestamps
   createdAt: Date;
   updatedAt: Date;
@@ -272,6 +277,20 @@ const HeroBannerSchema = new Schema<IHeroBanner>(
     displayOrder: {
       type: Number,
       default: 0,
+    },
+    
+    // SEO
+    imageAltText: {
+      type: String,
+      trim: true,
+    },
+    seoTitle: {
+      type: String,
+      trim: true,
+    },
+    seoDescription: {
+      type: String,
+      trim: true,
     },
   },
   {

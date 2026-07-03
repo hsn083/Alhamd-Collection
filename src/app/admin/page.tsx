@@ -195,7 +195,6 @@ export default function AdminDashboard() {
     { href: '/admin/reviews', label: 'Reviews', desc: 'Moderate customer reviews', icon: Star, color: 'bg-yellow-600' },
     { href: '/admin/categories', label: 'Categories', desc: 'Organize product categories', icon: Folder, color: 'bg-amber-600' },
     { href: '/admin/coupons', label: 'Coupons', desc: 'Create discount codes', icon: Ticket, color: 'bg-pink-600' },
-    { href: '/admin/hero-banner', label: 'Hero Banner', desc: 'Manage homepage banner', icon: Image, color: 'bg-teal-600' },
     { href: '/admin/settings', label: 'Settings', desc: 'Configure your store', icon: Activity, color: 'bg-indigo-600' },
     { href: '/admin/settings/account', label: 'Admin Account', desc: 'Manage admin credentials', icon: Shield, color: 'bg-gray-700' },
   ];

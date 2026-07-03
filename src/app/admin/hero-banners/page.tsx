@@ -16,9 +16,12 @@ import {
   EyeOff,
   Image as ImageIcon,
   Copy,
-  GripVertical
+  GripVertical,
+  Settings
 } from 'lucide-react';
 import Link from 'next/link';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import SliderSettingsPanel from '@/components/admin/SliderSettingsPanel';
 
 interface HeroBanner {
   _id: string;
@@ -54,6 +57,7 @@ export default function AdminHeroBannersPage() {
   const [activeFilter, setActiveFilter] = useState<'all' | 'active' | 'inactive'>('all');
   const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [activeTab, setActiveTab] = useState('banners');
 
   // Fetch banners
   useEffect(() => {
@@ -283,186 +287,208 @@ export default function AdminHeroBannersPage() {
         </div>
 
         <div className="container mx-auto px-4 py-8">
-          {/* Search and Filter */}
-          <Card className="mb-6 border border-emerald-100 bg-white shadow-sm">
-            <CardContent className="p-6">
-              <div className="flex flex-col md:flex-row gap-4">
-                <div className="flex-1 relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  <Input
-                    placeholder="Search banners..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                    variant={activeFilter === 'all' ? 'default' : 'outline'}
-                    onClick={() => setActiveFilter('all')}
-                    className={activeFilter === 'all' ? 'bg-emerald-600 text-black' : ''}
-                  >
-                    All
-                  </Button>
-                  <Button
-                    variant={activeFilter === 'active' ? 'default' : 'outline'}
-                    onClick={() => setActiveFilter('active')}
-                    className={activeFilter === 'active' ? 'bg-emerald-600 text-black' : ''}
-                  >
-                    Active
-                  </Button>
-                  <Button
-                    variant={activeFilter === 'inactive' ? 'default' : 'outline'}
-                    onClick={() => setActiveFilter('inactive')}
-                    className={activeFilter === 'inactive' ? 'bg-emerald-600 text-black' : ''}
-                  >
-                    Inactive
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          {/* Tabs */}
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-2 mb-6">
+              <TabsTrigger value="banners">
+                <ImageIcon className="mr-2 h-4 w-4" />
+                Banners
+              </TabsTrigger>
+              <TabsTrigger value="settings">
+                <Settings className="mr-2 h-4 w-4" />
+                Slider Settings
+              </TabsTrigger>
+            </TabsList>
 
-          {/* Banners List */}
-          <div className="space-y-4">
-            {filteredBanners.length === 0 ? (
-              <Card className="border border-gray-200 bg-white">
-                <CardContent className="p-12 text-center">
-                  <ImageIcon className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">No banners found</h3>
-                  <p className="text-gray-500 mb-4">
-                    {searchQuery || activeFilter !== 'all'
-                      ? 'Try adjusting your search or filters'
-                      : 'Get started by creating your first hero banner'}
-                  </p>
-                  {!searchQuery && activeFilter === 'all' && (
-                    <Link href="/admin/hero-banners/new">
-                      <Button className="bg-emerald-600 text-black hover:bg-emerald-500 font-semibold">
-                        <Plus className="mr-2 h-4 w-4" />
-                        Add Your First Banner
+            {/* Banners Tab */}
+            <TabsContent value="banners">
+              {/* Search and Filter */}
+              <Card className="mb-6 border border-emerald-100 bg-white shadow-sm">
+                <CardContent className="p-6">
+                  <div className="flex flex-col md:flex-row gap-4">
+                    <div className="flex-1 relative">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                      <Input
+                        placeholder="Search banners..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="pl-10"
+                      />
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        variant={activeFilter === 'all' ? 'default' : 'outline'}
+                        onClick={() => setActiveFilter('all')}
+                        className={activeFilter === 'all' ? 'bg-emerald-600 text-black' : ''}
+                      >
+                        All
                       </Button>
-                    </Link>
-                  )}
+                      <Button
+                        variant={activeFilter === 'active' ? 'default' : 'outline'}
+                        onClick={() => setActiveFilter('active')}
+                        className={activeFilter === 'active' ? 'bg-emerald-600 text-black' : ''}
+                      >
+                        Active
+                      </Button>
+                      <Button
+                        variant={activeFilter === 'inactive' ? 'default' : 'outline'}
+                        onClick={() => setActiveFilter('inactive')}
+                        className={activeFilter === 'inactive' ? 'bg-emerald-600 text-black' : ''}
+                      >
+                        Inactive
+                      </Button>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
-            ) : (
-              filteredBanners.map((banner, index) => (
-                <Card
-                  key={banner._id}
-                  className="border border-gray-200 bg-white hover:border-emerald-200 transition-colors"
-                  draggable
-                  onDragStart={() => handleDragStart(index)}
-                  onDragOver={(e) => handleDragOver(e, index)}
-                  onDragEnd={handleDragEnd}
-                >
-                  <CardContent className="p-6">
-                    <div className="flex flex-col md:flex-row gap-6">
-                      {/* Drag Handle */}
-                      <div className="hidden md:flex items-center">
-                        <GripVertical className="h-5 w-5 text-gray-400 cursor-move" />
-                      </div>
 
-                      {/* Thumbnail */}
-                      <div className="w-full md:w-48 flex-shrink-0">
-                        <div className="relative w-full bg-gray-100 rounded-lg overflow-hidden" style={{ aspectRatio: '1920/800' }}>
-                          <img
-                            src={banner.desktopImage}
-                            alt={banner.heading}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                      </div>
-
-                      {/* Content */}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between mb-2">
-                          <div>
-                            <h3 className="text-lg font-semibold text-gray-900 truncate">{banner.heading}</h3>
-                            <p className="text-sm text-gray-500 truncate">{banner.subHeading}</p>
+              {/* Banners List */}
+              <div className="space-y-4">
+                {filteredBanners.length === 0 ? (
+                  <Card className="border border-gray-200 bg-white">
+                    <CardContent className="p-12 text-center">
+                      <ImageIcon className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">No banners found</h3>
+                      <p className="text-gray-500 mb-4">
+                        {searchQuery || activeFilter !== 'all'
+                          ? 'Try adjusting your search or filters'
+                          : 'Get started by creating your first hero banner'}
+                      </p>
+                      {!searchQuery && activeFilter === 'all' && (
+                        <Link href="/admin/hero-banners/new">
+                          <Button className="bg-emerald-600 text-black hover:bg-emerald-500 font-semibold">
+                            <Plus className="mr-2 h-4 w-4" />
+                            Add Your First Banner
+                          </Button>
+                        </Link>
+                      )}
+                    </CardContent>
+                  </Card>
+                ) : (
+                  filteredBanners.map((banner, index) => (
+                    <Card
+                      key={banner._id}
+                      className="border border-gray-200 bg-white hover:border-emerald-200 transition-colors"
+                      draggable
+                      onDragStart={() => handleDragStart(index)}
+                      onDragOver={(e) => handleDragOver(e, index)}
+                      onDragEnd={handleDragEnd}
+                    >
+                      <CardContent className="p-6">
+                        <div className="flex flex-col md:flex-row gap-6">
+                          {/* Drag Handle */}
+                          <div className="hidden md:flex items-center">
+                            <GripVertical className="h-5 w-5 text-gray-400 cursor-move" />
                           </div>
-                          <div className="flex items-center gap-2">
-                            <span
-                              className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                banner.isActive
-                                  ? 'bg-emerald-100 text-emerald-700'
-                                  : 'bg-gray-100 text-gray-600'
-                              }`}
-                            >
-                              {banner.isActive ? 'Active' : 'Inactive'}
-                            </span>
+
+                          {/* Thumbnail */}
+                          <div className="w-full md:w-48 flex-shrink-0">
+                            <div className="relative w-full bg-gray-100 rounded-lg overflow-hidden" style={{ aspectRatio: '1920/800' }}>
+                              <img
+                                src={banner.desktopImage}
+                                alt={banner.heading}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                          </div>
+
+                          {/* Content */}
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-start justify-between mb-2">
+                              <div>
+                                <h3 className="text-lg font-semibold text-gray-900 truncate">{banner.heading}</h3>
+                                <p className="text-sm text-gray-500 truncate">{banner.subHeading}</p>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span
+                                  className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                    banner.isActive
+                                      ? 'bg-emerald-100 text-emerald-700'
+                                      : 'bg-gray-100 text-gray-600'
+                                  }`}
+                                >
+                                  {banner.isActive ? 'Active' : 'Inactive'}
+                                </span>
+                              </div>
+                            </div>
+
+                            <div className="flex flex-wrap gap-4 text-sm text-gray-500 mb-4">
+                              <span>Order: {banner.displayOrder}</span>
+                              <span>Position: {banner.textAlignment}</span>
+                              <span>Vertical: {banner.verticalAlignment}</span>
+                            </div>
+
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <Link href={`/admin/hero-banners/${banner._id}`}>
+                                <Button variant="outline" size="sm">
+                                  <Edit className="mr-2 h-4 w-4" />
+                                  Edit
+                                </Button>
+                              </Link>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => toggleActive(banner._id, banner.isActive)}
+                              >
+                                {banner.isActive ? (
+                                  <>
+                                    <EyeOff className="mr-2 h-4 w-4" />
+                                    Deactivate
+                                  </>
+                                ) : (
+                                  <>
+                                    <Eye className="mr-2 h-4 w-4" />
+                                    Activate
+                                  </>
+                                )}
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => duplicateBanner(banner._id)}
+                              >
+                                <Copy className="mr-2 h-4 w-4" />
+                                Duplicate
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => moveBanner(banner._id, 'up')}
+                                disabled={index === 0}
+                              >
+                                <ArrowUp className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => moveBanner(banner._id, 'down')}
+                                disabled={index === filteredBanners.length - 1}
+                              >
+                                <ArrowDown className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => deleteBanner(banner._id)}
+                                className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
                           </div>
                         </div>
+                      </CardContent>
+                    </Card>
+                  ))
+                )}
+              </div>
+            </TabsContent>
 
-                        <div className="flex flex-wrap gap-4 text-sm text-gray-500 mb-4">
-                          <span>Order: {banner.displayOrder}</span>
-                          <span>Position: {banner.textAlignment}</span>
-                          <span>Vertical: {banner.verticalAlignment}</span>
-                        </div>
-
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <Link href={`/admin/hero-banners/${banner._id}`}>
-                            <Button variant="outline" size="sm">
-                              <Edit className="mr-2 h-4 w-4" />
-                              Edit
-                            </Button>
-                          </Link>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => toggleActive(banner._id, banner.isActive)}
-                          >
-                            {banner.isActive ? (
-                              <>
-                                <EyeOff className="mr-2 h-4 w-4" />
-                                Deactivate
-                              </>
-                            ) : (
-                              <>
-                                <Eye className="mr-2 h-4 w-4" />
-                                Activate
-                              </>
-                            )}
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => duplicateBanner(banner._id)}
-                          >
-                            <Copy className="mr-2 h-4 w-4" />
-                            Duplicate
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => moveBanner(banner._id, 'up')}
-                            disabled={index === 0}
-                          >
-                            <ArrowUp className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => moveBanner(banner._id, 'down')}
-                            disabled={index === filteredBanners.length - 1}
-                          >
-                            <ArrowDown className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => deleteBanner(banner._id)}
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))
-            )}
-          </div>
+            {/* Slider Settings Tab */}
+            <TabsContent value="settings">
+              <SliderSettingsPanel />
+            </TabsContent>
+          </Tabs>
         </div>
 
         {/* Notification */}

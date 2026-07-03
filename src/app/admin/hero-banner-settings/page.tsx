@@ -51,6 +51,24 @@ interface SliderSettings {
   mobileHeadingFontSize: number;
   mobileDescriptionFontSize: number;
   mobileContentPosition: 'left' | 'center' | 'right';
+  overlayColor: string;
+  overlayOpacity: number;
+  headingColor: string;
+  subheadingColor: string;
+  descriptionColor: string;
+  buttonBackgroundColor: string;
+  buttonTextColor: string;
+  buttonHoverBackgroundColor: string;
+  buttonHoverTextColor: string;
+  buttonBorderColor: string;
+  buttonBorderRadius: number;
+  secondaryButtonBackgroundColor: string;
+  secondaryButtonTextColor: string;
+  secondaryButtonHoverBackgroundColor: string;
+  secondaryButtonHoverTextColor: string;
+  secondaryButtonBorderColor: string;
+  secondaryButtonBorderRadius: number;
+  sliderBackgroundColor: string;
 }
 
 export default function HeroBannerSettingsPage() {
@@ -93,6 +111,24 @@ export default function HeroBannerSettingsPage() {
     mobileHeadingFontSize: 36,
     mobileDescriptionFontSize: 16,
     mobileContentPosition: 'left',
+    overlayColor: '#000000',
+    overlayOpacity: 50,
+    headingColor: '#ffffff',
+    subheadingColor: '#ffffff',
+    descriptionColor: '#ffffff',
+    buttonBackgroundColor: '#10b981',
+    buttonTextColor: '#ffffff',
+    buttonHoverBackgroundColor: '#059669',
+    buttonHoverTextColor: '#ffffff',
+    buttonBorderColor: 'transparent',
+    buttonBorderRadius: 8,
+    secondaryButtonBackgroundColor: '#ffffff',
+    secondaryButtonTextColor: '#000000',
+    secondaryButtonHoverBackgroundColor: '#f3f4f6',
+    secondaryButtonHoverTextColor: '#000000',
+    secondaryButtonBorderColor: '#e5e7eb',
+    secondaryButtonBorderRadius: 8,
+    sliderBackgroundColor: '#f3f4f6',
   });
 
   useEffect(() => {
@@ -721,6 +757,355 @@ export default function HeroBannerSettingsPage() {
                       <SelectItem value="right">Right</SelectItem>
                     </SelectContent>
                   </Select>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Colors & Styling - Text */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Text Colors</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label htmlFor="headingColor">Heading Color</Label>
+                  <div className="flex gap-2 mt-2">
+                    <Input
+                      id="headingColor"
+                      type="color"
+                      value={settings.headingColor}
+                      onChange={(e) => handleInputChange('headingColor', e.target.value)}
+                      className="w-16 h-10 p-1"
+                    />
+                    <Input
+                      value={settings.headingColor}
+                      onChange={(e) => handleInputChange('headingColor', e.target.value)}
+                      className="flex-1"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="subheadingColor">Subheading Color</Label>
+                  <div className="flex gap-2 mt-2">
+                    <Input
+                      id="subheadingColor"
+                      type="color"
+                      value={settings.subheadingColor}
+                      onChange={(e) => handleInputChange('subheadingColor', e.target.value)}
+                      className="w-16 h-10 p-1"
+                    />
+                    <Input
+                      value={settings.subheadingColor}
+                      onChange={(e) => handleInputChange('subheadingColor', e.target.value)}
+                      className="flex-1"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="descriptionColor">Description Color</Label>
+                  <div className="flex gap-2 mt-2">
+                    <Input
+                      id="descriptionColor"
+                      type="color"
+                      value={settings.descriptionColor}
+                      onChange={(e) => handleInputChange('descriptionColor', e.target.value)}
+                      className="w-16 h-10 p-1"
+                    />
+                    <Input
+                      value={settings.descriptionColor}
+                      onChange={(e) => handleInputChange('descriptionColor', e.target.value)}
+                      className="flex-1"
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Colors & Styling - Primary Button */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Primary Button</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label htmlFor="buttonBackgroundColor">Background Color</Label>
+                  <div className="flex gap-2 mt-2">
+                    <Input
+                      id="buttonBackgroundColor"
+                      type="color"
+                      value={settings.buttonBackgroundColor}
+                      onChange={(e) => handleInputChange('buttonBackgroundColor', e.target.value)}
+                      className="w-16 h-10 p-1"
+                    />
+                    <Input
+                      value={settings.buttonBackgroundColor}
+                      onChange={(e) => handleInputChange('buttonBackgroundColor', e.target.value)}
+                      className="flex-1"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="buttonTextColor">Text Color</Label>
+                  <div className="flex gap-2 mt-2">
+                    <Input
+                      id="buttonTextColor"
+                      type="color"
+                      value={settings.buttonTextColor}
+                      onChange={(e) => handleInputChange('buttonTextColor', e.target.value)}
+                      className="w-16 h-10 p-1"
+                    />
+                    <Input
+                      value={settings.buttonTextColor}
+                      onChange={(e) => handleInputChange('buttonTextColor', e.target.value)}
+                      className="flex-1"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="buttonHoverBackgroundColor">Hover Background</Label>
+                  <div className="flex gap-2 mt-2">
+                    <Input
+                      id="buttonHoverBackgroundColor"
+                      type="color"
+                      value={settings.buttonHoverBackgroundColor}
+                      onChange={(e) => handleInputChange('buttonHoverBackgroundColor', e.target.value)}
+                      className="w-16 h-10 p-1"
+                    />
+                    <Input
+                      value={settings.buttonHoverBackgroundColor}
+                      onChange={(e) => handleInputChange('buttonHoverBackgroundColor', e.target.value)}
+                      className="flex-1"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="buttonHoverTextColor">Hover Text Color</Label>
+                  <div className="flex gap-2 mt-2">
+                    <Input
+                      id="buttonHoverTextColor"
+                      type="color"
+                      value={settings.buttonHoverTextColor}
+                      onChange={(e) => handleInputChange('buttonHoverTextColor', e.target.value)}
+                      className="w-16 h-10 p-1"
+                    />
+                    <Input
+                      value={settings.buttonHoverTextColor}
+                      onChange={(e) => handleInputChange('buttonHoverTextColor', e.target.value)}
+                      className="flex-1"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="buttonBorderColor">Border Color</Label>
+                  <div className="flex gap-2 mt-2">
+                    <Input
+                      id="buttonBorderColor"
+                      type="color"
+                      value={settings.buttonBorderColor}
+                      onChange={(e) => handleInputChange('buttonBorderColor', e.target.value)}
+                      className="w-16 h-10 p-1"
+                    />
+                    <Input
+                      value={settings.buttonBorderColor}
+                      onChange={(e) => handleInputChange('buttonBorderColor', e.target.value)}
+                      className="flex-1"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="buttonBorderRadius">Border Radius: {settings.buttonBorderRadius}px</Label>
+                  <Input
+                    id="buttonBorderRadius"
+                    type="number"
+                    min="0"
+                    max="50"
+                    value={settings.buttonBorderRadius}
+                    onChange={(e) => handleInputChange('buttonBorderRadius', parseInt(e.target.value))}
+                    className="mt-2"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Colors & Styling - Secondary Button */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Secondary Button</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label htmlFor="secondaryButtonBackgroundColor">Background Color</Label>
+                  <div className="flex gap-2 mt-2">
+                    <Input
+                      id="secondaryButtonBackgroundColor"
+                      type="color"
+                      value={settings.secondaryButtonBackgroundColor}
+                      onChange={(e) => handleInputChange('secondaryButtonBackgroundColor', e.target.value)}
+                      className="w-16 h-10 p-1"
+                    />
+                    <Input
+                      value={settings.secondaryButtonBackgroundColor}
+                      onChange={(e) => handleInputChange('secondaryButtonBackgroundColor', e.target.value)}
+                      className="flex-1"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="secondaryButtonTextColor">Text Color</Label>
+                  <div className="flex gap-2 mt-2">
+                    <Input
+                      id="secondaryButtonTextColor"
+                      type="color"
+                      value={settings.secondaryButtonTextColor}
+                      onChange={(e) => handleInputChange('secondaryButtonTextColor', e.target.value)}
+                      className="w-16 h-10 p-1"
+                    />
+                    <Input
+                      value={settings.secondaryButtonTextColor}
+                      onChange={(e) => handleInputChange('secondaryButtonTextColor', e.target.value)}
+                      className="flex-1"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="secondaryButtonHoverBackgroundColor">Hover Background</Label>
+                  <div className="flex gap-2 mt-2">
+                    <Input
+                      id="secondaryButtonHoverBackgroundColor"
+                      type="color"
+                      value={settings.secondaryButtonHoverBackgroundColor}
+                      onChange={(e) => handleInputChange('secondaryButtonHoverBackgroundColor', e.target.value)}
+                      className="w-16 h-10 p-1"
+                    />
+                    <Input
+                      value={settings.secondaryButtonHoverBackgroundColor}
+                      onChange={(e) => handleInputChange('secondaryButtonHoverBackgroundColor', e.target.value)}
+                      className="flex-1"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="secondaryButtonHoverTextColor">Hover Text Color</Label>
+                  <div className="flex gap-2 mt-2">
+                    <Input
+                      id="secondaryButtonHoverTextColor"
+                      type="color"
+                      value={settings.secondaryButtonHoverTextColor}
+                      onChange={(e) => handleInputChange('secondaryButtonHoverTextColor', e.target.value)}
+                      className="w-16 h-10 p-1"
+                    />
+                    <Input
+                      value={settings.secondaryButtonHoverTextColor}
+                      onChange={(e) => handleInputChange('secondaryButtonHoverTextColor', e.target.value)}
+                      className="flex-1"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="secondaryButtonBorderColor">Border Color</Label>
+                  <div className="flex gap-2 mt-2">
+                    <Input
+                      id="secondaryButtonBorderColor"
+                      type="color"
+                      value={settings.secondaryButtonBorderColor}
+                      onChange={(e) => handleInputChange('secondaryButtonBorderColor', e.target.value)}
+                      className="w-16 h-10 p-1"
+                    />
+                    <Input
+                      value={settings.secondaryButtonBorderColor}
+                      onChange={(e) => handleInputChange('secondaryButtonBorderColor', e.target.value)}
+                      className="flex-1"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="secondaryButtonBorderRadius">Border Radius: {settings.secondaryButtonBorderRadius}px</Label>
+                  <Input
+                    id="secondaryButtonBorderRadius"
+                    type="number"
+                    min="0"
+                    max="50"
+                    value={settings.secondaryButtonBorderRadius}
+                    onChange={(e) => handleInputChange('secondaryButtonBorderRadius', parseInt(e.target.value))}
+                    className="mt-2"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Colors & Styling - Overlay */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Overlay</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label htmlFor="overlayColor">Overlay Color</Label>
+                  <div className="flex gap-2 mt-2">
+                    <Input
+                      id="overlayColor"
+                      type="color"
+                      value={settings.overlayColor}
+                      onChange={(e) => handleInputChange('overlayColor', e.target.value)}
+                      className="w-16 h-10 p-1"
+                    />
+                    <Input
+                      value={settings.overlayColor}
+                      onChange={(e) => handleInputChange('overlayColor', e.target.value)}
+                      className="flex-1"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="overlayOpacity">Overlay Opacity: {settings.overlayOpacity}%</Label>
+                  <Input
+                    id="overlayOpacity"
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={settings.overlayOpacity}
+                    onChange={(e) => handleInputChange('overlayOpacity', parseInt(e.target.value))}
+                    className="mt-2"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Colors & Styling - Slider Background */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Slider Background</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label htmlFor="sliderBackgroundColor">Background Color</Label>
+                  <div className="flex gap-2 mt-2">
+                    <Input
+                      id="sliderBackgroundColor"
+                      type="color"
+                      value={settings.sliderBackgroundColor}
+                      onChange={(e) => handleInputChange('sliderBackgroundColor', e.target.value)}
+                      className="w-16 h-10 p-1"
+                    />
+                    <Input
+                      value={settings.sliderBackgroundColor}
+                      onChange={(e) => handleInputChange('sliderBackgroundColor', e.target.value)}
+                      className="flex-1"
+                    />
+                  </div>
                 </div>
               </CardContent>
             </Card>

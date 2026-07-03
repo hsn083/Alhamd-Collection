@@ -114,15 +114,15 @@ export default function HeroSlider() {
     dotSize: 12,
     showProgressBar: false,
     progressColor: '#10b981',
-    desktopHeight: 750,
+    desktopHeight: 650,
     desktopHeadingFontSize: 60,
     desktopDescriptionFontSize: 24,
     desktopContentPosition: 'left',
-    tabletHeight: 650,
+    tabletHeight: 560,
     tabletHeadingFontSize: 48,
     tabletDescriptionFontSize: 20,
     tabletContentPosition: 'left',
-    mobileHeight: 550,
+    mobileHeight: 480,
     mobileHeadingFontSize: 36,
     mobileDescriptionFontSize: 16,
     mobileContentPosition: 'left',
@@ -325,29 +325,19 @@ export default function HeroSlider() {
   const currentBanner = banners[currentIndex];
 
   return (
-    <section
-      ref={sliderRef}
-      className="relative overflow-hidden"
-      style={{
-        height: `${settings.mobileHeight}px`,
-      }}
+   <section
+  ref={sliderRef}
+  className="relative overflow-hidden h-[550px] md:h-[650px] lg:h-[750px]"
       onMouseEnter={() => settings.pauseOnHover && setIsPaused(true)}
       onMouseLeave={() => settings.pauseOnHover && setIsPaused(false)}
       onTouchStart={settings.touchSwipe ? handleTouchStart : undefined}
       onTouchEnd={settings.touchSwipe ? handleTouchEnd : undefined}
     >
-      <style>{`
-        @media (min-width: 768px) {
-          section { height: ${settings.tabletHeight}px !important; }
-        }
-        @media (min-width: 1024px) {
-          section { height: ${settings.desktopHeight}px !important; }
-        }
-      `}</style>
+      
       <div className="relative w-full h-full">
         {/* Slides */}
         <div
-          className="flex w-full h-full transition-transform"
+  className="flex h-full transition-transform ease-in-out"
           style={{
             transform: `translateX(-${currentIndex * 100}%)`,
             transitionDuration: `${settings.transitionSpeed}ms`,

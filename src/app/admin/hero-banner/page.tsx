@@ -8,14 +8,18 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   ArrowLeft,
   Upload,
   X,
   Save,
-  Eye
+  Eye,
+  Settings,
+  Image as ImageIcon
 } from 'lucide-react';
 import { HeroBanner } from '@/types';
+import SliderSettingsPanel from '@/components/admin/SliderSettingsPanel';
 
 export default function AdminHeroBannerPage() {
   const [heroBanner, setHeroBanner] = useState<HeroBanner | null>(null);
@@ -24,6 +28,7 @@ export default function AdminHeroBannerPage() {
   const [bannerImage, setBannerImage] = useState<string>('');
   const [previewMode, setPreviewMode] = useState(false);
   const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [activeTab, setActiveTab] = useState('banners');
 
   // Fetch hero banner data
   useEffect(() => {
@@ -161,186 +166,207 @@ export default function AdminHeroBannerPage() {
         </div>
 
         <div className="container mx-auto px-4 py-8">
-          {/* Preview Mode */}
-          {previewMode && heroBanner && (
-            <Card className="mb-8 border border-emerald-100 bg-white shadow-sm">
-              <CardHeader>
-                <CardTitle className="text-emerald-700">Live Preview</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="relative w-full h-[350px] md:h-[500px] overflow-hidden rounded-lg">
-                  {bannerImage ? (
-                    <img
-                      src={bannerImage}
-                      alt="Hero Banner Preview"
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-emerald-500/10 to-green-600/10 flex items-center justify-center">
-                      <div className="text-center">
-                        <div className="text-6xl mb-4">🎮</div>
-                        <p className="text-muted-foreground">No banner image uploaded</p>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-2 mb-6">
+              <TabsTrigger value="banners">
+                <ImageIcon className="mr-2 h-4 w-4" />
+                Banner Management
+              </TabsTrigger>
+              <TabsTrigger value="settings">
+                <Settings className="mr-2 h-4 w-4" />
+                Slider Settings
+              </TabsTrigger>
+            </TabsList>
+
+            {/* Banner Management Tab */}
+            <TabsContent value="banners">
+              {/* Preview Mode */}
+              {previewMode && heroBanner && (
+                <Card className="mb-8 border border-emerald-100 bg-white shadow-sm">
+                  <CardHeader>
+                    <CardTitle className="text-emerald-700">Live Preview</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="relative w-full h-[350px] md:h-[500px] overflow-hidden rounded-lg">
+                      {bannerImage ? (
+                        <img
+                          src={bannerImage}
+                          alt="Hero Banner Preview"
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-emerald-500/10 to-green-600/10 flex items-center justify-center">
+                          <div className="text-center">
+                            <div className="text-6xl mb-4">🎮</div>
+                            <p className="text-muted-foreground">No banner image uploaded</p>
+                          </div>
+                        </div>
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-gray-50/80 via-black/50 to-transparent flex items-end p-8">
+                        <div className="max-w-3xl">
+                          <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">
+                            {heroBanner.heading}
+                          </h1>
+                          <p className="text-lg md:text-xl text-white/90 mb-6">
+                            {heroBanner.subHeading}
+                          </p>
+                          {heroBanner.isActive && (
+                            <Button 
+                              size="lg" 
+                              className="bg-emerald-600 text-black hover:bg-emerald-500 font-bold transition-all hover:scale-105"
+                              onClick={() => window.location.href = heroBanner.buttonUrl}
+                            >
+                              {heroBanner.buttonText}
+                            </Button>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-gray-50/80 via-black/50 to-transparent flex items-end p-8">
-                    <div className="max-w-3xl">
-                      <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">
-                        {heroBanner.heading}
-                      </h1>
-                      <p className="text-lg md:text-xl text-white/90 mb-6">
-                        {heroBanner.subHeading}
-                      </p>
-                      {heroBanner.isActive && (
-                        <Button 
-                          size="lg" 
-                          className="bg-emerald-600 text-black hover:bg-emerald-500 font-bold transition-all hover:scale-105"
-                          onClick={() => window.location.href = heroBanner.buttonUrl}
-                        >
-                          {heroBanner.buttonText}
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
+                  </CardContent>
+                </Card>
+              )}
 
-          {/* Edit Form */}
-          {!previewMode && (
-            <Card className="border border-emerald-100 bg-white shadow-sm">
-              <CardHeader>
-                <CardTitle className="text-emerald-700">Edit Hero Banner</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleSave} className="space-y-6">
-                  {/* Image Upload */}
-                  <div>
-                    <Label>Banner Image *</Label>
-                    <div className="mt-2 border-2 border-dashed border-emerald-100 rounded-lg p-6 bg-white">
-                      <div className="flex flex-col items-center justify-center">
-                        {bannerImage ? (
-                          <div className="relative w-full h-64 mb-4">
-                            <img 
-                              src={bannerImage} 
-                              alt="Banner preview" 
-                              className="w-full h-full object-cover rounded"
+              {/* Edit Form */}
+              {!previewMode && (
+                <Card className="border border-emerald-100 bg-white shadow-sm">
+                  <CardHeader>
+                    <CardTitle className="text-emerald-700">Edit Hero Banner</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <form onSubmit={handleSave} className="space-y-6">
+                      {/* Image Upload */}
+                      <div>
+                        <Label>Banner Image *</Label>
+                        <div className="mt-2 border-2 border-dashed border-emerald-100 rounded-lg p-6 bg-white">
+                          <div className="flex flex-col items-center justify-center">
+                            {bannerImage ? (
+                              <div className="relative w-full h-64 mb-4">
+                                <img 
+                                  src={bannerImage} 
+                                  alt="Banner preview" 
+                                  className="w-full h-full object-cover rounded"
+                                />
+                                <Button
+                                  type="button"
+                                  variant="destructive"
+                                  size="icon"
+                                  className="absolute top-2 right-2"
+                                  onClick={removeImage}
+                                >
+                                  <X className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            ) : (
+                              <>
+                                <Upload className="h-12 w-12 text-emerald-700 mb-2" />
+                                <p className="text-sm text-muted-foreground mb-2">Upload banner image (Recommended: 1920x600px)</p>
+                              </>
+                            )}
+                            <Input
+                              type="file"
+                              accept="image/*"
+                              onChange={handleImageUpload}
+                              className="hidden"
+                              id="banner-image-upload"
                             />
-                            <Button
-                              type="button"
-                              variant="destructive"
-                              size="icon"
-                              className="absolute top-2 right-2"
-                              onClick={removeImage}
-                            >
-                              <X className="h-4 w-4" />
+                            <Button type="button" className="bg-emerald-600 text-black hover:bg-emerald-500 font-semibold" onClick={triggerFileInput}>
+                              <Upload className="mr-2 h-4 w-4" />
+                              Choose Image
                             </Button>
                           </div>
-                        ) : (
-                          <>
-                            <Upload className="h-12 w-12 text-emerald-700 mb-2" />
-                            <p className="text-sm text-muted-foreground mb-2">Upload banner image (Recommended: 1920x600px)</p>
-                          </>
-                        )}
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="heading">Heading *</Label>
+                          <Input
+                            id="heading"
+                            name="heading"
+                            placeholder="e.g., PREMIUM CLOTHING & SHOES COLLECTION"
+                            defaultValue={heroBanner?.heading || ''}
+                            required
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="buttonText">Button Text *</Label>
+                          <Input
+                            id="buttonText"
+                            name="buttonText"
+                            placeholder="e.g., Shop Now"
+                            defaultValue={heroBanner?.buttonText || ''}
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <Label htmlFor="subheading">Subheading *</Label>
                         <Input
-                          type="file"
-                          accept="image/*"
-                          onChange={handleImageUpload}
-                          className="hidden"
-                          id="banner-image-upload"
+                          id="subheading"
+                          name="subheading"
+                          placeholder="e.g., Discover premium clothing and footwear..."
+                          defaultValue={heroBanner?.subHeading || ''}
+                          required
                         />
-                        <Button type="button" className="bg-emerald-600 text-black hover:bg-emerald-500 font-semibold" onClick={triggerFileInput}>
-                          <Upload className="mr-2 h-4 w-4" />
-                          Choose Image
+                      </div>
+
+                      <div>
+                        <Label htmlFor="buttonLink">Button Link *</Label>
+                        <Input
+                          id="buttonLink"
+                          name="buttonLink"
+                          placeholder="e.g., /shop"
+                          defaultValue={heroBanner?.buttonUrl || ''}
+                          required
+                        />
+                      </div>
+
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="isActive"
+                          name="isActive"
+                          defaultChecked={heroBanner?.isActive}
+                        />
+                        <Label htmlFor="isActive" className="text-sm cursor-pointer">
+                          Show banner on homepage
+                        </Label>
+                      </div>
+
+                      <div className="flex space-x-4">
+                        <Button type="submit" className="bg-emerald-600 text-black hover:bg-emerald-500 font-semibold" disabled={isSaving}>
+                          {isSaving ? (
+                            <>
+                              <Save className="mr-2 h-4 w-4 animate-spin" />
+                              Saving...
+                            </>
+                          ) : (
+                            <>
+                              <Save className="mr-2 h-4 w-4" />
+                              Save Changes
+                            </>
+                          )}
+                        </Button>
+                        <Button 
+                          type="button" 
+                          variant="outline" 
+                          onClick={() => setPreviewMode(true)}
+                        >
+                          <Eye className="mr-2 h-4 w-4" />
+                          Preview
                         </Button>
                       </div>
-                    </div>
-                  </div>
+                    </form>
+                  </CardContent>
+                </Card>
+              )}
+            </TabsContent>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="heading">Heading *</Label>
-                      <Input
-                        id="heading"
-                        name="heading"
-                        placeholder="e.g., PREMIUM CLOTHING & SHOES COLLECTION"
-                        defaultValue={heroBanner?.heading || ''}
-                        required
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="buttonText">Button Text *</Label>
-                      <Input
-                        id="buttonText"
-                        name="buttonText"
-                        placeholder="e.g., Shop Now"
-                        defaultValue={heroBanner?.buttonText || ''}
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="subheading">Subheading *</Label>
-                    <Input
-                      id="subheading"
-                      name="subheading"
-                      placeholder="e.g., Discover premium clothing and footwear..."
-                      defaultValue={heroBanner?.subHeading || ''}
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="buttonLink">Button Link *</Label>
-                    <Input
-                      id="buttonLink"
-                      name="buttonLink"
-                      placeholder="e.g., /shop"
-                      defaultValue={heroBanner?.buttonUrl || ''}
-                      required
-                    />
-                  </div>
-
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="isActive"
-                      name="isActive"
-                      defaultChecked={heroBanner?.isActive}
-                    />
-                    <Label htmlFor="isActive" className="text-sm cursor-pointer">
-                      Show banner on homepage
-                    </Label>
-                  </div>
-
-                  <div className="flex space-x-4">
-                    <Button type="submit" className="bg-emerald-600 text-black hover:bg-emerald-500 font-semibold" disabled={isSaving}>
-                      {isSaving ? (
-                        <>
-                          <Save className="mr-2 h-4 w-4 animate-spin" />
-                          Saving...
-                        </>
-                      ) : (
-                        <>
-                          <Save className="mr-2 h-4 w-4" />
-                          Save Changes
-                        </>
-                      )}
-                    </Button>
-                    <Button 
-                      type="button" 
-                      variant="outline" 
-                      onClick={() => setPreviewMode(true)}
-                    >
-                      <Eye className="mr-2 h-4 w-4" />
-                      Preview
-                    </Button>
-                  </div>
-                </form>
-              </CardContent>
-            </Card>
-          )}
+            {/* Slider Settings Tab */}
+            <TabsContent value="settings">
+              <SliderSettingsPanel />
+            </TabsContent>
+          </Tabs>
         </div>
 
         {/* Notification */}
