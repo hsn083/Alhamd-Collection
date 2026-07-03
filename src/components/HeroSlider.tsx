@@ -136,6 +136,28 @@ export default function HeroSlider() {
   const sliderRef = useRef<HTMLDivElement>(null);
   const touchStartRef = useRef<number>(0);
   const autoPlayRef = useRef<NodeJS.Timeout | null>(null);
+  const autoPlayIntervalRef = useRef<NodeJS.Interval | null>(null);
+
+  const goToPrevious = useCallback(() => {
+    if (isTransitioning || banners.length <= 1 || !settings) return;
+    setIsTransitioning(true);
+    setCurrentIndex((prev) => (prev === 0 ? banners.length - 1 : prev - 1));
+    setTimeout(() => setIsTransitioning(false), settings.transitionSpeed);
+  }, [banners.length, settings?.transitionSpeed]);
+
+  const goToNext = useCallback(() => {
+    if (isTransitioning || banners.length <= 1 || !settings) return;
+    setIsTransitioning(true);
+    setCurrentIndex((prev) => (prev === banners.length - 1 ? 0 : prev + 1));
+    setTimeout(() => setIsTransitioning(false), settings.transitionSpeed);
+  }, [banners.length, settings?.transitionSpeed]);
+
+  const goToSlide = useCallback((index: number) => {
+    if (isTransitioning || banners.length <= 1 || !settings) return;
+    setIsTransitioning(true);
+    setCurrentIndex(index);
+    setTimeout(() => setIsTransitioning(false), settings.transitionSpeed);
+  }, [banners.length, settings?.transitionSpeed]);
 
   // Fetch banners and settings
   useEffect(() => {
@@ -172,24 +194,56 @@ export default function HeroSlider() {
 
   // Auto-play functionality
   useEffect(() => {
-    if (!settings.autoPlay || banners.length <= 1 || isPaused) {
+    // Clear any existing timers
+    if (autoPlayRef.current) {
+      clearTimeout(autoPlayRef.current);
+      autoPlayRef.current = null;
+    }
+    if (autoPlayIntervalRef.current) {
+      clearInterval(autoPlayIntervalRef.current);
+      autoPlayIntervalRef.current = null;
+    }
+
+    // Don't start autoplay if disabled, only one banner, or paused
+    if (!settings || !settings.autoPlay || banners.length <= 1 || isPaused) {
+      return;
+    }
+
+    // Use setInterval for continuous autoplay
+    autoPlayIntervalRef.current = setInterval(() => {
+      if (!isTransitioning && banners.length > 1) {
+        goToNext();
+      }
+    }, settings.autoPlayDelay);
+
+    // Cleanup function
+    return () => {
+      if (autoPlayIntervalRef.current) {
+        clearInterval(autoPlayIntervalRef.current);
+        autoPlayIntervalRef.current = null;
+      }
       if (autoPlayRef.current) {
         clearTimeout(autoPlayRef.current);
         autoPlayRef.current = null;
       }
-      return;
-    }
+    };
+  }, [settings?.autoPlay, settings?.autoPlayDelay, banners.length, isPaused, goToNext]);
 
-    autoPlayRef.current = setTimeout(() => {
-      goToNext();
-    }, settings.autoPlayDelay);
+  // Pause on tab hidden
+  useEffect(() => {
+    if (!settings?.pauseOnTabHidden) return;
 
-    return () => {
-      if (autoPlayRef.current) {
-        clearTimeout(autoPlayRef.current);
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        setIsPaused(true);
+      } else {
+        setIsPaused(false);
       }
     };
-  }, [currentIndex, banners.length, isPaused, settings.autoPlay, settings.autoPlayDelay]);
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [settings?.pauseOnTabHidden]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -205,28 +259,8 @@ export default function HeroSlider() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [currentIndex, banners.length, settings.keyboardNavigation]);
+  }, [currentIndex, banners.length, settings.keyboardNavigation, goToPrevious, goToNext]);
 
-  const goToPrevious = useCallback(() => {
-    if (isTransitioning || banners.length <= 1) return;
-    setIsTransitioning(true);
-    setCurrentIndex((prev) => (prev === 0 ? banners.length - 1 : prev - 1));
-    setTimeout(() => setIsTransitioning(false), settings.transitionSpeed);
-  }, [banners.length, isTransitioning, settings.transitionSpeed]);
-
-  const goToNext = useCallback(() => {
-    if (isTransitioning || banners.length <= 1) return;
-    setIsTransitioning(true);
-    setCurrentIndex((prev) => (prev === banners.length - 1 ? 0 : prev + 1));
-    setTimeout(() => setIsTransitioning(false), settings.transitionSpeed);
-  }, [banners.length, isTransitioning, settings.transitionSpeed]);
-
-  const goToSlide = useCallback((index: number) => {
-    if (isTransitioning || banners.length <= 1) return;
-    setIsTransitioning(true);
-    setCurrentIndex(index);
-    setTimeout(() => setIsTransitioning(false), settings.transitionSpeed);
-  }, [isTransitioning, banners.length, settings.transitionSpeed]);
 
   // Touch handlers for swipe
   const handleTouchStart = (e: React.TouchEvent) => {

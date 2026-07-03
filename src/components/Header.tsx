@@ -236,13 +236,13 @@ export default function Header() {
                       {suggestions?.categories && suggestions.categories.length > 0 && (
                         <div className="p-3 border-b border-gray-100">
                           <span className="text-xs font-semibold text-gray-500 uppercase mb-2 block">Categories</span>
-                          {suggestions.categories.map((category: string, idx: number) => (
+                          {suggestions.categories.map((category: any, idx: number) => (
                             <button
-                              key={idx}
-                              onClick={() => handleSuggestionClick('category', category)}
+                              key={category._id || idx}
+                              onClick={() => handleSuggestionClick('category', category.slug)}
                               className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-emerald-50 rounded-md"
                             >
-                              {category}
+                              {category.name}
                             </button>
                           ))}
                         </div>
@@ -252,13 +252,13 @@ export default function Header() {
                       {suggestions?.brands && suggestions.brands.length > 0 && (
                         <div className="p-3">
                           <span className="text-xs font-semibold text-gray-500 uppercase mb-2 block">Brands</span>
-                          {suggestions.brands.map((brand: string, idx: number) => (
+                          {suggestions.brands.map((brand: any, idx: number) => (
                             <button
-                              key={idx}
-                              onClick={() => handleSuggestionClick('brand', brand)}
+                              key={brand._id || idx}
+                              onClick={() => handleSuggestionClick('brand', brand.name)}
                               className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-emerald-50 rounded-md"
                             >
-                              {brand}
+                              {brand.name}
                             </button>
                           ))}
                         </div>
