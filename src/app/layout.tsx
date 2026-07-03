@@ -120,6 +120,9 @@ export async function generateMetadata(): Promise<Metadata> {
       yandex: process.env.NEXT_PUBLIC_YANDEX_VERIFICATION,
     },
     category: 'ecommerce',
+    icons: {
+      icon: '/favicon.ico',
+    },
     other: {
       'theme-color': '#0F766E',
       'msapplication-TileColor': '#0F766E',
@@ -138,7 +141,6 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <head>
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://images.unsplash.com" />

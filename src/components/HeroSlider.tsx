@@ -135,8 +135,8 @@ export default function HeroSlider() {
   
   const sliderRef = useRef<HTMLDivElement>(null);
   const touchStartRef = useRef<number>(0);
-  const autoPlayRef = useRef<NodeJS.Timeout | null>(null);
-  const autoPlayIntervalRef = useRef<NodeJS.Interval | null>(null);
+  const autoPlayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const autoPlayIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const goToPrevious = useCallback(() => {
     if (isTransitioning || banners.length <= 1 || !settings) return;
