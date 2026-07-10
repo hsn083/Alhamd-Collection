@@ -296,18 +296,33 @@ http://localhost:3000
 Create `.env.local` file:
 
 ```env
-MONGODB_URI=
+# Cloudinary Configuration (Required for image uploads)
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
 
-NEXTAUTH_SECRET=
+# MongoDB Configuration
+MONGODB_URI=mongodb://localhost:27017/alhamd-collection
 
-NEXTAUTH_URL=http://localhost:3000
+# JWT Secret
+JWT_SECRET=your_jwt_secret_key_here
 
-CLOUDINARY_CLOUD_NAME=
-CLOUDINARY_API_KEY=
-CLOUDINARY_API_SECRET=
+# Stripe Configuration (Optional - for credit card payments)
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
+STRIPE_SECRET_KEY=your_stripe_secret_key
+STRIPE_WEBHOOK_SECRET=your_stripe_webhook_secret
 
-NEXT_PUBLIC_SITE_URL=
-```
+# Email Configuration (Optional - for order notifications)
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USER=your_email@gmail.com
+EMAIL_PASSWORD=your_app_password
+EMAIL_FROM=Alhamd Collection <noreply@alhamdcollection.com>
+
+# Next.js Configuration
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+
 
 ---
 
