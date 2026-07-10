@@ -502,7 +502,7 @@ export default function AdminProductsPage() {
                       <Label htmlFor="brand">Brand *</Label>
                       <Input
                         id="brand"
-                        placeholder="e.g., Razer"
+                        placeholder="e.g., Alhamd Collection"
                         value={formData.brand}
                         onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
                         required

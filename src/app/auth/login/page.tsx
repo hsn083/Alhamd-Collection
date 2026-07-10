@@ -14,8 +14,7 @@ import {
   Eye, 
   EyeOff, 
   Loader2,
-  AlertCircle,
-  Shield
+  AlertCircle
 } from 'lucide-react';
 
 export default function LoginPage() {
@@ -173,18 +172,6 @@ export default function LoginPage() {
               Sign up
             </Link>
           </p>
-          <div className="w-full border-t border-green-700 pt-4">
-            <Link href="/admin/login">
-              <Button
-                type="button"
-                variant="outline"
-               className="w-full border-black-600 text-black-300 hover:bg-green-700 hover:text-black"
-              >
-                <Shield className="mr-2 h-4 w-4" />
-                Admin Login
-              </Button>
-            </Link>
-          </div>
         </CardFooter>
       </Card>
     </div>

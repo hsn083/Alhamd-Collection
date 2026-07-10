@@ -283,16 +283,17 @@ export default function SliderSettingsPanel({ onSettingsChange }: SliderSettings
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Slider Settings</h2>
           <p className="text-sm text-gray-500 mt-1">Configure every aspect of your hero slider</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-2">
           <Button
             variant="outline"
             onClick={() => setShowPreview(!showPreview)}
             disabled={isSaving}
+            className="w-full sm:w-auto"
           >
             {showPreview ? (
               <>
@@ -310,13 +311,14 @@ export default function SliderSettingsPanel({ onSettingsChange }: SliderSettings
             variant="outline"
             onClick={handleReset}
             disabled={isSaving}
+            className="w-full sm:w-auto"
           >
             <RotateCcw className="mr-2 h-4 w-4" />
             Reset to Default
           </Button>
           <Button
             onClick={handleSave}
-            className="bg-emerald-600 text-black hover:bg-emerald-500"
+            className="bg-emerald-600 text-black hover:bg-emerald-500 w-full sm:w-auto"
             disabled={isSaving}
           >
             {isSaving ? (
@@ -479,7 +481,7 @@ export default function SliderSettingsPanel({ onSettingsChange }: SliderSettings
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-8">
+        <TabsList className="flex gap-2 overflow-x-auto whitespace-nowrap w-full min-h-[40px] scrollbar-hide">
           <TabsTrigger value="general">
             <Settings className="mr-2 h-4 w-4" />
             General
@@ -516,11 +518,11 @@ export default function SliderSettingsPanel({ onSettingsChange }: SliderSettings
 
         {/* General Settings Tab */}
         <TabsContent value="general" className="space-y-6">
-          <Card>
-            <CardHeader>
+          <Card className="w-full overflow-hidden">
+            <CardHeader className="px-4 sm:px-6">
               <CardTitle>General Settings</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-6 px-4 sm:px-6">
               <div className="flex items-center space-x-2">
                 <Checkbox
                   id="enabled"
@@ -595,11 +597,11 @@ export default function SliderSettingsPanel({ onSettingsChange }: SliderSettings
 
         {/* Animation Settings Tab */}
         <TabsContent value="animation" className="space-y-6">
-          <Card>
-            <CardHeader>
+          <Card className="w-full overflow-hidden">
+            <CardHeader className="px-4 sm:px-6">
               <CardTitle>Animation Settings</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-6 px-4 sm:px-6">
               <div>
                 <Label htmlFor="animationType">Animation Type</Label>
                 <Select
@@ -672,11 +674,11 @@ export default function SliderSettingsPanel({ onSettingsChange }: SliderSettings
 
         {/* Navigation Settings Tab */}
         <TabsContent value="navigation" className="space-y-6">
-          <Card>
-            <CardHeader>
+          <Card className="w-full overflow-hidden">
+            <CardHeader className="px-4 sm:px-6">
               <CardTitle>Navigation Controls</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-6 px-4 sm:px-6">
               <div className="flex items-center space-x-2">
                 <Checkbox
                   id="touchSwipe"
@@ -713,11 +715,11 @@ export default function SliderSettingsPanel({ onSettingsChange }: SliderSettings
           </Card>
 
           {/* Arrows */}
-          <Card>
-            <CardHeader>
+          <Card className="w-full overflow-hidden">
+            <CardHeader className="px-4 sm:px-6">
               <CardTitle>Arrow Settings</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-6 px-4 sm:px-6">
               <div className="flex items-center space-x-2">
                 <Checkbox
                   id="showArrows"
@@ -757,72 +759,72 @@ export default function SliderSettingsPanel({ onSettingsChange }: SliderSettings
 
               <div>
                 <Label htmlFor="arrowBackgroundColor">Arrow Background Color</Label>
-                <div className="flex gap-2 mt-2">
+                <div className="flex flex-col sm:flex-row gap-2 mt-2">
                   <Input
                     id="arrowBackgroundColor"
                     type="color"
                     value={settings.arrowBackgroundColor.startsWith('#') ? settings.arrowBackgroundColor : '#ffffff'}
                     onChange={(e) => handleInputChange('arrowBackgroundColor', e.target.value)}
-                    className="w-16 h-10 p-1"
+                    className="w-full sm:w-16 h-10 p-1"
                   />
                   <Input
                     value={settings.arrowBackgroundColor}
                     onChange={(e) => handleInputChange('arrowBackgroundColor', e.target.value)}
-                    className="flex-1"
+                    className="w-full min-w-0"
                   />
                 </div>
               </div>
 
               <div>
                 <Label htmlFor="arrowIconColor">Arrow Icon Color</Label>
-                <div className="flex gap-2 mt-2">
+                <div className="flex flex-col sm:flex-row gap-2 mt-2">
                   <Input
                     id="arrowIconColor"
                     type="color"
                     value={settings.arrowIconColor}
                     onChange={(e) => handleInputChange('arrowIconColor', e.target.value)}
-                    className="w-16 h-10 p-1"
+                    className="w-full sm:w-16 h-10 p-1"
                   />
                   <Input
                     value={settings.arrowIconColor}
                     onChange={(e) => handleInputChange('arrowIconColor', e.target.value)}
-                    className="flex-1"
+                    className="w-full min-w-0"
                   />
                 </div>
               </div>
 
               <div>
                 <Label htmlFor="arrowHoverBackgroundColor">Arrow Hover Background</Label>
-                <div className="flex gap-2 mt-2">
+                <div className="flex flex-col sm:flex-row gap-2 mt-2">
                   <Input
                     id="arrowHoverBackgroundColor"
                     type="color"
                     value={settings.arrowHoverBackgroundColor.startsWith('#') ? settings.arrowHoverBackgroundColor : '#ffffff'}
                     onChange={(e) => handleInputChange('arrowHoverBackgroundColor', e.target.value)}
-                    className="w-16 h-10 p-1"
+                    className="w-full sm:w-16 h-10 p-1"
                   />
                   <Input
                     value={settings.arrowHoverBackgroundColor}
                     onChange={(e) => handleInputChange('arrowHoverBackgroundColor', e.target.value)}
-                    className="flex-1"
+                    className="w-full min-w-0"
                   />
                 </div>
               </div>
 
               <div>
                 <Label htmlFor="arrowHoverIconColor">Arrow Hover Icon Color</Label>
-                <div className="flex gap-2 mt-2">
+                <div className="flex flex-col sm:flex-row gap-2 mt-2">
                   <Input
                     id="arrowHoverIconColor"
                     type="color"
                     value={settings.arrowHoverIconColor}
                     onChange={(e) => handleInputChange('arrowHoverIconColor', e.target.value)}
-                    className="w-16 h-10 p-1"
+                    className="w-full sm:w-16 h-10 p-1"
                   />
                   <Input
                     value={settings.arrowHoverIconColor}
                     onChange={(e) => handleInputChange('arrowHoverIconColor', e.target.value)}
-                    className="flex-1"
+                    className="w-full min-w-0"
                   />
                 </div>
               </div>
@@ -830,11 +832,11 @@ export default function SliderSettingsPanel({ onSettingsChange }: SliderSettings
           </Card>
 
           {/* Dots */}
-          <Card>
-            <CardHeader>
+          <Card className="w-full overflow-hidden">
+            <CardHeader className="px-4 sm:px-6">
               <CardTitle>Dot Settings</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-6 px-4 sm:px-6">
               <div className="flex items-center space-x-2">
                 <Checkbox
                   id="showDots"
@@ -874,36 +876,36 @@ export default function SliderSettingsPanel({ onSettingsChange }: SliderSettings
 
               <div>
                 <Label htmlFor="dotColor">Dot Color</Label>
-                <div className="flex gap-2 mt-2">
+                <div className="flex flex-col sm:flex-row gap-2 mt-2">
                   <Input
                     id="dotColor"
                     type="color"
                     value={settings.dotColor.startsWith('#') ? settings.dotColor : '#ffffff'}
                     onChange={(e) => handleInputChange('dotColor', e.target.value)}
-                    className="w-16 h-10 p-1"
+                    className="w-full sm:w-16 h-10 p-1"
                   />
                   <Input
                     value={settings.dotColor}
                     onChange={(e) => handleInputChange('dotColor', e.target.value)}
-                    className="flex-1"
+                    className="w-full min-w-0"
                   />
                 </div>
               </div>
 
               <div>
                 <Label htmlFor="activeDotColor">Active Dot Color</Label>
-                <div className="flex gap-2 mt-2">
+                <div className="flex flex-col sm:flex-row gap-2 mt-2">
                   <Input
                     id="activeDotColor"
                     type="color"
                     value={settings.activeDotColor}
                     onChange={(e) => handleInputChange('activeDotColor', e.target.value)}
-                    className="w-16 h-10 p-1"
+                    className="w-full sm:w-16 h-10 p-1"
                   />
                   <Input
                     value={settings.activeDotColor}
                     onChange={(e) => handleInputChange('activeDotColor', e.target.value)}
-                    className="flex-1"
+                    className="w-full min-w-0"
                   />
                 </div>
               </div>
@@ -911,11 +913,11 @@ export default function SliderSettingsPanel({ onSettingsChange }: SliderSettings
           </Card>
 
           {/* Progress Bar */}
-          <Card>
-            <CardHeader>
+          <Card className="w-full overflow-hidden">
+            <CardHeader className="px-4 sm:px-6">
               <CardTitle>Progress Bar Settings</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-6 px-4 sm:px-6">
               <div className="flex items-center space-x-2">
                 <Checkbox
                   id="showProgressBar"
@@ -929,18 +931,18 @@ export default function SliderSettingsPanel({ onSettingsChange }: SliderSettings
 
               <div>
                 <Label htmlFor="progressColor">Progress Color</Label>
-                <div className="flex gap-2 mt-2">
+                <div className="flex flex-col sm:flex-row gap-2 mt-2">
                   <Input
                     id="progressColor"
                     type="color"
                     value={settings.progressColor}
                     onChange={(e) => handleInputChange('progressColor', e.target.value)}
-                    className="w-16 h-10 p-1"
+                    className="w-full sm:w-16 h-10 p-1"
                   />
                   <Input
                     value={settings.progressColor}
                     onChange={(e) => handleInputChange('progressColor', e.target.value)}
-                    className="flex-1"
+                    className="w-full min-w-0"
                   />
                 </div>
               </div>
@@ -964,14 +966,14 @@ export default function SliderSettingsPanel({ onSettingsChange }: SliderSettings
         {/* Responsive Settings Tab */}
         <TabsContent value="responsive" className="space-y-6">
           {/* Desktop */}
-          <Card>
-            <CardHeader>
+          <Card className="w-full overflow-hidden">
+            <CardHeader className="px-4 sm:px-6">
               <CardTitle className="flex items-center">
                 <Monitor className="mr-2 h-5 w-5" />
                 Desktop Settings
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-6 px-4 sm:px-6">
               <div>
                 <Label htmlFor="desktopHeight">Slider Height: {settings.desktopHeight}px</Label>
                 <Input
@@ -1022,14 +1024,14 @@ export default function SliderSettingsPanel({ onSettingsChange }: SliderSettings
           </Card>
 
           {/* Tablet */}
-          <Card>
-            <CardHeader>
+          <Card className="w-full overflow-hidden">
+            <CardHeader className="px-4 sm:px-6">
               <CardTitle className="flex items-center">
                 <Tablet className="mr-2 h-5 w-5" />
                 Tablet Settings
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-6 px-4 sm:px-6">
               <div>
                 <Label htmlFor="tabletHeight">Slider Height: {settings.tabletHeight}px</Label>
                 <Input
@@ -1080,14 +1082,14 @@ export default function SliderSettingsPanel({ onSettingsChange }: SliderSettings
           </Card>
 
           {/* Mobile */}
-          <Card>
-            <CardHeader>
+          <Card className="w-full overflow-hidden">
+            <CardHeader className="px-4 sm:px-6">
               <CardTitle className="flex items-center">
                 <Smartphone className="mr-2 h-5 w-5" />
                 Mobile Settings
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-6 px-4 sm:px-6">
               <div>
                 <Label htmlFor="mobileHeight">Slider Height: {settings.mobileHeight}px</Label>
                 <Input
@@ -1141,14 +1143,14 @@ export default function SliderSettingsPanel({ onSettingsChange }: SliderSettings
         {/* Typography Settings Tab */}
         <TabsContent value="typography" className="space-y-6">
           {/* Desktop Typography */}
-          <Card>
-            <CardHeader>
+          <Card className="w-full overflow-hidden">
+            <CardHeader className="px-4 sm:px-6">
               <CardTitle className="flex items-center">
                 <Monitor className="mr-2 h-5 w-5" />
                 Desktop Typography
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-6 px-4 sm:px-6">
               <div>
                 <Label htmlFor="desktopHeadingFontSize">Heading Size: {settings.desktopHeadingFontSize}px</Label>
                 <Input
@@ -1204,14 +1206,14 @@ export default function SliderSettingsPanel({ onSettingsChange }: SliderSettings
           </Card>
 
           {/* Tablet Typography */}
-          <Card>
-            <CardHeader>
+          <Card className="w-full overflow-hidden">
+            <CardHeader className="px-4 sm:px-6">
               <CardTitle className="flex items-center">
                 <Tablet className="mr-2 h-5 w-5" />
                 Tablet Typography
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-6 px-4 sm:px-6">
               <div>
                 <Label htmlFor="tabletHeadingFontSize">Heading Size: {settings.tabletHeadingFontSize}px</Label>
                 <Input
@@ -1267,14 +1269,14 @@ export default function SliderSettingsPanel({ onSettingsChange }: SliderSettings
           </Card>
 
           {/* Mobile Typography */}
-          <Card>
-            <CardHeader>
+          <Card className="w-full overflow-hidden">
+            <CardHeader className="px-4 sm:px-6">
               <CardTitle className="flex items-center">
                 <Smartphone className="mr-2 h-5 w-5" />
                 Mobile Typography
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-6 px-4 sm:px-6">
               <div>
                 <Label htmlFor="mobileHeadingFontSize">Heading Size: {settings.mobileHeadingFontSize}px</Label>
                 <Input
@@ -1333,61 +1335,61 @@ export default function SliderSettingsPanel({ onSettingsChange }: SliderSettings
         {/* Colors & Styling Settings Tab */}
         <TabsContent value="colors" className="space-y-6">
           {/* Text Colors */}
-          <Card>
-            <CardHeader>
+          <Card className="w-full overflow-hidden">
+            <CardHeader className="px-4 sm:px-6">
               <CardTitle>Text Colors</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-6 px-4 sm:px-6">
               <div>
                 <Label htmlFor="headingColor">Heading Color</Label>
-                <div className="flex gap-2 mt-2">
+                <div className="flex flex-col sm:flex-row gap-2 mt-2">
                   <Input
                     id="headingColor"
                     type="color"
                     value={settings.headingColor}
                     onChange={(e) => handleInputChange('headingColor', e.target.value)}
-                    className="w-16 h-10 p-1"
+                    className="w-full sm:w-16 h-10 p-1"
                   />
                   <Input
                     value={settings.headingColor}
                     onChange={(e) => handleInputChange('headingColor', e.target.value)}
-                    className="flex-1"
+                    className="w-full min-w-0"
                   />
                 </div>
               </div>
 
               <div>
                 <Label htmlFor="subheadingColor">Subheading Color</Label>
-                <div className="flex gap-2 mt-2">
+                <div className="flex flex-col sm:flex-row gap-2 mt-2">
                   <Input
                     id="subheadingColor"
                     type="color"
                     value={settings.subheadingColor}
                     onChange={(e) => handleInputChange('subheadingColor', e.target.value)}
-                    className="w-16 h-10 p-1"
+                    className="w-full sm:w-16 h-10 p-1"
                   />
                   <Input
                     value={settings.subheadingColor}
                     onChange={(e) => handleInputChange('subheadingColor', e.target.value)}
-                    className="flex-1"
+                    className="w-full min-w-0"
                   />
                 </div>
               </div>
 
               <div>
                 <Label htmlFor="descriptionColor">Description Color</Label>
-                <div className="flex gap-2 mt-2">
+                <div className="flex flex-col sm:flex-row gap-2 mt-2">
                   <Input
                     id="descriptionColor"
                     type="color"
                     value={settings.descriptionColor}
                     onChange={(e) => handleInputChange('descriptionColor', e.target.value)}
-                    className="w-16 h-10 p-1"
+                    className="w-full sm:w-16 h-10 p-1"
                   />
                   <Input
                     value={settings.descriptionColor}
                     onChange={(e) => handleInputChange('descriptionColor', e.target.value)}
-                    className="flex-1"
+                    className="w-full min-w-0"
                   />
                 </div>
               </div>
@@ -1395,97 +1397,97 @@ export default function SliderSettingsPanel({ onSettingsChange }: SliderSettings
           </Card>
 
           {/* Primary Button Colors */}
-          <Card>
-            <CardHeader>
+          <Card className="w-full overflow-hidden">
+            <CardHeader className="px-4 sm:px-6">
               <CardTitle>Primary Button Colors</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-6 px-4 sm:px-6">
               <div>
                 <Label htmlFor="buttonBackgroundColor">Button Background Color</Label>
-                <div className="flex gap-2 mt-2">
+                <div className="flex flex-col sm:flex-row gap-2 mt-2">
                   <Input
                     id="buttonBackgroundColor"
                     type="color"
                     value={settings.buttonBackgroundColor}
                     onChange={(e) => handleInputChange('buttonBackgroundColor', e.target.value)}
-                    className="w-16 h-10 p-1"
+                    className="w-full sm:w-16 h-10 p-1"
                   />
                   <Input
                     value={settings.buttonBackgroundColor}
                     onChange={(e) => handleInputChange('buttonBackgroundColor', e.target.value)}
-                    className="flex-1"
+                    className="w-full min-w-0"
                   />
                 </div>
               </div>
 
               <div>
                 <Label htmlFor="buttonTextColor">Button Text Color</Label>
-                <div className="flex gap-2 mt-2">
+                <div className="flex flex-col sm:flex-row gap-2 mt-2">
                   <Input
                     id="buttonTextColor"
                     type="color"
                     value={settings.buttonTextColor}
                     onChange={(e) => handleInputChange('buttonTextColor', e.target.value)}
-                    className="w-16 h-10 p-1"
+                    className="w-full sm:w-16 h-10 p-1"
                   />
                   <Input
                     value={settings.buttonTextColor}
                     onChange={(e) => handleInputChange('buttonTextColor', e.target.value)}
-                    className="flex-1"
+                    className="w-full min-w-0"
                   />
                 </div>
               </div>
 
               <div>
                 <Label htmlFor="buttonHoverBackgroundColor">Button Hover Background</Label>
-                <div className="flex gap-2 mt-2">
+                <div className="flex flex-col sm:flex-row gap-2 mt-2">
                   <Input
                     id="buttonHoverBackgroundColor"
                     type="color"
                     value={settings.buttonHoverBackgroundColor}
                     onChange={(e) => handleInputChange('buttonHoverBackgroundColor', e.target.value)}
-                    className="w-16 h-10 p-1"
+                    className="w-full sm:w-16 h-10 p-1"
                   />
                   <Input
                     value={settings.buttonHoverBackgroundColor}
                     onChange={(e) => handleInputChange('buttonHoverBackgroundColor', e.target.value)}
-                    className="flex-1"
+                    className="w-full min-w-0"
                   />
                 </div>
               </div>
 
               <div>
                 <Label htmlFor="buttonHoverTextColor">Button Hover Text Color</Label>
-                <div className="flex gap-2 mt-2">
+                <div className="flex flex-col sm:flex-row gap-2 mt-2">
                   <Input
                     id="buttonHoverTextColor"
                     type="color"
                     value={settings.buttonHoverTextColor}
                     onChange={(e) => handleInputChange('buttonHoverTextColor', e.target.value)}
-                    className="w-16 h-10 p-1"
+                    className="w-full sm:w-16 h-10 p-1"
                   />
                   <Input
                     value={settings.buttonHoverTextColor}
                     onChange={(e) => handleInputChange('buttonHoverTextColor', e.target.value)}
-                    className="flex-1"
+                    className="w-full min-w-0"
                   />
                 </div>
               </div>
 
               <div>
                 <Label htmlFor="buttonBorderColor">Button Border Color</Label>
-                <div className="flex gap-2 mt-2">
+                <div className="flex flex-col sm:flex-row gap-2 mt-2">
                   <Input
                     id="buttonBorderColor"
                     type="color"
                     value={settings.buttonBorderColor}
                     onChange={(e) => handleInputChange('buttonBorderColor', e.target.value)}
-                    className="w-16 h-10 p-1"
+                    className="w-full sm:w-16 h-10 p-1"
                   />
                   <Input
                     value={settings.buttonBorderColor}
                     onChange={(e) => handleInputChange('buttonBorderColor', e.target.value)}
-                    className="flex-1"
+                    className="w-full min-w-0"
                   />
                 </div>
               </div>
@@ -1506,97 +1508,97 @@ export default function SliderSettingsPanel({ onSettingsChange }: SliderSettings
           </Card>
 
           {/* Secondary Button Colors */}
-          <Card>
-            <CardHeader>
+          <Card className="w-full overflow-hidden">
+            <CardHeader className="px-4 sm:px-6">
               <CardTitle>Secondary Button Colors</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-6 px-4 sm:px-6">
               <div>
                 <Label htmlFor="secondaryButtonBackgroundColor">Button Background Color</Label>
-                <div className="flex gap-2 mt-2">
+                <div className="flex flex-col sm:flex-row gap-2 mt-2">
                   <Input
                     id="secondaryButtonBackgroundColor"
                     type="color"
                     value={settings.secondaryButtonBackgroundColor}
                     onChange={(e) => handleInputChange('secondaryButtonBackgroundColor', e.target.value)}
-                    className="w-16 h-10 p-1"
+                    className="w-full sm:w-16 h-10 p-1"
                   />
                   <Input
                     value={settings.secondaryButtonBackgroundColor}
                     onChange={(e) => handleInputChange('secondaryButtonBackgroundColor', e.target.value)}
-                    className="flex-1"
+                    className="w-full min-w-0"
                   />
                 </div>
               </div>
 
               <div>
                 <Label htmlFor="secondaryButtonTextColor">Button Text Color</Label>
-                <div className="flex gap-2 mt-2">
+                <div className="flex flex-col sm:flex-row gap-2 mt-2">
                   <Input
                     id="secondaryButtonTextColor"
                     type="color"
                     value={settings.secondaryButtonTextColor}
                     onChange={(e) => handleInputChange('secondaryButtonTextColor', e.target.value)}
-                    className="w-16 h-10 p-1"
+                    className="w-full sm:w-16 h-10 p-1"
                   />
                   <Input
                     value={settings.secondaryButtonTextColor}
                     onChange={(e) => handleInputChange('secondaryButtonTextColor', e.target.value)}
-                    className="flex-1"
+                    className="w-full min-w-0"
                   />
                 </div>
               </div>
 
               <div>
                 <Label htmlFor="secondaryButtonHoverBackgroundColor">Button Hover Background</Label>
-                <div className="flex gap-2 mt-2">
+                <div className="flex flex-col sm:flex-row gap-2 mt-2">
                   <Input
                     id="secondaryButtonHoverBackgroundColor"
                     type="color"
                     value={settings.secondaryButtonHoverBackgroundColor}
                     onChange={(e) => handleInputChange('secondaryButtonHoverBackgroundColor', e.target.value)}
-                    className="w-16 h-10 p-1"
+                    className="w-full sm:w-16 h-10 p-1"
                   />
                   <Input
                     value={settings.secondaryButtonHoverBackgroundColor}
                     onChange={(e) => handleInputChange('secondaryButtonHoverBackgroundColor', e.target.value)}
-                    className="flex-1"
+                    className="w-full min-w-0"
                   />
                 </div>
               </div>
 
               <div>
                 <Label htmlFor="secondaryButtonHoverTextColor">Button Hover Text Color</Label>
-                <div className="flex gap-2 mt-2">
+                <div className="flex flex-col sm:flex-row gap-2 mt-2">
                   <Input
                     id="secondaryButtonHoverTextColor"
                     type="color"
                     value={settings.secondaryButtonHoverTextColor}
                     onChange={(e) => handleInputChange('secondaryButtonHoverTextColor', e.target.value)}
-                    className="w-16 h-10 p-1"
+                    className="w-full sm:w-16 h-10 p-1"
                   />
                   <Input
                     value={settings.secondaryButtonHoverTextColor}
                     onChange={(e) => handleInputChange('secondaryButtonHoverTextColor', e.target.value)}
-                    className="flex-1"
+                    className="w-full min-w-0"
                   />
                 </div>
               </div>
 
               <div>
                 <Label htmlFor="secondaryButtonBorderColor">Button Border Color</Label>
-                <div className="flex gap-2 mt-2">
+                <div className="flex flex-col sm:flex-row gap-2 mt-2">
                   <Input
                     id="secondaryButtonBorderColor"
                     type="color"
                     value={settings.secondaryButtonBorderColor}
                     onChange={(e) => handleInputChange('secondaryButtonBorderColor', e.target.value)}
-                    className="w-16 h-10 p-1"
+                    className="w-full sm:w-16 h-10 p-1"
                   />
                   <Input
                     value={settings.secondaryButtonBorderColor}
                     onChange={(e) => handleInputChange('secondaryButtonBorderColor', e.target.value)}
-                    className="flex-1"
+                    className="w-full min-w-0"
                   />
                 </div>
               </div>
@@ -1617,151 +1619,151 @@ export default function SliderSettingsPanel({ onSettingsChange }: SliderSettings
           </Card>
 
           {/* Slider Colors */}
-          <Card>
-            <CardHeader>
+          <Card className="w-full overflow-hidden">
+            <CardHeader className="px-4 sm:px-6">
               <CardTitle>Slider Colors</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-6 px-4 sm:px-6">
               <div>
                 <Label htmlFor="sliderBackgroundColor">Slider Background Color</Label>
-                <div className="flex gap-2 mt-2">
+                <div className="flex flex-col sm:flex-row gap-2 mt-2">
                   <Input
                     id="sliderBackgroundColor"
                     type="color"
                     value={settings.sliderBackgroundColor}
                     onChange={(e) => handleInputChange('sliderBackgroundColor', e.target.value)}
-                    className="w-16 h-10 p-1"
+                    className="w-full sm:w-16 h-10 p-1"
                   />
                   <Input
                     value={settings.sliderBackgroundColor}
                     onChange={(e) => handleInputChange('sliderBackgroundColor', e.target.value)}
-                    className="flex-1"
+                    className="w-full min-w-0"
                   />
                 </div>
               </div>
 
               <div>
                 <Label htmlFor="arrowBackgroundColor">Arrow Background Color</Label>
-                <div className="flex gap-2 mt-2">
+                <div className="flex flex-col sm:flex-row gap-2 mt-2">
                   <Input
                     id="arrowBackgroundColor"
                     type="color"
                     value={settings.arrowBackgroundColor.startsWith('#') ? settings.arrowBackgroundColor : '#ffffff'}
                     onChange={(e) => handleInputChange('arrowBackgroundColor', e.target.value)}
-                    className="w-16 h-10 p-1"
+                    className="w-full sm:w-16 h-10 p-1"
                   />
                   <Input
                     value={settings.arrowBackgroundColor}
                     onChange={(e) => handleInputChange('arrowBackgroundColor', e.target.value)}
-                    className="flex-1"
+                    className="w-full min-w-0"
                   />
                 </div>
               </div>
 
               <div>
                 <Label htmlFor="arrowIconColor">Arrow Icon Color</Label>
-                <div className="flex gap-2 mt-2">
+                <div className="flex flex-col sm:flex-row gap-2 mt-2">
                   <Input
                     id="arrowIconColor"
                     type="color"
                     value={settings.arrowIconColor}
                     onChange={(e) => handleInputChange('arrowIconColor', e.target.value)}
-                    className="w-16 h-10 p-1"
+                    className="w-full sm:w-16 h-10 p-1"
                   />
                   <Input
                     value={settings.arrowIconColor}
                     onChange={(e) => handleInputChange('arrowIconColor', e.target.value)}
-                    className="flex-1"
+                    className="w-full min-w-0"
                   />
                 </div>
               </div>
 
               <div>
                 <Label htmlFor="arrowHoverBackgroundColor">Arrow Hover Background</Label>
-                <div className="flex gap-2 mt-2">
+                <div className="flex flex-col sm:flex-row gap-2 mt-2">
                   <Input
                     id="arrowHoverBackgroundColor"
                     type="color"
                     value={settings.arrowHoverBackgroundColor.startsWith('#') ? settings.arrowHoverBackgroundColor : '#ffffff'}
                     onChange={(e) => handleInputChange('arrowHoverBackgroundColor', e.target.value)}
-                    className="w-16 h-10 p-1"
+                    className="w-full sm:w-16 h-10 p-1"
                   />
                   <Input
                     value={settings.arrowHoverBackgroundColor}
                     onChange={(e) => handleInputChange('arrowHoverBackgroundColor', e.target.value)}
-                    className="flex-1"
+                    className="w-full min-w-0"
                   />
                 </div>
               </div>
 
               <div>
                 <Label htmlFor="arrowHoverIconColor">Arrow Hover Icon Color</Label>
-                <div className="flex gap-2 mt-2">
+                <div className="flex flex-col sm:flex-row gap-2 mt-2">
                   <Input
                     id="arrowHoverIconColor"
                     type="color"
                     value={settings.arrowHoverIconColor}
                     onChange={(e) => handleInputChange('arrowHoverIconColor', e.target.value)}
-                    className="w-16 h-10 p-1"
+                    className="w-full sm:w-16 h-10 p-1"
                   />
                   <Input
                     value={settings.arrowHoverIconColor}
                     onChange={(e) => handleInputChange('arrowHoverIconColor', e.target.value)}
-                    className="flex-1"
+                    className="w-full min-w-0"
                   />
                 </div>
               </div>
 
               <div>
                 <Label htmlFor="dotColor">Dot Color</Label>
-                <div className="flex gap-2 mt-2">
+                <div className="flex flex-col sm:flex-row gap-2 mt-2">
                   <Input
                     id="dotColor"
                     type="color"
                     value={settings.dotColor.startsWith('#') ? settings.dotColor : '#ffffff'}
                     onChange={(e) => handleInputChange('dotColor', e.target.value)}
-                    className="w-16 h-10 p-1"
+                    className="w-full sm:w-16 h-10 p-1"
                   />
                   <Input
                     value={settings.dotColor}
                     onChange={(e) => handleInputChange('dotColor', e.target.value)}
-                    className="flex-1"
+                    className="w-full min-w-0"
                   />
                 </div>
               </div>
 
               <div>
                 <Label htmlFor="activeDotColor">Active Dot Color</Label>
-                <div className="flex gap-2 mt-2">
+                <div className="flex flex-col sm:flex-row gap-2 mt-2">
                   <Input
                     id="activeDotColor"
                     type="color"
                     value={settings.activeDotColor}
                     onChange={(e) => handleInputChange('activeDotColor', e.target.value)}
-                    className="w-16 h-10 p-1"
+                    className="w-full sm:w-16 h-10 p-1"
                   />
                   <Input
                     value={settings.activeDotColor}
                     onChange={(e) => handleInputChange('activeDotColor', e.target.value)}
-                    className="flex-1"
+                    className="w-full min-w-0"
                   />
                 </div>
               </div>
 
               <div>
                 <Label htmlFor="progressColor">Progress Bar Color</Label>
-                <div className="flex gap-2 mt-2">
+                <div className="flex flex-col sm:flex-row gap-2 mt-2">
                   <Input
                     id="progressColor"
                     type="color"
                     value={settings.progressColor}
                     onChange={(e) => handleInputChange('progressColor', e.target.value)}
-                    className="w-16 h-10 p-1"
+                    className="w-full sm:w-16 h-10 p-1"
                   />
                   <Input
                     value={settings.progressColor}
                     onChange={(e) => handleInputChange('progressColor', e.target.value)}
-                    className="flex-1"
+                    className="w-full min-w-0"
                   />
                 </div>
               </div>
@@ -1771,25 +1773,25 @@ export default function SliderSettingsPanel({ onSettingsChange }: SliderSettings
 
         {/* Overlay Settings Tab */}
         <TabsContent value="overlay" className="space-y-6">
-          <Card>
-            <CardHeader>
+          <Card className="w-full overflow-hidden">
+            <CardHeader className="px-4 sm:px-6">
               <CardTitle>Overlay Settings</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-6 px-4 sm:px-6">
               <div>
                 <Label htmlFor="overlayColor">Overlay Color</Label>
-                <div className="flex gap-2 mt-2">
+                <div className="flex flex-col sm:flex-row gap-2 mt-2">
                   <Input
                     id="overlayColor"
                     type="color"
                     value={settings.overlayColor.startsWith('#') ? settings.overlayColor : '#000000'}
                     onChange={(e) => handleInputChange('overlayColor', e.target.value)}
-                    className="w-16 h-10 p-1"
+                    className="w-full sm:w-16 h-10 p-1"
                   />
                   <Input
                     value={settings.overlayColor}
                     onChange={(e) => handleInputChange('overlayColor', e.target.value)}
-                    className="flex-1"
+                    className="w-full min-w-0"
                   />
                 </div>
               </div>
@@ -1813,11 +1815,11 @@ export default function SliderSettingsPanel({ onSettingsChange }: SliderSettings
 
         {/* Performance Settings Tab */}
         <TabsContent value="performance" className="space-y-6">
-          <Card>
-            <CardHeader>
+          <Card className="w-full overflow-hidden">
+            <CardHeader className="px-4 sm:px-6">
               <CardTitle>Performance Settings</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-6 px-4 sm:px-6">
               <div className="flex items-center space-x-2">
                 <Checkbox
                   id="lazyLoadImages"

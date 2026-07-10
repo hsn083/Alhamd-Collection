@@ -26,7 +26,15 @@ import {
 } from 'lucide-react';
 import { loadStripe } from '@stripe/stripe-js';
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
+
+if (!publishableKey) {
+  console.error("Missing NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY environment variable.");
+}
+
+export const stripePromise = publishableKey
+  ? loadStripe(publishableKey)
+  : Promise.resolve(null);
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -243,7 +251,14 @@ export default function CheckoutPage() {
           window.location.href = data.checkoutUrl;
         } else if (data.sessionId) {
           const stripeJs = await import('@stripe/stripe-js');
-          const stripe = await stripeJs.loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY || '');
+          const stripePublicKey = process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY;
+          
+          if (!stripePublicKey) {
+            console.error("Missing NEXT_PUBLIC_STRIPE_PUBLIC_KEY environment variable.");
+            throw new Error('Stripe configuration error: Missing public key');
+          }
+          
+          const stripe = await stripeJs.loadStripe(stripePublicKey);
           if (stripe) {
            if (data.url) {
     window.location.href = data.url;

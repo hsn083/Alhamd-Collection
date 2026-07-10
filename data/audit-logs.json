@@ -4,6 +4,14 @@
     "adminId": "ADMIN-1780244625271",
     "adminUsername": "hassan83",
     "details": "Successful login",
+    "id": "AUDIT-1783684694871-eukd5o61m",
+    "timestamp": "2026-07-10T11:58:14.871Z"
+  },
+  {
+    "action": "LOGIN_SUCCESS",
+    "adminId": "ADMIN-1780244625271",
+    "adminUsername": "hassan83",
+    "details": "Successful login",
     "id": "AUDIT-1783050785710-zp8whqaca",
     "timestamp": "2026-07-03T03:53:05.710Z"
   },

@@ -236,8 +236,8 @@ export default function NewHeroBannerPage() {
 
   return (
     <AdminLayout>
-      <div className="p-8">
-        <div className="container mx-auto px-4">
+      <div className="p-4 sm:p-8 overflow-x-hidden">
+        <div className="container mx-auto px-4 max-w-full">
           <div className="mb-6">
             <Link href="/admin/hero-banners">
               <Button variant="ghost" className="mb-4">
@@ -250,20 +250,20 @@ export default function NewHeroBannerPage() {
           </div>
 
           <form onSubmit={handleSubmit}>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
               {/* Left Column - Form */}
               <div className="space-y-6">
                 {/* Images Section */}
-                <Card>
-                  <CardHeader>
+                <Card className="w-full overflow-hidden">
+                  <CardHeader className="px-4 sm:px-6">
                     <CardTitle>Images</CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-4">
+                  <CardContent className="space-y-4 px-4 sm:px-6">
                     {/* Desktop Image */}
                     <div>
                       <Label>Desktop Image (Recommended: 1920×800)</Label>
                       <div
-                        className="mt-2 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-emerald-500 transition-colors cursor-pointer"
+                        className="mt-2 border-2 border-dashed border-gray-300 rounded-lg p-4 sm:p-6 text-center hover:border-emerald-500 transition-colors cursor-pointer"
                         onDragOver={(e) => e.preventDefault()}
                         onDrop={(e) => handleDrop(e, 'desktop')}
                       >
@@ -272,7 +272,7 @@ export default function NewHeroBannerPage() {
                             <img
                               src={formData.desktopImage}
                               alt="Desktop preview"
-                              className="w-full h-48 object-cover rounded"
+                              className="w-full h-32 sm:h-48 object-cover rounded max-w-full"
                             />
                             <Button
                               type="button"
@@ -293,7 +293,7 @@ export default function NewHeroBannerPage() {
                             <Input
                               type="file"
                               accept="image/jpeg,image/jpg,image/png,image/webp"
-                              className="mt-2"
+                              className="mt-2 w-full"
                               onChange={(e) => {
                                 const file = e.target.files?.[0];
                                 if (file) handleImageUpload(file, 'desktop');
@@ -313,7 +313,7 @@ export default function NewHeroBannerPage() {
                     <div>
                       <Label>Mobile Image (Recommended: 768×960)</Label>
                       <div
-                        className="mt-2 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-emerald-500 transition-colors cursor-pointer"
+                        className="mt-2 border-2 border-dashed border-gray-300 rounded-lg p-4 sm:p-6 text-center hover:border-emerald-500 transition-colors cursor-pointer"
                         onDragOver={(e) => e.preventDefault()}
                         onDrop={(e) => handleDrop(e, 'mobile')}
                       >
@@ -322,7 +322,7 @@ export default function NewHeroBannerPage() {
                             <img
                               src={formData.mobileImage}
                               alt="Mobile preview"
-                              className="w-full h-48 object-cover rounded"
+                              className="w-full h-32 sm:h-48 object-cover rounded max-w-full"
                             />
                             <Button
                               type="button"
@@ -343,7 +343,7 @@ export default function NewHeroBannerPage() {
                             <Input
                               type="file"
                               accept="image/jpeg,image/jpg,image/png,image/webp"
-                              className="mt-2"
+                              className="mt-2 w-full"
                               onChange={(e) => {
                                 const file = e.target.files?.[0];
                                 if (file) handleImageUpload(file, 'mobile');
@@ -362,11 +362,11 @@ export default function NewHeroBannerPage() {
                 </Card>
 
                 {/* Content Section */}
-                <Card>
-                  <CardHeader>
+                <Card className="w-full overflow-hidden">
+                  <CardHeader className="px-4 sm:px-6">
                     <CardTitle>Content</CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-4">
+                  <CardContent className="space-y-4 px-4 sm:px-6">
                     <div>
                       <Label htmlFor="heading">Heading *</Label>
                       <Input
@@ -375,6 +375,7 @@ export default function NewHeroBannerPage() {
                         onChange={(e) => handleInputChange('heading', e.target.value)}
                         placeholder="Enter banner heading"
                         required
+                        className="w-full min-w-0"
                       />
                     </div>
                     <div>
@@ -385,6 +386,7 @@ export default function NewHeroBannerPage() {
                         onChange={(e) => handleInputChange('subHeading', e.target.value)}
                         placeholder="Enter sub heading"
                         required
+                        className="w-full min-w-0"
                       />
                     </div>
                     <div>
@@ -395,6 +397,7 @@ export default function NewHeroBannerPage() {
                         onChange={(e) => handleInputChange('description', e.target.value)}
                         placeholder="Enter description (optional)"
                         rows={3}
+                        className="w-full min-w-0"
                       />
                     </div>
                     <div>
@@ -405,6 +408,7 @@ export default function NewHeroBannerPage() {
                         onChange={(e) => handleInputChange('buttonText', e.target.value)}
                         placeholder="e.g., Shop Now"
                         required
+                        className="w-full min-w-0"
                       />
                     </div>
                     <div>
@@ -415,24 +419,25 @@ export default function NewHeroBannerPage() {
                         onChange={(e) => handleInputChange('buttonUrl', e.target.value)}
                         placeholder="e.g., /products"
                         required
+                        className="w-full min-w-0"
                       />
                     </div>
                   </CardContent>
                 </Card>
 
                 {/* Layout Section */}
-                <Card>
-                  <CardHeader>
+                <Card className="w-full overflow-hidden">
+                  <CardHeader className="px-4 sm:px-6">
                     <CardTitle>Layout</CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-4">
+                  <CardContent className="space-y-4 px-4 sm:px-6">
                     <div>
                       <Label>Text Alignment</Label>
                       <Select
                         value={formData.textAlignment}
                         onValueChange={(value: any) => handleInputChange('textAlignment', value)}
                       >
-                        <SelectTrigger>
+                        <SelectTrigger className="w-full">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -448,7 +453,7 @@ export default function NewHeroBannerPage() {
                         value={formData.verticalAlignment}
                         onValueChange={(value: any) => handleInputChange('verticalAlignment', value)}
                       >
-                        <SelectTrigger>
+                        <SelectTrigger className="w-full">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -465,111 +470,111 @@ export default function NewHeroBannerPage() {
               {/* Right Column - Colors & Preview */}
               <div className="space-y-6">
                 {/* Colors Section */}
-                <Card>
-                  <CardHeader>
+                <Card className="w-full overflow-hidden">
+                  <CardHeader className="px-4 sm:px-6">
                     <CardTitle>Colors & Styling</CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
+                  <CardContent className="space-y-4 px-4 sm:px-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <Label htmlFor="headingColor">Heading Color</Label>
-                        <div className="flex gap-2 mt-2">
+                        <div className="flex flex-col sm:flex-row gap-2 mt-2">
                           <Input
                             id="headingColor"
                             type="color"
                             value={formData.headingColor}
                             onChange={(e) => handleInputChange('headingColor', e.target.value)}
-                            className="w-16 h-10 p-1"
+                            className="w-full sm:w-16 h-10 p-1"
                           />
                           <Input
                             value={formData.headingColor}
                             onChange={(e) => handleInputChange('headingColor', e.target.value)}
-                            className="flex-1"
+                            className="w-full min-w-0"
                           />
                         </div>
                       </div>
                       <div>
                         <Label htmlFor="subHeadingColor">Sub Heading Color</Label>
-                        <div className="flex gap-2 mt-2">
+                        <div className="flex flex-col sm:flex-row gap-2 mt-2">
                           <Input
                             id="subHeadingColor"
                             type="color"
                             value={formData.subHeadingColor}
                             onChange={(e) => handleInputChange('subHeadingColor', e.target.value)}
-                            className="w-16 h-10 p-1"
+                            className="w-full sm:w-16 h-10 p-1"
                           />
                           <Input
                             value={formData.subHeadingColor}
                             onChange={(e) => handleInputChange('subHeadingColor', e.target.value)}
-                            className="flex-1"
+                            className="w-full min-w-0"
                           />
                         </div>
                       </div>
                       <div>
                         <Label htmlFor="descriptionColor">Description Color</Label>
-                        <div className="flex gap-2 mt-2">
+                        <div className="flex flex-col sm:flex-row gap-2 mt-2">
                           <Input
                             id="descriptionColor"
                             type="color"
                             value={formData.descriptionColor}
                             onChange={(e) => handleInputChange('descriptionColor', e.target.value)}
-                            className="w-16 h-10 p-1"
+                            className="w-full sm:w-16 h-10 p-1"
                           />
                           <Input
                             value={formData.descriptionColor}
                             onChange={(e) => handleInputChange('descriptionColor', e.target.value)}
-                            className="flex-1"
+                            className="w-full min-w-0"
                           />
                         </div>
                       </div>
                       <div>
                         <Label htmlFor="overlayColor">Overlay Color</Label>
-                        <div className="flex gap-2 mt-2">
+                        <div className="flex flex-col sm:flex-row gap-2 mt-2">
                           <Input
                             id="overlayColor"
                             type="color"
                             value={formData.overlayColor}
                             onChange={(e) => handleInputChange('overlayColor', e.target.value)}
-                            className="w-16 h-10 p-1"
+                            className="w-full sm:w-16 h-10 p-1"
                           />
                           <Input
                             value={formData.overlayColor}
                             onChange={(e) => handleInputChange('overlayColor', e.target.value)}
-                            className="flex-1"
+                            className="w-full min-w-0"
                           />
                         </div>
                       </div>
                       <div>
                         <Label htmlFor="badgeColor">Badge Color</Label>
-                        <div className="flex gap-2 mt-2">
+                        <div className="flex flex-col sm:flex-row gap-2 mt-2">
                           <Input
                             id="badgeColor"
                             type="color"
                             value={formData.badgeColor}
                             onChange={(e) => handleInputChange('badgeColor', e.target.value)}
-                            className="w-16 h-10 p-1"
+                            className="w-full sm:w-16 h-10 p-1"
                           />
                           <Input
                             value={formData.badgeColor}
                             onChange={(e) => handleInputChange('badgeColor', e.target.value)}
-                            className="flex-1"
+                            className="w-full min-w-0"
                           />
                         </div>
                       </div>
                       <div>
                         <Label htmlFor="badgeTextColor">Badge Text Color</Label>
-                        <div className="flex gap-2 mt-2">
+                        <div className="flex flex-col sm:flex-row gap-2 mt-2">
                           <Input
                             id="badgeTextColor"
                             type="color"
                             value={formData.badgeTextColor}
                             onChange={(e) => handleInputChange('badgeTextColor', e.target.value)}
-                            className="w-16 h-10 p-1"
+                            className="w-full sm:w-16 h-10 p-1"
                           />
                           <Input
                             value={formData.badgeTextColor}
                             onChange={(e) => handleInputChange('badgeTextColor', e.target.value)}
-                            className="flex-1"
+                            className="w-full min-w-0"
                           />
                         </div>
                       </div>
@@ -588,7 +593,7 @@ export default function NewHeroBannerPage() {
                         <Label htmlFor="useGradientOverlay">Use Gradient Overlay</Label>
                       </div>
                       {formData.useGradientOverlay && (
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div>
                             <Label htmlFor="gradientColor1">Gradient Color 1</Label>
                             <Input
@@ -630,112 +635,112 @@ export default function NewHeroBannerPage() {
                         max="100"
                         value={formData.overlayOpacity}
                         onChange={(e) => handleInputChange('overlayOpacity', parseInt(e.target.value))}
-                        className="mt-2"
+                        className="mt-2 w-full"
                       />
                     </div>
 
                     <div className="border-t pt-4">
                       <Label className="mb-3 block">Button Settings</Label>
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                           <Label htmlFor="buttonBackgroundColor">Background</Label>
-                          <div className="flex gap-2 mt-2">
+                          <div className="flex flex-col sm:flex-row gap-2 mt-2">
                             <Input
                               id="buttonBackgroundColor"
                               type="color"
                               value={formData.buttonBackgroundColor}
                               onChange={(e) => handleInputChange('buttonBackgroundColor', e.target.value)}
-                              className="w-16 h-10 p-1"
+                              className="w-full sm:w-16 h-10 p-1"
                             />
                             <Input
                               value={formData.buttonBackgroundColor}
                               onChange={(e) => handleInputChange('buttonBackgroundColor', e.target.value)}
-                              className="flex-1"
+                              className="w-full min-w-0"
                             />
                           </div>
                         </div>
                         <div>
                           <Label htmlFor="buttonTextColor">Text</Label>
-                          <div className="flex gap-2 mt-2">
+                          <div className="flex flex-col sm:flex-row gap-2 mt-2">
                             <Input
                               id="buttonTextColor"
                               type="color"
                               value={formData.buttonTextColor}
                               onChange={(e) => handleInputChange('buttonTextColor', e.target.value)}
-                              className="w-16 h-10 p-1"
+                              className="w-full sm:w-16 h-10 p-1"
                             />
                             <Input
                               value={formData.buttonTextColor}
                               onChange={(e) => handleInputChange('buttonTextColor', e.target.value)}
-                              className="flex-1"
+                              className="w-full min-w-0"
                             />
                           </div>
                         </div>
                         <div>
                           <Label htmlFor="buttonBorderColor">Border</Label>
-                          <div className="flex gap-2 mt-2">
+                          <div className="flex flex-col sm:flex-row gap-2 mt-2">
                             <Input
                               id="buttonBorderColor"
                               type="color"
                               value={formData.buttonBorderColor}
                               onChange={(e) => handleInputChange('buttonBorderColor', e.target.value)}
-                              className="w-16 h-10 p-1"
+                              className="w-full sm:w-16 h-10 p-1"
                             />
                             <Input
                               value={formData.buttonBorderColor}
                               onChange={(e) => handleInputChange('buttonBorderColor', e.target.value)}
-                              className="flex-1"
+                              className="w-full min-w-0"
                             />
                           </div>
                         </div>
                         <div>
                           <Label htmlFor="buttonHoverBackgroundColor">Hover Background</Label>
-                          <div className="flex gap-2 mt-2">
+                          <div className="flex flex-col sm:flex-row gap-2 mt-2">
                             <Input
                               id="buttonHoverBackgroundColor"
                               type="color"
                               value={formData.buttonHoverBackgroundColor}
                               onChange={(e) => handleInputChange('buttonHoverBackgroundColor', e.target.value)}
-                              className="w-16 h-10 p-1"
+                              className="w-full sm:w-16 h-10 p-1"
                             />
                             <Input
                               value={formData.buttonHoverBackgroundColor}
                               onChange={(e) => handleInputChange('buttonHoverBackgroundColor', e.target.value)}
-                              className="flex-1"
+                              className="w-full min-w-0"
                             />
                           </div>
                         </div>
                         <div>
                           <Label htmlFor="buttonHoverTextColor">Hover Text</Label>
-                          <div className="flex gap-2 mt-2">
+                          <div className="flex flex-col sm:flex-row gap-2 mt-2">
                             <Input
                               id="buttonHoverTextColor"
                               type="color"
                               value={formData.buttonHoverTextColor}
                               onChange={(e) => handleInputChange('buttonHoverTextColor', e.target.value)}
-                              className="w-16 h-10 p-1"
+                              className="w-full sm:w-16 h-10 p-1"
                             />
                             <Input
                               value={formData.buttonHoverTextColor}
                               onChange={(e) => handleInputChange('buttonHoverTextColor', e.target.value)}
-                              className="flex-1"
+                              className="w-full min-w-0"
                             />
                           </div>
                         </div>
                         <div>
                           <Label htmlFor="buttonHoverBorderColor">Hover Border</Label>
-                          <div className="flex gap-2 mt-2">
+                          <div className="flex flex-col sm:flex-row gap-2 mt-2">
                             <Input
                               id="buttonHoverBorderColor"
                               type="color"
                               value={formData.buttonHoverBorderColor}
                               onChange={(e) => handleInputChange('buttonHoverBorderColor', e.target.value)}
-                              className="w-16 h-10 p-1"
+                              className="w-full sm:w-16 h-10 p-1"
                             />
                             <Input
                               value={formData.buttonHoverBorderColor}
                               onChange={(e) => handleInputChange('buttonHoverBorderColor', e.target.value)}
-                              className="flex-1"
+                              className="w-full min-w-0"
                             />
                           </div>
                         </div>
@@ -748,7 +753,7 @@ export default function NewHeroBannerPage() {
                             max="30"
                             value={formData.buttonBorderRadius}
                             onChange={(e) => handleInputChange('buttonBorderRadius', parseInt(e.target.value))}
-                            className="mt-2"
+                            className="mt-2 w-full"
                           />
                         </div>
                         <div>
@@ -758,7 +763,7 @@ export default function NewHeroBannerPage() {
                             value={formData.buttonShadow}
                             onChange={(e) => handleInputChange('buttonShadow', e.target.value)}
                             placeholder="e.g., 0 4px 6px rgba(0,0,0,0.1)"
-                            className="mt-2"
+                            className="mt-2 w-full min-w-0"
                           />
                         </div>
                         <div>
@@ -768,7 +773,7 @@ export default function NewHeroBannerPage() {
                             value={formData.buttonHoverShadow}
                             onChange={(e) => handleInputChange('buttonHoverShadow', e.target.value)}
                             placeholder="e.g., 0 6px 8px rgba(0,0,0,0.2)"
-                            className="mt-2"
+                            className="mt-2 w-full min-w-0"
                           />
                         </div>
                       </div>
@@ -777,38 +782,38 @@ export default function NewHeroBannerPage() {
                     {/* Background */}
                     <div className="border-t pt-4">
                       <Label className="mb-3 block">Background</Label>
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                           <Label htmlFor="bannerBackgroundColor">Banner Background</Label>
-                          <div className="flex gap-2 mt-2">
+                          <div className="flex flex-col sm:flex-row gap-2 mt-2">
                             <Input
                               id="bannerBackgroundColor"
                               type="color"
                               value={formData.bannerBackgroundColor}
                               onChange={(e) => handleInputChange('bannerBackgroundColor', e.target.value)}
-                              className="w-16 h-10 p-1"
+                              className="w-full sm:w-16 h-10 p-1"
                             />
                             <Input
                               value={formData.bannerBackgroundColor}
                               onChange={(e) => handleInputChange('bannerBackgroundColor', e.target.value)}
-                              className="flex-1"
+                              className="w-full min-w-0"
                             />
                           </div>
                         </div>
                         <div>
                           <Label htmlFor="contentBoxBackgroundColor">Content Box Background</Label>
-                          <div className="flex gap-2 mt-2">
+                          <div className="flex flex-col sm:flex-row gap-2 mt-2">
                             <Input
                               id="contentBoxBackgroundColor"
                               type="color"
                               value={formData.contentBoxBackgroundColor}
                               onChange={(e) => handleInputChange('contentBoxBackgroundColor', e.target.value)}
-                              className="w-16 h-10 p-1"
+                              className="w-full sm:w-16 h-10 p-1"
                             />
                             <Input
                               value={formData.contentBoxBackgroundColor}
                               onChange={(e) => handleInputChange('contentBoxBackgroundColor', e.target.value)}
-                              className="flex-1"
+                              className="w-full min-w-0"
                             />
                           </div>
                         </div>
@@ -821,7 +826,7 @@ export default function NewHeroBannerPage() {
                             max="100"
                             value={formData.contentBoxOpacity}
                             onChange={(e) => handleInputChange('contentBoxOpacity', parseInt(e.target.value))}
-                            className="mt-2"
+                            className="mt-2 w-full"
                           />
                         </div>
                       </div>
@@ -830,7 +835,7 @@ export default function NewHeroBannerPage() {
                     {/* Typography */}
                     <div className="border-t pt-4">
                       <Label className="mb-3 block">Typography</Label>
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                           <Label htmlFor="fontFamily">Font Family</Label>
                           <Input
@@ -838,7 +843,7 @@ export default function NewHeroBannerPage() {
                             value={formData.fontFamily}
                             onChange={(e) => handleInputChange('fontFamily', e.target.value)}
                             placeholder="e.g., Inter, Arial"
-                            className="mt-2"
+                            className="mt-2 w-full min-w-0"
                           />
                         </div>
                         <div>
@@ -847,7 +852,7 @@ export default function NewHeroBannerPage() {
                             value={formData.fontWeight}
                             onValueChange={(value) => handleInputChange('fontWeight', value)}
                           >
-                            <SelectTrigger className="mt-2">
+                            <SelectTrigger className="mt-2 w-full">
                               <SelectValue placeholder="Select weight" />
                             </SelectTrigger>
                             <SelectContent>
@@ -866,7 +871,7 @@ export default function NewHeroBannerPage() {
                             type="number"
                             value={formData.headingFontSize}
                             onChange={(e) => handleInputChange('headingFontSize', parseInt(e.target.value) || 0)}
-                            className="mt-2"
+                            className="mt-2 w-full min-w-0"
                           />
                         </div>
                         <div>
@@ -876,7 +881,7 @@ export default function NewHeroBannerPage() {
                             type="number"
                             value={formData.subHeadingFontSize}
                             onChange={(e) => handleInputChange('subHeadingFontSize', parseInt(e.target.value) || 0)}
-                            className="mt-2"
+                            className="mt-2 w-full min-w-0"
                           />
                         </div>
                         <div>
@@ -886,7 +891,7 @@ export default function NewHeroBannerPage() {
                             type="number"
                             value={formData.descriptionFontSize}
                             onChange={(e) => handleInputChange('descriptionFontSize', parseInt(e.target.value) || 0)}
-                            className="mt-2"
+                            className="mt-2 w-full min-w-0"
                           />
                         </div>
                         <div>
@@ -896,7 +901,7 @@ export default function NewHeroBannerPage() {
                             type="number"
                             value={formData.buttonFontSize}
                             onChange={(e) => handleInputChange('buttonFontSize', parseInt(e.target.value) || 0)}
-                            className="mt-2"
+                            className="mt-2 w-full min-w-0"
                           />
                         </div>
                         <div>
@@ -906,7 +911,7 @@ export default function NewHeroBannerPage() {
                             type="number"
                             value={formData.letterSpacing}
                             onChange={(e) => handleInputChange('letterSpacing', parseInt(e.target.value) || 0)}
-                            className="mt-2"
+                            className="mt-2 w-full min-w-0"
                           />
                         </div>
                         <div>
@@ -917,7 +922,7 @@ export default function NewHeroBannerPage() {
                             step="0.1"
                             value={formData.lineHeight}
                             onChange={(e) => handleInputChange('lineHeight', parseFloat(e.target.value) || 0)}
-                            className="mt-2"
+                            className="mt-2 w-full min-w-0"
                           />
                         </div>
                         <div>
@@ -927,7 +932,7 @@ export default function NewHeroBannerPage() {
                             value={formData.textShadow}
                             onChange={(e) => handleInputChange('textShadow', e.target.value)}
                             placeholder="e.g., 2px 2px 4px rgba(0,0,0,0.5)"
-                            className="mt-2"
+                            className="mt-2 w-full min-w-0"
                           />
                         </div>
                         <div>
@@ -936,7 +941,7 @@ export default function NewHeroBannerPage() {
                             value={formData.textTransform}
                             onValueChange={(value: any) => handleInputChange('textTransform', value)}
                           >
-                            <SelectTrigger className="mt-2">
+                            <SelectTrigger className="mt-2 w-full">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
@@ -953,7 +958,7 @@ export default function NewHeroBannerPage() {
                     {/* Content Box */}
                     <div className="border-t pt-4">
                       <Label className="mb-3 block">Content Box</Label>
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                           <Label htmlFor="contentBoxWidth">Width: {formData.contentBoxWidth}px</Label>
                           <Input
@@ -961,7 +966,7 @@ export default function NewHeroBannerPage() {
                             type="number"
                             value={formData.contentBoxWidth}
                             onChange={(e) => handleInputChange('contentBoxWidth', parseInt(e.target.value) || 0)}
-                            className="mt-2"
+                            className="mt-2 w-full min-w-0"
                           />
                         </div>
                         <div>
@@ -971,7 +976,7 @@ export default function NewHeroBannerPage() {
                             type="number"
                             value={formData.contentBoxPadding}
                             onChange={(e) => handleInputChange('contentBoxPadding', parseInt(e.target.value) || 0)}
-                            className="mt-2"
+                            className="mt-2 w-full min-w-0"
                           />
                         </div>
                         <div>
@@ -981,7 +986,7 @@ export default function NewHeroBannerPage() {
                             type="number"
                             value={formData.contentBoxBorderRadius}
                             onChange={(e) => handleInputChange('contentBoxBorderRadius', parseInt(e.target.value) || 0)}
-                            className="mt-2"
+                            className="mt-2 w-full min-w-0"
                           />
                         </div>
                         <div>
@@ -991,7 +996,7 @@ export default function NewHeroBannerPage() {
                             type="number"
                             value={formData.contentBoxBlur}
                             onChange={(e) => handleInputChange('contentBoxBlur', parseInt(e.target.value) || 0)}
-                            className="mt-2"
+                            className="mt-2 w-full min-w-0"
                           />
                         </div>
                         <div>
@@ -1001,7 +1006,7 @@ export default function NewHeroBannerPage() {
                             type="number"
                             value={formData.contentBoxMaxWidth}
                             onChange={(e) => handleInputChange('contentBoxMaxWidth', parseInt(e.target.value) || 0)}
-                            className="mt-2"
+                            className="mt-2 w-full min-w-0"
                           />
                         </div>
                         <div>
@@ -1011,7 +1016,7 @@ export default function NewHeroBannerPage() {
                             value={formData.contentBoxShadow}
                             onChange={(e) => handleInputChange('contentBoxShadow', e.target.value)}
                             placeholder="e.g., 0 4px 6px rgba(0,0,0,0.1)"
-                            className="mt-2"
+                            className="mt-2 w-full min-w-0"
                           />
                         </div>
                       </div>
@@ -1031,15 +1036,16 @@ export default function NewHeroBannerPage() {
                 </Card>
 
                 {/* Preview */}
-                <Card>
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
+                <Card className="w-full overflow-hidden">
+                  <CardHeader className="px-4 sm:px-6">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                       <CardTitle>Live Preview</CardTitle>
                       <Button
                         type="button"
                         variant="outline"
                         size="sm"
                         onClick={() => setShowPreview(!showPreview)}
+                        className="w-full sm:w-auto"
                       >
                         <Eye className="mr-2 h-4 w-4" />
                         {showPreview ? 'Hide' : 'Show'}
@@ -1047,9 +1053,9 @@ export default function NewHeroBannerPage() {
                     </div>
                   </CardHeader>
                   {showPreview && (
-                    <CardContent>
+                    <CardContent className="px-4 sm:px-6">
                       <div
-                        className="relative rounded-lg overflow-hidden"
+                        className="relative rounded-lg overflow-hidden w-full"
                         style={{
                           aspectRatio: '1920/800',
                           backgroundColor: '#f3f4f6',
@@ -1059,7 +1065,7 @@ export default function NewHeroBannerPage() {
                           <img
                             src={formData.desktopImage}
                             alt="Preview"
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover max-w-full"
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center bg-gray-200">
@@ -1131,16 +1137,16 @@ export default function NewHeroBannerPage() {
                 </Card>
 
                 {/* Actions */}
-                <div className="flex gap-4">
+                <div className="flex flex-col sm:flex-row gap-2">
                   <Button
                     type="submit"
-                    className="flex-1 bg-emerald-600 text-black hover:bg-emerald-500"
+                    className="w-full sm:flex-1 bg-emerald-600 text-black hover:bg-emerald-500"
                     disabled={isLoading}
                   >
                     {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                     Create Banner
                   </Button>
-                  <Link href="/admin/hero-banners" className="flex-1">
+                  <Link href="/admin/hero-banners" className="w-full sm:flex-1">
                     <Button type="button" variant="outline" className="w-full">
                       Cancel
                     </Button>
