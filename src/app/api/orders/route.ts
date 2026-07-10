@@ -291,15 +291,15 @@ export async function GET(request: NextRequest) {
       let order;
       // Check if it's a MongoDB ObjectId
       if (/^[0-9A-F]{24}$/i.test(searchValue || '')) {
-        order = await Order.findById(searchValue).populate('customer', 'name email');
+        order = await Order.findById(searchValue).populate('customer', 'name email').lean();
       } else {
         // Try to parse as numeric order number
         const numericOrderNumber = parseInt(searchValue || '', 10);
         if (!isNaN(numericOrderNumber)) {
-          order = await Order.findOne({ orderNumber: numericOrderNumber }).populate('customer', 'name email');
+          order = await Order.findOne({ orderNumber: numericOrderNumber }).populate('customer', 'name email').lean();
         } else {
           // Try searching by displayOrderNumber
-          order = await Order.findOne({ displayOrderNumber: searchValue }).populate('customer', 'name email');
+          order = await Order.findOne({ displayOrderNumber: searchValue }).populate('customer', 'name email').lean();
         }
       }
       
@@ -326,7 +326,8 @@ export async function GET(request: NextRequest) {
       .populate('customer', 'name email')
       .sort({ createdAt: -1 })
       .skip(skip)
-      .limit(limit);
+      .limit(limit)
+      .lean();
 
     const total = await Order.countDocuments(query);
 

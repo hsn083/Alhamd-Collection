@@ -45,6 +45,26 @@ async function connectDB(): Promise<typeof mongoose> {
 
     cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
       console.log('MongoDB connected successfully');
+      
+      // Register event listeners only once after successful connection
+      if (!mongoose.connection.listenerCount('error')) {
+        mongoose.connection.on('error', (err) => {
+          console.error('MongoDB connection error:', err);
+        });
+      }
+      
+      if (!mongoose.connection.listenerCount('disconnected')) {
+        mongoose.connection.on('disconnected', () => {
+          console.log('MongoDB disconnected');
+        });
+      }
+      
+      if (!mongoose.connection.listenerCount('reconnected')) {
+        mongoose.connection.on('reconnected', () => {
+          console.log('MongoDB reconnected');
+        });
+      }
+      
       return mongoose;
     });
   }
@@ -58,17 +78,5 @@ async function connectDB(): Promise<typeof mongoose> {
 
   return cached.conn;
 }
-
-mongoose.connection.on('error', (err) => {
-  console.error('MongoDB connection error:', err);
-});
-
-mongoose.connection.on('disconnected', () => {
-  console.log('MongoDB disconnected');
-});
-
-mongoose.connection.on('reconnected', () => {
-  console.log('MongoDB reconnected');
-});
 
 export default connectDB;

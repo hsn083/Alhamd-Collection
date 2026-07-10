@@ -87,7 +87,7 @@ export async function PUT(
     const updateData: any = {};
 
     if (status) {
-      const validStatuses = ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded', 'returned'];
+      const validStatuses = ['pending', 'confirmed', 'processing', 'packed', 'shipped', 'in_transit', 'out_for_delivery', 'delivered', 'cancelled', 'refunded', 'returned'];
       if (!validStatuses.includes(status)) {
         return NextResponse.json(
           { success: false, error: 'Invalid status' },

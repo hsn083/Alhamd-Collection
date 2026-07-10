@@ -44,7 +44,7 @@ export interface IOrder extends Document {
   couponCode?: string;
   couponDiscount?: number;
   total: number;
-  status: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'refunded';
+  status: 'pending' | 'confirmed' | 'processing' | 'packed' | 'shipped' | 'in_transit' | 'out_for_delivery' | 'delivered' | 'cancelled' | 'refunded' | 'returned';
   paymentMethod: 'cod' | 'easypaisa' | 'jazzcash' | 'stripe';
   paymentStatus: 'pending_payment' | 'payment_submitted' | 'under_verification' | 'verified' | 'rejected' | 'refunded' | 'paid' | 'failed';
   paymentId?: string;
@@ -158,7 +158,7 @@ const OrderSchema = new Schema<IOrder>(
     },
     status: {
       type: String,
-      enum: ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded', 'returned'],
+      enum: ['pending', 'confirmed', 'processing', 'packed', 'shipped', 'in_transit', 'out_for_delivery', 'delivered', 'cancelled', 'refunded', 'returned'],
       default: 'pending',
     },
     paymentMethod: {
@@ -189,8 +189,6 @@ OrderSchema.index({ customer: 1 });
 OrderSchema.index({ status: 1 });
 OrderSchema.index({ paymentStatus: 1 });
 OrderSchema.index({ createdAt: -1 });
-OrderSchema.index({ orderNumber: 1 }, { unique: true });
-OrderSchema.index({ displayOrderNumber: 1 }, { unique: true });
 OrderSchema.index({ trackingNumber: 1 });
 OrderSchema.index({ customerPhone: 1 });
 OrderSchema.index({ customerPhoneNormalized: 1 });

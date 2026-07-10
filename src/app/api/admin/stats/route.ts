@@ -15,113 +15,163 @@ export async function GET(request: NextRequest) {
     
     console.log('[STATS] Fetching dashboard statistics at:', new Date().toISOString());
 
-    // Calculate total revenue from orders
-    const revenueResult = await Order.aggregate([
-      {
-        $group: {
-          _id: null,
-          totalRevenue: { $sum: '$total' },
-          totalOrders: { $sum: 1 },
+    // Run all independent queries in parallel for better performance
+    const [
+      revenueResult,
+      totalCustomers,
+      totalProducts,
+      totalCategories,
+      activeCategories,
+      inventoryResult,
+      recentOrders,
+      orderStatuses,
+      paymentStatuses,
+      topProductsResult,
+      todayRevenueResult,
+      weekRevenueResult,
+      monthRevenueResult,
+    ] = await Promise.all([
+      // Calculate total revenue and orders
+      Order.aggregate([
+        {
+          $group: {
+            _id: null,
+            totalRevenue: { $sum: '$total' },
+            totalOrders: { $sum: 1 },
+          },
         },
-      },
+      ]),
+      // Count total customers
+      User.countDocuments({ 
+        role: { $ne: 'admin' },
+        isDeleted: { $ne: true }
+      }),
+      // Count total products
+      Product.countDocuments(),
+      // Count total categories
+      Category.countDocuments(),
+      // Count active categories
+      Category.countDocuments({ status: 'active' }),
+      // Calculate total inventory
+      Product.aggregate([
+        {
+          $group: {
+            _id: null,
+            totalInventory: { $sum: '$stock' },
+          },
+        },
+      ]),
+      // Calculate recent orders (last 7 days)
+      Order.countDocuments({
+        createdAt: { $gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) },
+      }),
+      // Calculate order status breakdown
+      Order.aggregate([
+        {
+          $group: {
+            _id: '$status',
+            count: { $sum: 1 },
+          },
+        },
+      ]),
+      // Calculate payment status breakdown
+      Order.aggregate([
+        {
+          $group: {
+            _id: '$paymentStatus',
+            count: { $sum: 1 },
+          },
+        },
+      ]),
+      // Calculate top selling products
+      Order.aggregate([
+        { $unwind: '$items' },
+        {
+          $group: {
+            _id: '$items.product',
+            totalSold: { $sum: '$items.quantity' },
+            totalRevenue: {
+              $sum: { $multiply: ['$items.quantity', '$items.price'] },
+            },
+          },
+        },
+        { $sort: { totalSold: -1 } },
+        { $limit: 5 },
+        {
+          $lookup: {
+            from: 'products',
+            localField: '_id',
+            foreignField: '_id',
+            as: 'product',
+          },
+        },
+        { $unwind: '$product' },
+        {
+          $project: {
+            name: '$product.name',
+            sales: '$totalSold',
+            revenue: '$totalRevenue',
+          },
+        },
+      ]),
+      // Today's revenue
+      Order.aggregate([
+        { $match: { createdAt: { $gte: new Date(new Date().setHours(0, 0, 0, 0)) } } },
+        {
+          $group: {
+            _id: null,
+            totalRevenue: { $sum: '$total' },
+            totalOrders: { $sum: 1 },
+          },
+        },
+      ]),
+      // Week's revenue
+      Order.aggregate([
+        { $match: { createdAt: { $gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) } } },
+        {
+          $group: {
+            _id: null,
+            totalRevenue: { $sum: '$total' },
+            totalOrders: { $sum: 1 },
+          },
+        },
+      ]),
+      // Month's revenue
+      Order.aggregate([
+        { $match: { createdAt: { $gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) } } },
+        {
+          $group: {
+            _id: null,
+            totalRevenue: { $sum: '$total' },
+            totalOrders: { $sum: 1 },
+          },
+        },
+      ]),
     ]);
 
     const totalRevenue = revenueResult[0]?.totalRevenue || 0;
     const totalOrders = revenueResult[0]?.totalOrders || 0;
-
-    // Count total customers (exclude admins and deleted users)
-    const totalCustomers = await User.countDocuments({ 
-      role: { $ne: 'admin' },
-      isDeleted: { $ne: true }
-    });
-
-    // Count total products
-    const totalProducts = await Product.countDocuments();
-
-    // Count total and active categories
-    const totalCategories = await Category.countDocuments();
-    const activeCategories = await Category.countDocuments({ status: 'active' });
-
-    // Calculate total inventory
-    const inventoryResult = await Product.aggregate([
-      {
-        $group: {
-          _id: null,
-          totalInventory: { $sum: '$stock' },
-        },
-      },
-    ]);
     const totalInventory = inventoryResult[0]?.totalInventory || 0;
+    const todayRevenue = todayRevenueResult[0]?.totalRevenue || 0;
+    const todayOrdersCount = todayRevenueResult[0]?.totalOrders || 0;
+    const weekRevenue = weekRevenueResult[0]?.totalRevenue || 0;
+    const weekOrdersCount = weekRevenueResult[0]?.totalOrders || 0;
+    const monthRevenue = monthRevenueResult[0]?.totalRevenue || 0;
+    const monthOrdersCount = monthRevenueResult[0]?.totalOrders || 0;
 
-    // Calculate recent orders (last 7 days)
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-    const recentOrders = await Order.countDocuments({
-      createdAt: { $gte: sevenDaysAgo },
-    });
-
-    // Calculate order status breakdown
-    const orderStatuses = await Order.aggregate([
-      {
-        $group: {
-          _id: '$status',
-          count: { $sum: 1 },
-        },
-      },
-    ]);
     const orderStatusMap = orderStatuses.reduce((acc: any, item: any) => {
       acc[item._id] = item.count;
       return acc;
     }, {});
 
-    // Calculate payment status breakdown
-    const paymentStatuses = await Order.aggregate([
-      {
-        $group: {
-          _id: '$paymentStatus',
-          count: { $sum: 1 },
-        },
-      },
-    ]);
     const paymentStatusMap = paymentStatuses.reduce((acc: any, item: any) => {
       acc[item._id] = item.count;
       return acc;
     }, {});
 
-    // Calculate top selling products
-    const topProductsResult = await Order.aggregate([
-      { $unwind: '$items' },
-      {
-        $group: {
-          _id: '$items.product',
-          totalSold: { $sum: '$items.quantity' },
-          totalRevenue: {
-            $sum: { $multiply: ['$items.quantity', '$items.price'] },
-          },
-        },
-      },
-      { $sort: { totalSold: -1 } },
-      { $limit: 5 },
-      {
-        $lookup: {
-          from: 'products',
-          localField: '_id',
-          foreignField: '_id',
-          as: 'product',
-        },
-      },
-      { $unwind: '$product' },
-      {
-        $project: {
-          name: '$product.name',
-          sales: '$totalSold',
-          revenue: '$totalRevenue',
-        },
-      },
-    ]);
-
-    // Calculate recent orders for display
+    // Calculate recent orders for display (separate query to avoid slowing down main stats)
     const recentOrdersList = await Order.find()
+      .select('orderNumber customer customerName total status createdAt items')
       .populate('customer', 'name')
       .sort({ createdAt: -1 })
       .limit(5)
@@ -139,53 +189,6 @@ export async function GET(request: NextRequest) {
         quantity: item.quantity,
       })) || [],
     }));
-
-    // Calculate analytics data
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-    const todayRevenueResult = await Order.aggregate([
-      { $match: { createdAt: { $gte: today } } },
-      {
-        $group: {
-          _id: null,
-          totalRevenue: { $sum: '$total' },
-          totalOrders: { $sum: 1 },
-        },
-      },
-    ]);
-    const todayRevenue = todayRevenueResult[0]?.totalRevenue || 0;
-    const todayOrdersCount = todayRevenueResult[0]?.totalOrders || 0;
-
-    const weekAgo = new Date();
-    weekAgo.setDate(weekAgo.getDate() - 7);
-    const weekRevenueResult = await Order.aggregate([
-      { $match: { createdAt: { $gte: weekAgo } } },
-      {
-        $group: {
-          _id: null,
-          totalRevenue: { $sum: '$total' },
-          totalOrders: { $sum: 1 },
-        },
-      },
-    ]);
-    const weekRevenue = weekRevenueResult[0]?.totalRevenue || 0;
-    const weekOrdersCount = weekRevenueResult[0]?.totalOrders || 0;
-
-    const monthAgo = new Date();
-    monthAgo.setDate(monthAgo.getDate() - 30);
-    const monthRevenueResult = await Order.aggregate([
-      { $match: { createdAt: { $gte: monthAgo } } },
-      {
-        $group: {
-          _id: null,
-          totalRevenue: { $sum: '$total' },
-          totalOrders: { $sum: 1 },
-        },
-      },
-    ]);
-    const monthRevenue = monthRevenueResult[0]?.totalRevenue || 0;
-    const monthOrdersCount = monthRevenueResult[0]?.totalOrders || 0;
 
     const statistics = {
       totalRevenue,

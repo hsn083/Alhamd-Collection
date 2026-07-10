@@ -12,23 +12,29 @@ import {
   MapPin, Phone, Mail, Calendar, Loader2, Search, AlertCircle
 } from 'lucide-react';
 
-// Status flow matching the actual Order model enum
+// Order Status Flow (Single Source of Truth)
 const STATUS_FLOW = [
-  { value: 'pending', label: 'Order Placed', desc: 'Your order has been placed successfully', icon: Clock },
-  { value: 'confirmed', label: 'Order Confirmed', desc: 'Order confirmed by seller', icon: CheckCircle },
+  { value: 'pending', label: 'Pending', desc: 'Your order has been placed successfully', icon: Clock },
+  { value: 'confirmed', label: 'Confirmed', desc: 'Order confirmed by seller', icon: CheckCircle },
   { value: 'processing', label: 'Processing', desc: 'Preparing your items for shipment', icon: Package },
+  { value: 'packed', label: 'Packed', desc: 'Items packed and ready for shipment', icon: Package },
   { value: 'shipped', label: 'Shipped', desc: 'Handed to courier service', icon: Truck },
+  { value: 'in_transit', label: 'In Transit', desc: 'Package is on its way to you', icon: Truck },
+  { value: 'out_for_delivery', label: 'Out for Delivery', desc: 'Package is out for delivery', icon: Truck },
   { value: 'delivered', label: 'Delivered', desc: 'Order delivered successfully!', icon: CheckCircle },
-  { value: 'cancelled', label: 'Cancelled', desc: 'Order has been cancelled', icon: XCircle },
-  { value: 'refunded', label: 'Refunded', desc: 'Order has been refunded', icon: XCircle },
-  { value: 'returned', label: 'Returned', desc: 'Order returned by customer', icon: XCircle },
 ];
+
+// Terminal statuses that are not part of the delivery timeline
+const TERMINAL_STATUSES = ['cancelled', 'refunded', 'returned'];
 
 const STATUS_BADGE: Record<string, string> = {
   pending: 'bg-amber-100 text-amber-700 border-amber-200',
   confirmed: 'bg-blue-100 text-blue-700 border-blue-200',
   processing: 'bg-purple-100 text-purple-700 border-purple-200',
+  packed: 'bg-indigo-100 text-indigo-700 border-indigo-200',
   shipped: 'bg-teal-100 text-teal-700 border-teal-200',
+  in_transit: 'bg-cyan-100 text-cyan-700 border-cyan-200',
+  out_for_delivery: 'bg-orange-100 text-orange-700 border-orange-200',
   delivered: 'bg-emerald-100 text-emerald-700 border-emerald-200',
   cancelled: 'bg-red-100 text-red-700 border-red-200',
   refunded: 'bg-gray-100 text-gray-700 border-gray-200',
@@ -78,12 +84,22 @@ export default function TrackOrderPage() {
     }
   };
 
-  const currentIdx = STATUS_FLOW.findIndex(s => s.value === order?.status);
-  const isTerminal = ['cancelled', 'refunded', 'returned'].includes(order?.status || '');
-  const badgeClass = STATUS_BADGE[order?.status] || 'bg-gray-100 text-gray-700';
+  // Calculate current step index dynamically
+  // If an unknown status is received, safely default to Pending
+  const normalizedStatus = order?.status && STATUS_FLOW.some(s => s.value === order.status) 
+    ? order.status 
+    : 'pending';
+  const currentIdx = STATUS_FLOW.findIndex(s => s.value === normalizedStatus);
+  const isTerminal = TERMINAL_STATUSES.includes(order?.status || '');
+  const badgeClass = STATUS_BADGE[order?.status] || STATUS_BADGE[normalizedStatus] || 'bg-gray-100 text-gray-700';
 
-  const progressPct = isTerminal ? 0 : currentIdx >= 0
-    ? Math.round(((currentIdx + 1) / STATUS_FLOW.length) * 100) : 0;
+  // Progress percentage calculated from current index
+  // Delivered must always return exactly 100%
+  const progressPct = isTerminal 
+    ? 0 
+    : currentIdx >= 0 
+      ? Math.round((currentIdx / (STATUS_FLOW.length - 1)) * 100) 
+      : 0;
 
   return (
     <>
@@ -225,13 +241,16 @@ export default function TrackOrderPage() {
                   </CardHeader>
                   <CardContent className="p-6">
                     <div className="space-y-0">
-                      {STATUS_FLOW.filter(s => !['cancelled', 'refunded', 'returned'].includes(s.value)).map((step, i) => {
-                        const isDone = currentIdx > i;
+                      {STATUS_FLOW.map((step, i) => {
+                        // Every previous step must be marked completed
+                        const isDone = currentIdx >= i;
+                        // Current step must be active
                         const isCurrent = currentIdx === i;
                         const Icon = step.icon;
                         return (
                           <div key={step.value} className="flex gap-4 pb-8 last:pb-0 relative">
-                            {i < STATUS_FLOW.length - 3 && (
+                            {/* The connecting progress line must stop exactly at the current step */}
+                            {i < STATUS_FLOW.length - 1 && (
                               <div className={`absolute left-4 top-8 w-0.5 h-full ${isDone ? 'bg-emerald-400' : 'bg-gray-200'}`} />
                             )}
                             <div className={`relative z-10 w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center border-2 ${

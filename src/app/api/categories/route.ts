@@ -45,11 +45,11 @@ export async function GET(request: NextRequest) {
       ];
     }
 
-    const categories = await Category.find(query).sort({ displayOrder: 1 });
+    const categories = await Category.find(query).sort({ displayOrder: 1 }).lean();
 
     // Transform categories to match frontend type expectations
     const transformedCategories = categories.map(category => ({
-      ...category.toObject(),
+      ...category,
       id: category._id.toString(),
     }));
 

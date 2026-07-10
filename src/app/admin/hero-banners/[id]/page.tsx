@@ -559,7 +559,7 @@ export default function EditHeroBannerPage() {
                     <CardTitle>Colors & Styling</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <Label htmlFor="headingColor">Heading Color</Label>
                         <div className="flex gap-2 mt-2">
@@ -677,7 +677,7 @@ export default function EditHeroBannerPage() {
                         <Label htmlFor="useGradientOverlay">Use Gradient Overlay</Label>
                       </div>
                       {formData.useGradientOverlay && (
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div>
                             <Label htmlFor="gradientColor1">Gradient Color 1</Label>
                             <Input
@@ -725,7 +725,7 @@ export default function EditHeroBannerPage() {
 
                     <div className="border-t pt-4">
                       <Label className="mb-3 block">Button Settings</Label>
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                           <Label htmlFor="buttonBackgroundColor">Background</Label>
                           <div className="flex gap-2 mt-2">
@@ -866,7 +866,7 @@ export default function EditHeroBannerPage() {
                     {/* Background */}
                     <div className="border-t pt-4">
                       <Label className="mb-3 block">Background</Label>
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                           <Label htmlFor="bannerBackgroundColor">Banner Background</Label>
                           <div className="flex gap-2 mt-2">
@@ -919,7 +919,7 @@ export default function EditHeroBannerPage() {
                     {/* Typography */}
                     <div className="border-t pt-4">
                       <Label className="mb-3 block">Typography</Label>
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                           <Label htmlFor="fontFamily">Font Family</Label>
                           <Input
@@ -1042,7 +1042,7 @@ export default function EditHeroBannerPage() {
                     {/* Content Box */}
                     <div className="border-t pt-4">
                       <Label className="mb-3 block">Content Box</Label>
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                           <Label htmlFor="contentBoxWidth">Width: {formData.contentBoxWidth}px</Label>
                           <Input
