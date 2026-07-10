@@ -1,95 +1,103 @@
 # AlhamdCollection - Premium Clothing E-Commerce Store 🛍️
 
-A professional online clothing store built with Next.js, TypeScript, TailwindCSS, MongoDB, and modern web technologies for selling fashion products across Pakistan.
+A professional full-stack online clothing store built with Next.js 14, TypeScript, TailwindCSS, MongoDB, and modern web technologies for selling premium fashion products across Pakistan.
 
-AlhamdCollection provides a complete shopping experience with customer accounts, product management, secure authentication, online ordering, payment verification, and a powerful admin dashboard.
-
-## 🚀 Features
-
-### Customer Features
-
-- **Modern Home Page** with:
-  - Hero section
-  - Featured products
-  - Categories
-  - Latest collections
-  - Newsletter section
-
-- **Shop Page** with:
-  - Product browsing
-  - Category filtering
-  - Search system
-  - Price filtering
-  - Product sorting
-
-- **Product Detail Page** with:
-  - Multiple product images
-  - Product information
-  - Price details
-  - Stock availability
-  - Related products
-
-- **Shopping Cart**
-  - Add products to cart
-  - Update quantity
-  - Remove items
-  - Cart total calculation
-
-- **Checkout System**
-  - Customer information
-  - Shipping details
-  - Order summary
-  - Payment selection
-
-- **User Account**
-  - User registration
-  - Secure login
-  - Profile management
-  - Order history
-  - Order tracking
-
-- **Order System**
-  - Place orders
-  - Track orders
-  - View order status
-  - Order history
-
-- **Return System**
-  - Submit return requests
-  - Manage return status
-
-- **Coupon System**
-  - Apply discount coupons
-  - Percentage and fixed discounts
+AlhamdCollection provides a complete e-commerce experience with customer accounts, secure authentication, product management, shopping cart, checkout system, payment verification, order management, customer reviews, coupon system, and a powerful admin dashboard.
 
 ---
 
-## 🛠️ Admin Panel
+# 🚀 Features
 
-### Dashboard
+## 👕 Customer Features
 
-- Sales overview
-- Total customers
-- Total products
-- Total orders
-- Website statistics
+### Modern Homepage
 
-### Product Management
+- Hero banner slider
+- Featured products
+- Best sellers section
+- Trending collections
+- New arrivals
+- Product categories
+- Newsletter section
+- Fully responsive mobile design
 
-- Add products
-- Edit products
-- Delete products
-- Upload product images
-- Manage categories
-- Update stock
-- Manage pricing
+---
 
-### Order Management
+## 🛒 Shop System
 
-- View all orders
-- Update order status
+- Browse all products
+- Search products
+- Category filtering
+- Price filtering
+- Product sorting
+- Stock availability
+- Responsive product cards
 
-Order statuses:
+---
+
+## 📦 Product Details
+
+- Multiple product images
+- Product description
+- Price details
+- Discount pricing
+- Stock information
+- Related products
+- Customer reviews
+- Product ratings
+
+---
+
+## 🛍️ Shopping Cart
+
+- Add products to cart
+- Update quantity
+- Remove products
+- Automatic total calculation
+- Cart summary
+
+---
+
+## 💳 Checkout System
+
+- Customer information
+- Shipping details
+- Order summary
+- Payment method selection
+- Payment screenshot upload
+- Order confirmation
+
+Payment Methods:
+
+- Cash on Delivery
+- EasyPaisa
+- JazzCash
+
+---
+
+# 👤 User Account System
+
+- User registration
+- Secure login
+- Profile management
+- Order history
+- Order tracking
+- Return requests
+- Product reviews
+
+---
+
+# 📦 Order Management
+
+Customers can:
+
+- Place orders
+- Track orders
+- View order history
+- Check order status
+- Request returns
+
+Order Status:
 
 ```
 Pending
@@ -101,97 +109,175 @@ Cancelled
 Returned
 ```
 
-### Customer Management
+---
 
-- View customers
-- Customer details
-- Block customers
-- Verify customers
-- Manage accounts
+# 🔄 Return System
 
-### Payment Management
-
-- View payment screenshots
-- Verify payments
-- Manage EasyPaisa/JazzCash orders
+- Submit return requests
+- Add return reasons
+- Track return status
+- Admin return management
 
 ---
 
-## 🇵🇰 Pakistan Specific Features
+# 🎟️ Coupon System
+
+- Apply discount coupons
+- Percentage discounts
+- Fixed amount discounts
+- Coupon expiry management
+- Admin coupon control
+
+---
+
+# 🛠️ Admin Dashboard
+
+Complete store management system.
+
+## Dashboard
+
+- Sales overview
+- Total revenue
+- Total orders
+- Total customers
+- Total products
+- Website analytics
+
+---
+
+## Product Management
+
+Admin can:
+
+- Add products
+- Edit products
+- Delete products
+- Upload product images
+- Manage categories
+- Update stock
+- Manage prices
+- Set product status
+
+Product Types:
+
+```
+Featured
+Best Seller
+Trending
+New Arrival
+```
+
+---
+
+## Order Management
+
+Admin can:
+
+- View all orders
+- View customer details
+- Update order status
+- Verify payments
+- Manage returns
+
+---
+
+## Customer Management
+
+- View customers
+- Customer profiles
+- Order history
+- Block customers
+- Manage accounts
+- Verify users
+
+---
+
+## Payment Management
+
+- View payment screenshots
+- Verify payments
+- Manage EasyPaisa payments
+- Manage JazzCash payments
+- Payment settings
+
+---
+
+# 🇵🇰 Pakistan Specific Features
 
 - PKR currency support
-- EasyPaisa payment
-- JazzCash payment
-- Cash on Delivery support
-- Pakistan address support
+- EasyPaisa support
+- JazzCash support
+- Cash on Delivery
+- Pakistan address system
 - Local customer experience
 
 ---
 
-## 🔐 Authentication System
+# 🔐 Authentication & Security
 
-- Secure login system
-- User registration
+- Secure authentication
 - Protected routes
 - Admin authorization
-- Session management
+- User sessions
+- Role-based access control
 
 ---
 
-## 🛠️ Tech Stack
+# 🛠️ Tech Stack
 
-### Frontend
+## Frontend
 
-- Next.js 14 (App Router)
+- Next.js 14
 - React
 - TypeScript
 - TailwindCSS
 
-### Backend
+## Backend
 
 - Next.js API Routes
 - Node.js
 
-### Database
+## Database
 
 - MongoDB
 - Mongoose
 
-### Authentication
+## Authentication
 
 - NextAuth.js
 
-### Image Upload
+## Image Storage
 
 - Cloudinary
 
-### Deployment
+## Deployment
 
 - Vercel
+- GitHub
 
 ---
 
-## 📦 Installation
+# 📦 Installation
 
-Clone the repository:
+## Clone Repository
 
 ```bash
 git clone https://github.com/hsn083/Alhamd-Collection.git
 ```
 
-Go to project folder:
+## Enter Project Folder
 
 ```bash
 cd Alhamd-Collection
 ```
 
-Install dependencies:
+## Install Dependencies
 
 ```bash
 npm install
 ```
 
-Run development server:
+## Run Development Server
 
 ```bash
 npm run dev
@@ -205,9 +291,9 @@ http://localhost:3000
 
 ---
 
-## 🔧 Environment Variables
+# 🔧 Environment Variables
 
-Create a `.env.local` file:
+Create `.env.local` file:
 
 ```env
 MONGODB_URI=
@@ -219,37 +305,43 @@ NEXTAUTH_URL=http://localhost:3000
 CLOUDINARY_CLOUD_NAME=
 CLOUDINARY_API_KEY=
 CLOUDINARY_API_SECRET=
+
+NEXT_PUBLIC_SITE_URL=
 ```
 
 ---
 
-## 📁 Project Structure
+# 📁 Project Structure
 
 ```
 src/
-├── app/
-│   ├── admin/          # Admin dashboard
-│   ├── account/        # Customer account
-│   ├── products/       # Product pages
-│   ├── checkout/       # Checkout system
-│   ├── cart/           # Shopping cart
-│   └── api/            # Backend APIs
 │
-├── components/         # Reusable components
-├── models/             # Database models
-├── utils/              # Helper functions
-├── public/             # Images and assets
-└── styles/             # Global styling
+├── app/
+│   ├── admin/              # Admin dashboard
+│   ├── account/            # Customer account
+│   ├── shop/               # Shop pages
+│   ├── products/           # Product pages
+│   ├── cart/               # Shopping cart
+│   ├── checkout/           # Checkout system
+│   ├── track-order/        # Order tracking
+│   ├── returns/            # Return system
+│   └── api/                # Backend APIs
+│
+├── components/             # Reusable components
+├── models/                 # Database models
+├── utils/                  # Helper functions
+├── public/                 # Images and assets
+└── styles/                 # Global styles
 ```
 
 ---
 
-## 🌐 Pages
+# 🌐 Pages
 
-### Customer Pages
+## Customer Pages
 
 ```
-/ 
+/
 /shop
 /product/[id]
 /cart
@@ -259,59 +351,71 @@ src/
 /returns
 ```
 
-### Admin Pages
+## Admin Pages
 
 ```
 /admin
 /admin/products
 /admin/orders
 /admin/customers
+/admin/categories
 /admin/coupons
+/admin/settings
 ```
 
 ---
 
-## 🚀 Deployment
+# 🚀 Deployment
 
-### Vercel (Recommended)
+## Deploy on Vercel
 
-1. Push code to GitHub
-2. Import repository into Vercel
+Steps:
+
+1. Push project to GitHub
+2. Connect repository with Vercel
 3. Add environment variables
-4. Deploy
+4. Deploy project
 
 ---
 
-## 📝 Available Scripts
+# 📝 Available Scripts
+
+Development:
 
 ```bash
 npm run dev
 ```
-Start development server
+
+Production Build:
 
 ```bash
 npm run build
 ```
-Create production build
+
+Start Production:
 
 ```bash
 npm start
 ```
-Start production server
+
+Code Checking:
 
 ```bash
 npm run lint
 ```
-Check code quality
 
 ---
 
-## 📞 Contact
+# 📞 Contact
 
-**AlhamdCollection**
+## AlhamdCollection
 
-ALJANNAT MARKET  
+Location:
+
+```
+ALJANNAT MARKET
 ADDA MONGI BANGLA
+```
 
 Phone:
 
@@ -327,12 +431,16 @@ alhamdcollection518@gmail.com
 
 ---
 
-## 📄 License
+# 📄 License
 
 This project is developed for AlhamdCollection.
 
-All rights reserved.
+2026. All rights reserved.
 
 ---
+## 👨‍💻 Created By
 
-Built with ❤️ using Next.js and modern web technologies.
+Designed and Developed by Hassan Ahmad
+
+---
+Built with ❤️ using Next.js, React, TypeScript, MongoDB, and modern web technologies.
