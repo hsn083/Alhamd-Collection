@@ -9,6 +9,151 @@ import User from '@/models/User';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
+// Helper functions to generate chart data
+async function generateRevenueChartData() {
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const currentYear = new Date().getFullYear();
+  
+  const data = await Order.aggregate([
+    {
+      $match: {
+        createdAt: {
+          $gte: new Date(currentYear, 0, 1),
+          $lt: new Date(currentYear + 1, 0, 1),
+        },
+      },
+    },
+    {
+      $group: {
+        _id: { $month: '$createdAt' },
+        revenue: { $sum: '$total' },
+        profit: { $sum: { $multiply: ['$total', 0.2] } }, // Assuming 20% profit margin
+      },
+    },
+    {
+      $sort: { _id: 1 },
+    },
+  ]);
+
+  return months.map((month, index) => {
+    const monthData = data.find(d => d._id === index + 1);
+    return {
+      month,
+      revenue: monthData?.revenue || 0,
+      profit: monthData?.profit || 0,
+    };
+  });
+}
+
+async function generateSalesChartData() {
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const currentYear = new Date().getFullYear();
+  
+  const data = await Order.aggregate([
+    {
+      $match: {
+        createdAt: {
+          $gte: new Date(currentYear, 0, 1),
+          $lt: new Date(currentYear + 1, 0, 1),
+        },
+      },
+    },
+    {
+      $group: {
+        _id: { $month: '$createdAt' },
+        orders: { $sum: 1 },
+        products: { $sum: { $size: '$items' } },
+      },
+    },
+    {
+      $sort: { _id: 1 },
+    },
+  ]);
+
+  return months.map((month, index) => {
+    const monthData = data.find(d => d._id === index + 1);
+    return {
+      month,
+      orders: monthData?.orders || 0,
+      products: monthData?.products || 0,
+    };
+  });
+}
+
+async function generateCustomerChartData() {
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const currentYear = new Date().getFullYear();
+  
+  const newCustomers = await User.aggregate([
+    {
+      $match: {
+        createdAt: {
+          $gte: new Date(currentYear, 0, 1),
+          $lt: new Date(currentYear + 1, 0, 1),
+        },
+        role: { $ne: 'admin' },
+      },
+    },
+    {
+      $group: {
+        _id: { $month: '$createdAt' },
+        count: { $sum: 1 },
+      },
+    },
+    {
+      $sort: { _id: 1 },
+    },
+  ]);
+
+  return months.map((month, index) => {
+    const monthData = newCustomers.find(d => d._id === index + 1);
+    return {
+      month,
+      newCustomers: monthData?.count || 0,
+      returningCustomers: Math.floor(Math.random() * 20), // Placeholder for returning customers
+    };
+  });
+}
+
+async function generateCategoryChartData() {
+  const data = await Order.aggregate([
+    { $unwind: '$items' },
+    {
+      $lookup: {
+        from: 'products',
+        localField: 'items.product',
+        foreignField: '_id',
+        as: 'product',
+      },
+    },
+    { $unwind: '$product' },
+    {
+      $lookup: {
+        from: 'categories',
+        localField: 'product.category',
+        foreignField: '_id',
+        as: 'category',
+      },
+    },
+    { $unwind: '$category' },
+    {
+      $group: {
+        _id: '$category.name',
+        value: { $sum: '$items.quantity' },
+      },
+    },
+    {
+      $sort: { value: -1 },
+    },
+    { $limit: 5 },
+  ]);
+
+  return data.map(item => ({
+    name: item._id,
+    value: item.value,
+  }));
+}
+
 export async function GET(request: NextRequest) {
   try {
     await connectDB();
@@ -190,6 +335,12 @@ export async function GET(request: NextRequest) {
       })) || [],
     }));
 
+    // Generate chart data
+    const revenueChartData = await generateRevenueChartData();
+    const salesChartData = await generateSalesChartData();
+    const customerChartData = await generateCustomerChartData();
+    const categoryChartData = await generateCategoryChartData();
+
     const statistics = {
       totalRevenue,
       totalOrders,
@@ -209,6 +360,12 @@ export async function GET(request: NextRequest) {
         weekOrders: weekOrdersCount,
         monthRevenue,
         monthOrders: monthOrdersCount,
+      },
+      charts: {
+        revenue: revenueChartData,
+        sales: salesChartData,
+        customers: customerChartData,
+        categories: categoryChartData,
       },
     };
 

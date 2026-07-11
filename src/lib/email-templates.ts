@@ -147,3 +147,55 @@ export function passwordResetTemplate(name: string, resetLink: string) {
   `;
   return baseTemplate('Reset Your Password', content);
 }
+
+export function returnApprovedTemplate(name: string, returnId: string, refundAmount: number) {
+  const content = `
+    <div style="text-align:center;margin:0 0 32px;">
+      <div style="font-size:48px;margin:0 0 16px;">✅</div>
+      <h2 style="margin:0;color:#111827;font-size:24px;font-weight:700;">Return Approved</h2>
+    </div>
+    <p style="margin:0 0 8px;color:#374151;font-size:15px;">Hi <strong>${name}</strong>,</p>
+    <p style="margin:0 0 24px;color:#6b7280;font-size:15px;">Good news! Your return request has been approved and your refund has been processed.</p>
+    <div style="background:#ecfdf5;border-radius:8px;padding:16px 20px;margin:0 0 24px;border-left:4px solid ${BRAND_COLOR};">
+      <p style="margin:0;font-size:13px;color:#059669;">Return ID: <strong style="font-family:monospace;">${returnId}</strong></p>
+      <p style="margin:8px 0 0;font-size:13px;color:#059669;">Refund Amount: <strong>PKR ${refundAmount.toLocaleString()}</strong></p>
+    </div>
+    <p style="margin:0 0 8px;color:#6b7280;font-size:14px;">💰 Your refund will be credited to your original payment method within <strong>5-7 business days</strong>.</p>
+    <p style="margin:0;color:#6b7280;font-size:14px;">If you have any questions, please don't hesitate to contact our support team.</p>
+  `;
+  return baseTemplate('Return Approved', content);
+}
+
+export function newsletterTemplate(name: string, subject: string, content: string, products?: any[]) {
+  const productsHtml = products?.map((product) => `
+    <td style="width:33%;padding:8px;vertical-align:top;">
+      <div style="background:#fff;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;">
+        <img src="${product.image}" alt="${product.name}" style="width:100%;height:180px;object-fit:cover;display:block;">
+        <div style="padding:16px;">
+          <h4 style="margin:0 0 8px;color:#111827;font-size:14px;font-weight:600;">${product.name}</h4>
+          <p style="margin:0 0 12px;color:${BRAND_COLOR};font-weight:700;font-size:16px;">PKR ${product.price.toLocaleString()}</p>
+          <a href="${product.link}" style="display:inline-block;background:${BRAND_COLOR};color:#fff;text-decoration:none;padding:10px 20px;border-radius:6px;font-size:13px;font-weight:600;">Shop Now</a>
+        </div>
+      </div>
+    </td>
+  `).join('') || '';
+
+  const fullContent = `
+    <p style="margin:0 0 16px;color:#374151;font-size:16px;">Hi ${name ? `<strong>${name}</strong>` : ''},</p>
+    <div style="margin:0 0 24px;color:#374151;font-size:15px;line-height:1.6;">
+      ${content}
+    </div>
+    ${products ? `
+      <table width="100%" cellpadding="0" cellspacing="0" style="margin:24px 0;">
+        <tr>${productsHtml}</tr>
+      </table>
+    ` : ''}
+    <div style="text-align:center;margin:32px 0;">
+      <a href="https://alhamdcollection.pk/shop" style="display:inline-block;background:${BRAND_COLOR};color:#fff;text-decoration:none;padding:14px 28px;border-radius:8px;font-weight:600;font-size:15px;">Shop Latest Collection →</a>
+    </div>
+    <p style="margin:32px 0 0;color:#94a3b8;font-size:12px;text-align:center;">
+      <a href="https://alhamdcollection.pk/unsubscribe" style="color:#94a3b8;text-decoration:underline;">Unsubscribe</a> from this newsletter
+    </p>
+  `;
+  return baseTemplate(subject, fullContent);
+}

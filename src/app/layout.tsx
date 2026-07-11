@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Poppins, Playfair_Display, Cinzel, Montserrat } from "next/font/google";
 import "./globals.css";
 import Analytics from "@/components/Analytics";
@@ -72,6 +72,7 @@ export async function generateMetadata(): Promise<Metadata> {
     authors: [{ name: 'ALHAMD COLLECTION' }],
     creator: 'ALHAMD COLLECTION',
     publisher: 'ALHAMD COLLECTION',
+    manifest: '/manifest.json',
     formatDetection: {
       email: false,
       address: false,
@@ -124,12 +125,20 @@ export async function generateMetadata(): Promise<Metadata> {
       icon: '/favicon.ico',
     },
     other: {
-      'theme-color': '#0F766E',
       'msapplication-TileColor': '#0F766E',
       'apple-mobile-web-app-capable': 'yes',
       'apple-mobile-web-app-status-bar-style': 'default',
       'apple-mobile-web-app-title': 'ALHAMD COLLECTION',
     },
+  };
+}
+
+export function generateViewport(): Viewport {
+  return {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 5,
+    themeColor: '#0F766E',
   };
 }
 

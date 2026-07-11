@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import Product from '@/models/Product';
 import Category from '@/models/Category';
+import { fuzzySearchProducts } from '@/lib/fuzzy-search';
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic';
@@ -29,79 +30,75 @@ export async function GET(request: NextRequest) {
     }
 
     const searchTerm = query.trim();
-    const skip = (page - 1) * limit;
 
-    // Build MongoDB query
-    const queryObj: any = {
-      status: 'active',
-      $or: [
-        { name: { $regex: searchTerm, $options: 'i' } },
-        { description: { $regex: searchTerm, $options: 'i' } },
-      ],
-    };
+    // Get all active products for fuzzy search
+    let products = await Product.find({ status: 'active' })
+      .populate('category', 'name slug')
+      .lean();
 
     // Apply category filter if specified
     if (category) {
       const categoryDoc = await Category.findOne({ slug: category });
       if (categoryDoc) {
-        queryObj.category = categoryDoc._id;
+        products = products.filter(p => 
+          p.category && p.category._id.toString() === categoryDoc._id.toString()
+        );
       }
     }
 
     // Apply price range filter
     if (minPrice || maxPrice) {
-      queryObj.$and = queryObj.$and || [];
-      const priceFilter: any = {};
-      if (minPrice) priceFilter.$gte = parseFloat(minPrice);
-      if (maxPrice) priceFilter.$lte = parseFloat(maxPrice);
-      queryObj.$and.push({ price: priceFilter });
+      products = products.filter(p => {
+        const price = p.discountPrice || p.price;
+        if (minPrice && price < parseFloat(minPrice)) return false;
+        if (maxPrice && price > parseFloat(maxPrice)) return false;
+        return true;
+      });
     }
 
     // Apply rating filter
     if (minRating) {
-      queryObj.rating = { $gte: parseFloat(minRating) };
+      products = products.filter(p => p.rating >= parseFloat(minRating));
     }
 
-    // Build sort options
-    let sortObj: any = {};
+    // Use fuzzy search with type casting
+    const fuzzyResults = fuzzySearchProducts(products as any, searchTerm, 1000);
+
+    // Sort results
+    let sortedProducts = [...fuzzyResults];
     switch (sortBy) {
       case 'price_low':
-        sortObj = { price: 1 };
+        sortedProducts.sort((a, b) => (a.discountPrice || a.price) - (b.discountPrice || b.price));
         break;
       case 'price_high':
-        sortObj = { price: -1 };
+        sortedProducts.sort((a, b) => (b.discountPrice || b.price) - (a.discountPrice || a.price));
         break;
       case 'rating':
-        sortObj = { rating: -1 };
+        sortedProducts.sort((a, b) => b.rating - a.rating);
         break;
       case 'newest':
-        sortObj = { createdAt: -1 };
+        sortedProducts.sort((a, b) => {
+          const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+          const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+          return dateB - dateA;
+        });
         break;
       case 'popular':
-        sortObj = { reviewCount: -1 };
+        sortedProducts.sort((a, b) => b.reviewCount - a.reviewCount);
         break;
       default:
-        // Relevance: use text score if available, otherwise sort by name match
-        sortObj = { name: 1 };
+        // Relevance is already handled by fuzzy search
+        break;
     }
 
-    // Execute query with pagination
-    const [products, total] = await Promise.all([
-      Product.find(queryObj)
-        .populate('category', 'name slug')
-        .populate('brand', 'name slug')
-        .sort(sortObj)
-        .skip(skip)
-        .limit(limit)
-        .lean(),
-      Product.countDocuments(queryObj),
-    ]);
-
+    const total = sortedProducts.length;
     const totalPages = Math.ceil(total / limit);
+    const skip = (page - 1) * limit;
+    const paginatedProducts = sortedProducts.slice(skip, skip + limit);
 
     return NextResponse.json({
       success: true,
-      products,
+      products: paginatedProducts,
       pagination: {
         page,
         limit,

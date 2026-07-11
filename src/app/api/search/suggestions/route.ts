@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import Product from '@/models/Product';
 import Category from '@/models/Category';
+import { fuzzySearchProducts, fuzzySearchCategories, fuzzySearchBrands } from '@/lib/fuzzy-search';
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic';
@@ -25,73 +26,25 @@ export async function GET(request: NextRequest) {
 
     const searchTerm = query.trim();
 
-    // Get matching products
-    const products = await Product.find({
-      status: 'active',
-      $or: [
-        { name: { $regex: searchTerm, $options: 'i' } },
-        { description: { $regex: searchTerm, $options: 'i' } },
-      ],
-    })
+    // Get all active products for fuzzy search
+    const allProducts = await Product.find({ status: 'active' })
       .populate('category', 'name slug')
-      .populate('brand', 'name slug')
-      .limit(5)
       .lean();
 
-    // Get matching categories
-    const categories = await Category.find({
-      $or: [
-        { name: { $regex: searchTerm, $options: 'i' } },
-        { description: { $regex: searchTerm, $options: 'i' } },
-      ],
-      status: 'active',
-    })
-      .limit(3)
-      .lean();
+    // Get all active categories for fuzzy search
+    const allCategories = await Category.find({ status: 'active' }).lean();
 
-    // Get unique brands from matching products
-    const brands = await Product.aggregate([
-      {
-        $match: {
-          status: 'active',
-          brand: { $ne: null },
-          $or: [
-            { name: { $regex: searchTerm, $options: 'i' } },
-            { description: { $regex: searchTerm, $options: 'i' } },
-          ],
-        },
-      },
-      {
-        $lookup: {
-          from: 'brands',
-          localField: 'brand',
-          foreignField: '_id',
-          as: 'brandInfo',
-        },
-      },
-      {
-        $unwind: '$brandInfo',
-      },
-      {
-        $group: {
-          _id: '$brand',
-          name: { $first: '$brandInfo.name' },
-          slug: { $first: '$brandInfo.slug' },
-        },
-      },
-      {
-        $limit: 3,
-      },
-    ]);
+    // Use fuzzy search for products with type casting
+    const products = fuzzySearchProducts(allProducts as any, searchTerm, 5);
 
-    // Count total matching products
-    const totalProducts = await Product.countDocuments({
-      status: 'active',
-      $or: [
-        { name: { $regex: searchTerm, $options: 'i' } },
-        { description: { $regex: searchTerm, $options: 'i' } },
-      ],
-    });
+    // Use fuzzy search for categories with type casting
+    const categories = fuzzySearchCategories(allCategories as any, searchTerm, 3);
+
+    // Use fuzzy search for brands with type casting
+    const brands = fuzzySearchBrands(allProducts as any, searchTerm, 3);
+
+    // Count total matching products using fuzzy search
+    const totalProducts = fuzzySearchProducts(allProducts as any, searchTerm, 1000).length;
 
     return NextResponse.json({
       success: true,

@@ -2,6 +2,46 @@
   {
     "action": "LOGIN_SUCCESS",
     "adminId": "ADMIN-1780244625271",
+    "adminUsername": "@lh@mdcollection518",
+    "details": "Successful login",
+    "id": "AUDIT-1783772130125-ot3tr5o78",
+    "timestamp": "2026-07-11T12:15:30.125Z"
+  },
+  {
+    "action": "PASSWORD_CHANGED",
+    "adminId": "ADMIN-1780244625271",
+    "adminUsername": "@lh@mdcollection518",
+    "details": "Password changed successfully",
+    "id": "AUDIT-1783772097842-46f5f8z5s",
+    "timestamp": "2026-07-11T12:14:57.842Z"
+  },
+  {
+    "action": "USERNAME_CHANGED",
+    "adminId": "ADMIN-1780244625271",
+    "adminUsername": "hassan83",
+    "details": "Username changed from \"hassan83\" to \"@lh@mdcollection518\"",
+    "id": "AUDIT-1783772030776-yjtfrnmra",
+    "timestamp": "2026-07-11T12:13:50.776Z"
+  },
+  {
+    "action": "LOGIN_SUCCESS",
+    "adminId": "ADMIN-1780244625271",
+    "adminUsername": "hassan83",
+    "details": "Successful login",
+    "id": "AUDIT-1783771412899-ubcqiqo1c",
+    "timestamp": "2026-07-11T12:03:32.899Z"
+  },
+  {
+    "action": "LOGIN_SUCCESS",
+    "adminId": "ADMIN-1780244625271",
+    "adminUsername": "hassan83",
+    "details": "Successful login",
+    "id": "AUDIT-1783771411227-ndrefyy4h",
+    "timestamp": "2026-07-11T12:03:31.227Z"
+  },
+  {
+    "action": "LOGIN_SUCCESS",
+    "adminId": "ADMIN-1780244625271",
     "adminUsername": "hassan83",
     "details": "Successful login",
     "id": "AUDIT-1783684694871-eukd5o61m",

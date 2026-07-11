@@ -1,12 +1,15 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { getSecureHeaders, getCSPHeaders } from './lib/security';
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Allow login page to be accessible
   if (pathname === '/admin/login') {
-    return NextResponse.next();
+    const response = NextResponse.next();
+    addSecurityHeaders(response);
+    return response;
   }
 
   // Check maintenance mode for non-admin routes
@@ -23,7 +26,9 @@ export async function middleware(request: NextRequest) {
         if (data.success && data.maintenanceMode) {
           // Allow access to maintenance page itself
           if (pathname === '/maintenance') {
-            return NextResponse.next();
+            const nextResponse = NextResponse.next();
+            addSecurityHeaders(nextResponse);
+            return nextResponse;
           }
           // Redirect to maintenance page
           return NextResponse.redirect(new URL('/maintenance', request.url));
@@ -48,7 +53,22 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  return NextResponse.next();
+  const response = NextResponse.next();
+  addSecurityHeaders(response);
+  return response;
+}
+
+function addSecurityHeaders(response: NextResponse) {
+  const secureHeaders = getSecureHeaders();
+  const cspHeaders = getCSPHeaders();
+
+  Object.entries(secureHeaders).forEach(([key, value]) => {
+    response.headers.set(key, value);
+  });
+
+  Object.entries(cspHeaders).forEach(([key, value]) => {
+    response.headers.set(key, value);
+  });
 }
 
 export const config = {
